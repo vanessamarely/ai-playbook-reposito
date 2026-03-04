@@ -175,6 +175,7 @@ Example output:
       ],
       tools: [],
       skills: ['react-components', 'a11y-automation'],
+      markdown: `---
 description: Build accessible React components following TypeScript and WCAG 2.2 standards
 tools:
   - file-system-read
@@ -261,13 +262,12 @@ Provide:
 - **Invalid props specification**: Request clarification on expected types.
 - **Missing dependencies**: Suggest installing required packages.`
     },
-    },
-    {it-react',
-      name: 'a11y-audit-react',ccessibility compliance',
+    {
+      name: 'a11y-audit-react',
       purpose: 'Audit React components for WCAG 2.2 accessibility compliance',
-      badge: 'Audit',rple-600',
+      badge: 'Audit',
       color: 'text-purple-600',
-      bgColor: 'bg-purple-50',',
+      bgColor: 'bg-purple-50',
       when: 'Reviewing existing components for accessibility issues',
       steps: [
         'Load a11y-automation skill',
@@ -275,9 +275,9 @@ Provide:
         'Validate keyboard navigation patterns',
         'Check ARIA usage and semantic HTML',
       ],
-      ],playwright.mjs'],
       tools: ['run-a11y-lint.sh', 'run-axe-playwright.mjs'],
       skills: ['a11y-automation'],
+      markdown: `---
 description: Audit React components for WCAG 2.2 compliance and suggest fixes
 tools:
   - file-system-read
@@ -385,7 +385,6 @@ If Playwright is available:
 - **Linter not configured**: Provide setup instructions for eslint-plugin-jsx-a11y.
 - **Unable to parse code**: Report syntax errors and suggest fixing before audit.`
     },
-    },
     {
       name: 'node-microservice-builder',
       purpose: 'Create Node.js/TypeScript backend services',
@@ -402,6 +401,7 @@ If Playwright is available:
       ],
       tools: [],
       skills: ['node-typescript-service'],
+      markdown: `---
 description: Scaffold or extend Node.js/TypeScript microservices with validation, error handling, and testing
 tools:
   - file-system-read
@@ -519,7 +519,6 @@ Provide:
 - **Framework mismatch**: If the detected framework differs from expectation, clarify before proceeding.
 - **Missing validation library**: Suggest installing an appropriate package.
 - **Route conflict**: Notify and suggest alternative path or method.`
-    },
     },
     {
       name: 'pr-reviewer',
@@ -667,7 +666,7 @@ Format:
 - **Project detection failure**: Ask for explicit project type.
 - **Policy file missing**: Proceed with general best practices only.`
     },
-    },
+    {
       name: 'code-reviewer',
       purpose: 'Review code files for quality, security, and best practices',
       badge: 'Review',
@@ -918,7 +917,6 @@ The developer reviews the suggestions and applies them manually, maintaining ful
 - Load style guidelines: \`.github/copilot-instructions/style-output.md\``
     },
   ]
-  ]
 
   return (
     <div className="space-y-6">
@@ -1023,6 +1021,7 @@ The developer reviews the suggestions and applies them manually, maintaining ful
                 </div>
               </div>
 
+              <Collapsible 
                 open={expandedAgent === agent.name} 
                 onOpenChange={() => setExpandedAgent(expandedAgent === agent.name ? null : agent.name)}
               >
@@ -1064,44 +1063,6 @@ The developer reviews the suggestions and applies them manually, maintaining ful
                 </CollapsibleContent>
               </Collapsible>
             </CardContent>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="bg-accent/5 border-accent/20">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Boxes className="h-5 w-5 text-accent" />
-            AGENT.md File Structure
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-background p-4 rounded-lg font-mono text-xs space-y-3">
-            <div>
-              <p className="text-muted-foreground">YAML frontmatter:</p>
-              <pre className="text-foreground mt-1">
-{`---
-description: Brief action-oriented description
-tools: [tool1, tool2]
----`}
-              </pre>
-            </div>
-            <div>
-              <p className="text-muted-foreground">Required sections:</p>
-              <ul className="text-foreground space-y-1 mt-1 ml-4">
-                <li>• Purpose</li>
-                <li>• Inputs (what the agent receives)</li>
-                <li>• Outputs (what the agent produces)</li>
-                <li>• Step-by-step procedure</li>
-              </ul>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
           </Card>
         ))}
       </div>
