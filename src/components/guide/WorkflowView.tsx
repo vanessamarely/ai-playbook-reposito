@@ -104,7 +104,7 @@ export default function WorkflowView() {
               <div className="bg-accent/5 p-2 rounded text-xs space-y-1">
                 <div>• <code className="bg-muted px-1.5 py-0.5 rounded">references/a11y-wcag22.md</code> when checking accessibility</div>
                 <div>• <code className="bg-muted px-1.5 py-0.5 rounded">assets/component-spec.template.md</code> when creating a spec</div>
-                <div>• <code className="bg-muted px-1.5 py-0.5 rounded">references/architecture-patterns.md</code> for Waterworks components</div>
+                <div>• <code className="bg-muted px-1.5 py-0.5 rounded">references/architecture-patterns.md</code> for client library components</div>
               </div>
               <p className="text-xs text-muted-foreground mt-2 italic">
                 This prevents overwhelming the AI with unnecessary context up front.

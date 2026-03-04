@@ -20,7 +20,7 @@ export default function StructureView() {
             { name: 'workspace-policy.md', desc: 'Project isolation & scope rules' },
             { name: 'frontend-policy.md', desc: 'React/TS + accessibility guidelines' },
             { name: 'backend-policy.md', desc: 'Multi-language backend conventions' },
-            { name: 'waterworks-overrides.md', desc: 'Client-specific style rules' },
+            { name: '[library-name]-overrides.md', desc: 'Client-specific style rules (optional)' },
             { name: 'style-output.md', desc: 'Output formatting standards' },
           ],
         },
@@ -47,7 +47,7 @@ export default function StructureView() {
           items: [
             { name: 'skill-creator/', desc: 'Generate new skills with templates' },
             { name: 'react-components/', desc: 'Build React/TS components' },
-            { name: 'waterworks-library/', desc: 'Client component library (Waterworks)' },
+            { name: '[library-name]/', desc: 'Client component library (optional)' },
             { name: 'node-typescript-service/', desc: 'Node/TS service development' },
             { name: 'a11y-automation/', desc: 'Accessibility testing automation' },
           ],

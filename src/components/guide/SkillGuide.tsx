@@ -27,14 +27,14 @@ export default function SkillGuide() {
       scripts: [],
     },
     {
-      name: 'waterworks-library',
-      description: 'Build components for Waterworks client library',
+      name: 'client-library',
+      description: 'Build components for client-specific component libraries',
       badge: 'Client-Specific',
       color: 'text-orange-600',
-      triggers: ['+waterworks component', '+client library'],
+      triggers: ['+client library', '+custom component library'],
       antiTriggers: ['General React components', 'Other client projects'],
       assets: ['component-template.tsx'],
-      references: ['no-semicolons.md', 'architecture-patterns.md'],
+      references: ['code-style.md', 'architecture-patterns.md'],
       scripts: [],
     },
     {
