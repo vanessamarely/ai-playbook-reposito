@@ -36,10 +36,11 @@ export default function AlternativeSetups() {
           </Alert>
 
           <Tabs defaultValue="copilot" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-8 h-auto gap-2 bg-muted/50 p-2">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-9 h-auto gap-2 bg-muted/50 p-2">
               <TabsTrigger value="copilot" className="text-xs">GitHub Copilot</TabsTrigger>
               <TabsTrigger value="claude" className="text-xs">Claude Projects</TabsTrigger>
               <TabsTrigger value="cursor" className="text-xs">Cursor Rules</TabsTrigger>
+              <TabsTrigger value="openai" className="text-xs">OpenAI Codex</TabsTrigger>
               <TabsTrigger value="gemini" className="text-xs">Gemini CLI</TabsTrigger>
               <TabsTrigger value="cline" className="text-xs">Cline</TabsTrigger>
               <TabsTrigger value="amazonq" className="text-xs">Amazon Q</TabsTrigger>
@@ -214,6 +215,552 @@ When asked to perform complex tasks:
                     <span>Reference .github/* structure for agents/skills (same as Copilot)</span>
                   </div>
                 </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="openai" className="space-y-4 mt-4">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Terminal className="h-4 w-4 text-primary" />
+                  <h4 className="font-semibold">OpenAI Codex Integration</h4>
+                </div>
+                
+                <Alert>
+                  <Lightbulb className="h-4 w-4" />
+                  <AlertTitle>What is OpenAI Codex?</AlertTitle>
+                  <AlertDescription className="text-sm">
+                    OpenAI Codex powers GitHub Copilot and is also available via OpenAI's API. You can integrate it directly into custom editors, CLI tools, or IDEs using the API or specialized clients.
+                  </AlertDescription>
+                </Alert>
+
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Badge variant="outline">Method 1</Badge>
+                      OpenAI API with System Prompts
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Use OpenAI's Chat Completions API to send code context from your AI Playbook:
+                    </p>
+                    <div className="bg-background p-4 rounded-lg">
+                      <pre className="text-xs font-mono">
+{`# Project Structure
+.openai/
+├── config.json
+└── context/
+    ├── workspace-policy.md
+    ├── frontend-policy.md
+    └── backend-policy.md
+.github/
+├── agents/
+├── skills/
+└── specs/`}
+                      </pre>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-start gap-2">
+                        <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span>Store policies in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.openai/context/</code></span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span>Load policies as system messages in API calls</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                        <span>Reference agents/skills dynamically based on task type</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Alert className="bg-accent/10 border-accent/30">
+                  <Code className="h-4 w-4" />
+                  <AlertTitle className="text-sm">Example Python Integration</AlertTitle>
+                  <AlertDescription>
+                    <pre className="text-xs font-mono mt-2 bg-background/50 p-3 rounded overflow-x-auto">
+{`import openai
+import os
+
+def load_policy(policy_file):
+    """Load a policy file from .openai/context/"""
+    with open(f'.openai/context/{policy_file}', 'r') as f:
+        return f.read()
+
+def load_skill(skill_path):
+    """Load a skill from .github/skills/"""
+    with open(f'.github/skills/{skill_path}/SKILL.md', 'r') as f:
+        return f.read()
+
+def codegen_with_playbook(task_description, task_type="frontend"):
+    """Generate code using OpenAI with AI Playbook context"""
+    
+    # Load base policies
+    workspace_policy = load_policy('workspace-policy.md')
+    
+    if task_type == "frontend":
+        specific_policy = load_policy('frontend-policy.md')
+        # Load React component skill if needed
+        skill_context = load_skill('react-components')
+    elif task_type == "backend":
+        specific_policy = load_policy('backend-policy.md')
+        skill_context = load_skill('node-typescript-service')
+    else:
+        specific_policy = ""
+        skill_context = ""
+    
+    # Build system prompt with policies
+    system_prompt = f"""You are a code generation assistant following the AI Playbook framework.
+
+## Workspace Policy
+{workspace_policy}
+
+## Specific Policy
+{specific_policy}
+
+## Skill Context
+{skill_context}
+
+Follow these guidelines strictly when generating code. Use progressive disclosure - only apply detailed rules when relevant to the task."""
+
+    # Call OpenAI API
+    response = openai.chat.completions.create(
+        model="gpt-4",  # or "gpt-3.5-turbo"
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": task_description}
+        ],
+        temperature=0.7
+    )
+    
+    return response.choices[0].message.content
+
+# Example usage
+result = codegen_with_playbook(
+    "Create an accessible button component with hover states",
+    task_type="frontend"
+)
+print(result)`}
+                    </pre>
+                  </AlertDescription>
+                </Alert>
+
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Badge variant="outline">Method 2</Badge>
+                      OpenAI Functions for Agent Routing
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Use OpenAI function calling to dynamically route to appropriate agents:
+                    </p>
+                    <div className="bg-background p-4 rounded-lg">
+                      <pre className="text-xs font-mono">
+{`# Define functions that map to your agents
+functions = [
+    {
+        "name": "react_component_builder",
+        "description": "Build React components following WCAG 2.2",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "component_name": {"type": "string"},
+                "requirements": {"type": "string"}
+            }
+        }
+    },
+    {
+        "name": "a11y_audit",
+        "description": "Audit code for accessibility issues",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "code": {"type": "string"},
+                "framework": {"type": "string"}
+            }
+        }
+    },
+    {
+        "name": "pr_reviewer",
+        "description": "Review pull requests for code quality",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "diff": {"type": "string"},
+                "focus_areas": {"type": "array"}
+            }
+        }
+    }
+]
+
+# OpenAI will automatically route to the right function
+response = openai.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": user_task}],
+    functions=functions,
+    function_call="auto"
+)`}
+                      </pre>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span>Each function maps to an agent in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/agents/</code></span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span>OpenAI automatically selects the right agent based on user input</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span>Load agent AGENT.md file and execute its procedure</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Badge variant="outline">Method 3</Badge>
+                      VS Code Extension with OpenAI
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Build a custom VS Code extension that uses OpenAI Codex with your AI Playbook:
+                    </p>
+                    <div className="bg-background p-4 rounded-lg">
+                      <pre className="text-xs font-mono">
+{`// VS Code Extension (TypeScript)
+import * as vscode from 'vscode';
+import OpenAI from 'openai';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export function activate(context: vscode.ExtensionContext) {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY
+    });
+
+    // Register command
+    let disposable = vscode.commands.registerCommand(
+        'ai-playbook.generateCode',
+        async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) return;
+
+            const workspaceRoot = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+            if (!workspaceRoot) return;
+
+            // Load policies from .openai/context/
+            const workspacePolicy = fs.readFileSync(
+                path.join(workspaceRoot, '.openai/context/workspace-policy.md'),
+                'utf-8'
+            );
+
+            // Determine file type and load appropriate policy
+            const fileName = editor.document.fileName;
+            let specificPolicy = '';
+            
+            if (fileName.endsWith('.tsx') || fileName.endsWith('.jsx')) {
+                specificPolicy = fs.readFileSync(
+                    path.join(workspaceRoot, '.openai/context/frontend-policy.md'),
+                    'utf-8'
+                );
+            }
+
+            // Get user input
+            const prompt = await vscode.window.showInputBox({
+                prompt: 'Describe what you want to generate'
+            });
+
+            if (!prompt) return;
+
+            // Call OpenAI with policies as system context
+            const completion = await openai.chat.completions.create({
+                model: 'gpt-4',
+                messages: [
+                    {
+                        role: 'system',
+                        content: \`Follow these policies:\\n\\n\${workspacePolicy}\\n\\n\${specificPolicy}\`
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ]
+            });
+
+            // Insert generated code
+            const code = completion.choices[0].message.content;
+            editor.edit(editBuilder => {
+                editBuilder.insert(editor.selection.active, code || '');
+            });
+        }
+    );
+
+    context.subscriptions.push(disposable);
+}`}
+                      </pre>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Badge variant="outline">Method 4</Badge>
+                      CLI Tool with OpenAI
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Create a command-line tool for code generation with AI Playbook context:
+                    </p>
+                    <div className="bg-background p-4 rounded-lg">
+                      <pre className="text-xs font-mono">
+{`#!/usr/bin/env node
+// ai-playbook-cli.js
+
+const { OpenAI } = require('openai');
+const fs = require('fs');
+const path = require('path');
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+async function generate(taskType, description) {
+  const root = process.cwd();
+  
+  // Load workspace policy
+  const workspacePolicy = fs.readFileSync(
+    path.join(root, '.openai/context/workspace-policy.md'),
+    'utf-8'
+  );
+  
+  // Load task-specific policy and skill
+  let policy = '';
+  let skill = '';
+  
+  if (taskType === 'component') {
+    policy = fs.readFileSync(
+      path.join(root, '.openai/context/frontend-policy.md'),
+      'utf-8'
+    );
+    skill = fs.readFileSync(
+      path.join(root, '.github/skills/react-components/SKILL.md'),
+      'utf-8'
+    );
+  } else if (taskType === 'service') {
+    policy = fs.readFileSync(
+      path.join(root, '.openai/context/backend-policy.md'),
+      'utf-8'
+    );
+    skill = fs.readFileSync(
+      path.join(root, '.github/skills/node-typescript-service/SKILL.md'),
+      'utf-8'
+    );
+  }
+  
+  const systemPrompt = \`AI Playbook Context:
+
+\${workspacePolicy}
+
+\${policy}
+
+\${skill}
+
+Generate code following these guidelines.\`;
+
+  const completion = await openai.chat.completions.create({
+    model: 'gpt-4',
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: description }
+    ]
+  });
+  
+  return completion.choices[0].message.content;
+}
+
+// CLI usage
+const [,, taskType, ...descriptionParts] = process.argv;
+const description = descriptionParts.join(' ');
+
+if (!taskType || !description) {
+  console.error('Usage: ai-playbook-cli <component|service> <description>');
+  process.exit(1);
+}
+
+generate(taskType, description)
+  .then(code => console.log(code))
+  .catch(err => console.error(err));
+
+// Example usage:
+// $ ai-playbook-cli component "accessible button with icon"
+// $ ai-playbook-cli service "REST endpoint for user auth"`}
+                      </pre>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Alert className="bg-accent/10 border-accent/30">
+                  <Code className="h-4 w-4" />
+                  <AlertTitle className="text-sm">Example .openai/config.json</AlertTitle>
+                  <AlertDescription>
+                    <pre className="text-xs font-mono mt-2 bg-background/50 p-3 rounded overflow-x-auto">
+{`{
+  "model": "gpt-4",
+  "temperature": 0.7,
+  "max_tokens": 2000,
+  "context_files": {
+    "workspace": ".openai/context/workspace-policy.md",
+    "frontend": ".openai/context/frontend-policy.md",
+    "backend": ".openai/context/backend-policy.md",
+    "style": ".openai/context/style-output.md"
+  },
+  "agents": {
+    "directory": ".github/agents",
+    "available": [
+      "react-component-builder",
+      "node-microservice-builder",
+      "a11y-audit-react",
+      "pr-reviewer"
+    ]
+  },
+  "skills": {
+    "directory": ".github/skills",
+    "load_on_demand": true
+  },
+  "progressive_disclosure": true
+}`}
+                    </pre>
+                  </AlertDescription>
+                </Alert>
+
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Badge variant="outline">Advanced</Badge>
+                      Embeddings for Semantic Search
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-sm text-muted-foreground">
+                      Use OpenAI embeddings to find relevant skills/agents based on task description:
+                    </p>
+                    <div className="bg-background p-4 rounded-lg">
+                      <pre className="text-xs font-mono">
+{`import openai
+import numpy as np
+from pathlib import Path
+
+def embed_text(text):
+    """Get embedding for text"""
+    response = openai.embeddings.create(
+        model="text-embedding-ada-002",
+        input=text
+    )
+    return response.data[0].embedding
+
+def cosine_similarity(a, b):
+    """Calculate similarity between embeddings"""
+    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+def find_relevant_skills(task_description):
+    """Find skills relevant to the task"""
+    
+    # Embed the task
+    task_embedding = embed_text(task_description)
+    
+    # Embed all skills (cache these in production)
+    skills_dir = Path('.github/skills')
+    skill_scores = []
+    
+    for skill_path in skills_dir.glob('*/SKILL.md'):
+        skill_content = skill_path.read_text()
+        skill_embedding = embed_text(skill_content[:1000])  # First 1000 chars
+        
+        similarity = cosine_similarity(task_embedding, skill_embedding)
+        skill_scores.append((skill_path, similarity))
+    
+    # Return top 3 most relevant skills
+    skill_scores.sort(key=lambda x: x[1], reverse=True)
+    return [str(path) for path, score in skill_scores[:3]]
+
+# Usage
+task = "Build an accessible form with validation"
+relevant_skills = find_relevant_skills(task)
+print(f"Most relevant skills: {relevant_skills}")
+
+# Load those skills as context for OpenAI
+for skill_path in relevant_skills:
+    skill_content = Path(skill_path).read_text()
+    # Add to system prompt...`}
+                      </pre>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span>Automatically finds relevant skills without manual routing</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span>Cache embeddings to avoid repeated API calls</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span>Load only the most relevant context (progressive disclosure)</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Alert>
+                  <Terminal className="h-4 w-4" />
+                  <AlertTitle className="text-sm">OpenAI vs GitHub Copilot</AlertTitle>
+                  <AlertDescription className="text-sm space-y-2">
+                    <p><strong>GitHub Copilot:</strong> Built-in IDE integration, reads .github/copilot-instructions/ automatically</p>
+                    <p><strong>OpenAI API:</strong> More flexible, requires custom integration, but allows full control over context loading and routing logic</p>
+                    <p className="text-xs text-muted-foreground mt-2">Both use the same underlying Codex models, so your AI Playbook content works with both approaches.</p>
+                  </AlertDescription>
+                </Alert>
+
+                <Card className="bg-muted/50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm">Best Practices</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span><strong>Progressive Loading:</strong> Don't send all policies/skills at once - load based on task type</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span><strong>Token Limits:</strong> Keep system prompts under 4000 tokens; use embeddings for larger context</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span><strong>Caching:</strong> Cache policy content and embeddings to reduce API calls</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span><strong>Function Calling:</strong> Use OpenAI functions to map user tasks to agents automatically</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                        <span><strong>Versioning:</strong> Store API responses in version control for reproducibility</span>
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
