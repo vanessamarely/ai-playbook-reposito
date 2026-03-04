@@ -51,7 +51,6 @@ Based on project type, read:
 - `.github/copilot-instructions/workspace-policy.md` (always)
 - `.github/copilot-instructions/frontend-policy.md` (if frontend)
 - `.github/copilot-instructions/backend-policy.md` (if backend)
-- `.github/copilot-instructions/waterworks-overrides.md` (if Waterworks)
 
 ### Step 5: Code Quality Check
 
