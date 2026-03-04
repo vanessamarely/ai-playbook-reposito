@@ -26,6 +26,7 @@ import ClientLibraryGuide from '@/components/guide/ClientLibraryGuide'
 import WorkflowView from '@/components/guide/WorkflowView'
 import DataFlowDiagram from '@/components/guide/DataFlowDiagram'
 import AlternativeSetups from '@/components/guide/AlternativeSetups'
+import OrchestratorGuide from '@/components/guide/OrchestratorGuide'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -48,10 +49,14 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Info className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="orchestrator" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <GitBranch className="h-4 w-4" />
+              <span className="hidden sm:inline">Orchestrator</span>
             </TabsTrigger>
             <TabsTrigger value="structure" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <FolderTree className="h-4 w-4" />
@@ -74,6 +79,10 @@ function App() {
               <span className="hidden sm:inline">Client Setup</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="orchestrator" className="space-y-6">
+            <OrchestratorGuide />
+          </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
             <Card className="border-primary/20">
