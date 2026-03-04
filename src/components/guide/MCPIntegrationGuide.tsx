@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Separator } from '@/components/ui/separator'
 import { 
   Plug, 
   Chrome, 
@@ -14,7 +15,12 @@ import {
   FileText,
   Globe,
   Database,
-  Package
+  Package,
+  Download,
+  Settings,
+  Play,
+  MessageSquare,
+  Zap
 } from 'lucide-react'
 
 export default function MCPIntegrationGuide() {
@@ -67,6 +73,284 @@ export default function MCPIntegrationGuide() {
                 </p>
               </CardContent>
             </Card>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-primary/30">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-primary" />
+            MCP Integration Workflow
+          </CardTitle>
+          <CardDescription>
+            Step-by-step visual guide to setting up and using MCP servers with AI Playbook agents
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid gap-6">
+            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">1</div>
+                  <div>
+                    <CardTitle className="text-base">Install MCP Server</CardTitle>
+                    <CardDescription className="text-xs">Add the required MCP package to your system</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border border-border/50">
+                  <div className="flex items-start gap-3 mb-3">
+                    <Terminal className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold mb-2">Terminal Command</p>
+                      <pre className="text-xs font-mono bg-muted p-2 rounded">npm install -g @modelcontextprotocol/server-github</pre>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Download className="h-4 w-4" />
+                    <span>This installs the GitHub MCP server globally on your machine</span>
+                  </div>
+                </div>
+
+                <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
+                  <p className="text-xs font-semibold text-accent mb-2">💡 Quick Tip</p>
+                  <p className="text-xs text-muted-foreground">
+                    Most MCP servers can run without global installation using <code className="bg-background px-1 py-0.5 rounded">npx -y</code>, which is the recommended approach
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center">
+              <ArrowRight className="h-6 w-6 text-muted-foreground" />
+            </div>
+
+            <Card className="bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-bold">2</div>
+                  <div>
+                    <CardTitle className="text-base">Configure AI Tool</CardTitle>
+                    <CardDescription className="text-xs">Add MCP server to your AI assistant's configuration</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border border-border/50">
+                  <div className="flex items-start gap-3 mb-3">
+                    <Settings className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold mb-1">Claude Desktop Configuration</p>
+                      <p className="text-xs text-muted-foreground mb-3">
+                        <code className="bg-muted px-1 py-0.5 rounded text-[10px]">~/Library/Application Support/Claude/claude_desktop_config.json</code>
+                      </p>
+                      <pre className="text-[10px] font-mono bg-muted p-3 rounded overflow-x-auto">
+{`{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "ghp_your_token_here" }
+    }
+  }
+}`}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    <p className="text-xs font-semibold mb-1">Claude Desktop</p>
+                    <p className="text-[10px] text-muted-foreground">Edit JSON config file</p>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    <p className="text-xs font-semibold mb-1">Cline (VSCode)</p>
+                    <p className="text-[10px] text-muted-foreground">Add to settings.json</p>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    <p className="text-xs font-semibold mb-1">Cursor</p>
+                    <p className="text-[10px] text-muted-foreground">Coming soon (use CLI)</p>
+                  </div>
+                </div>
+
+                <Alert className="bg-destructive/10 border-destructive/30">
+                  <Terminal className="h-4 w-4 text-destructive" />
+                  <AlertTitle className="text-xs">Restart Required</AlertTitle>
+                  <AlertDescription className="text-xs">
+                    You must restart your AI tool after modifying the configuration file
+                  </AlertDescription>
+                </Alert>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center">
+              <ArrowRight className="h-6 w-6 text-muted-foreground" />
+            </div>
+
+            <Card className="bg-gradient-to-br from-primary/5 to-accent/5 border-primary/20">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">3</div>
+                  <div>
+                    <CardTitle className="text-base">Update Agent Metadata</CardTitle>
+                    <CardDescription className="text-xs">Document MCP dependencies in agent files</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border border-border/50">
+                  <div className="flex items-start gap-3 mb-3">
+                    <FileText className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold mb-1">Agent File: pr-reviewer/AGENT.md</p>
+                      <pre className="text-[10px] font-mono bg-muted p-3 rounded overflow-x-auto">
+{`---
+description: Review pull requests for code quality
+mcp-servers:
+  - github        # Required: Fetch PR data
+  - filesystem    # Optional: Read local files
+---
+
+# Purpose
+Automated PR review with GitHub integration via MCP.
+
+## Procedure
+1. Use github MCP to fetch PR details
+2. Analyze code changes against policies
+3. Use github MCP to post review comments`}
+                      </pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-semibold mb-1">Benefits of Documentation</p>
+                      <ul className="text-xs text-muted-foreground space-y-1">
+                        <li>• Team members know which MCP servers to install</li>
+                        <li>• AI tools can automatically request appropriate capabilities</li>
+                        <li>• Clear distinction between required and optional servers</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-center">
+              <ArrowRight className="h-6 w-6 text-muted-foreground" />
+            </div>
+
+            <Card className="bg-gradient-to-br from-accent/5 to-primary/5 border-accent/20">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-sm font-bold">4</div>
+                  <div>
+                    <CardTitle className="text-base">Invoke Agent with MCP</CardTitle>
+                    <CardDescription className="text-xs">Start using the agent with enhanced capabilities</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border border-border/50">
+                  <div className="flex items-start gap-3 mb-3">
+                    <MessageSquare className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold mb-2">Example Prompt</p>
+                      <div className="bg-muted p-3 rounded text-xs space-y-2">
+                        <p className="font-semibold text-foreground">You:</p>
+                        <p className="text-muted-foreground">
+                          "Please review PR #142 in the user/repo repository using the pr-reviewer agent"
+                        </p>
+                        <Separator className="my-2" />
+                        <p className="font-semibold text-foreground">AI Assistant:</p>
+                        <p className="text-muted-foreground">
+                          "I'll use the github MCP server to fetch PR #142 and review it according to the pr-reviewer agent guidelines..."
+                        </p>
+                        <div className="mt-3 p-2 bg-primary/10 rounded border border-primary/20">
+                          <div className="flex items-center gap-2 text-xs">
+                            <Play className="h-3 w-3 text-primary" />
+                            <span className="text-primary font-semibold">Using: github.get_pull_request</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle2 className="h-4 w-4 text-primary" />
+                      <p className="text-xs font-semibold">Automated Actions</p>
+                    </div>
+                    <ul className="text-[10px] text-muted-foreground space-y-1">
+                      <li>• Fetch PR diffs from GitHub</li>
+                      <li>• Read policy files from repo</li>
+                      <li>• Post review comments</li>
+                      <li>• Request changes automatically</li>
+                    </ul>
+                  </div>
+                  <div className="bg-accent/10 p-3 rounded-lg border border-accent/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Zap className="h-4 w-4 text-accent" />
+                      <p className="text-xs font-semibold">Real-time Results</p>
+                    </div>
+                    <ul className="text-[10px] text-muted-foreground space-y-1">
+                      <li>• No manual copy-paste needed</li>
+                      <li>• Direct GitHub integration</li>
+                      <li>• Instant feedback on code</li>
+                      <li>• Complete audit trail</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Separator className="my-6" />
+
+          <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 p-6 rounded-lg border border-primary/20">
+            <h3 className="font-semibold flex items-center gap-2 mb-4">
+              <Lightbulb className="h-5 w-5 text-primary" />
+              Complete Integration Example
+            </h3>
+            <div className="space-y-4">
+              <div className="bg-background/80 backdrop-blur-sm p-4 rounded-lg border border-border/50">
+                <p className="text-xs font-semibold mb-3 text-muted-foreground">Scenario: Accessibility Testing with Playwright MCP</p>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <Badge variant="outline" className="shrink-0 mt-0.5">Setup</Badge>
+                    <p className="text-xs text-muted-foreground">
+                      Install <code className="bg-muted px-1 py-0.5 rounded">@executeautomation/playwright-mcp-server</code> and configure in Claude Desktop
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge variant="outline" className="shrink-0 mt-0.5">Agent</Badge>
+                    <p className="text-xs text-muted-foreground">
+                      Update <code className="bg-muted px-1 py-0.5 rounded">a11y-audit-react/AGENT.md</code> to include <code className="bg-muted px-1 py-0.5 rounded">playwright</code> in mcp-servers list
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge variant="outline" className="shrink-0 mt-0.5">Usage</Badge>
+                    <p className="text-xs text-muted-foreground">
+                      Prompt: "Use the a11y-audit-react agent to test the LoginForm component on localhost:3000/components"
+                    </p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Badge variant="outline" className="shrink-0 mt-0.5">Result</Badge>
+                    <p className="text-xs text-muted-foreground">
+                      AI automatically launches browser, navigates to component, runs axe-core tests, captures screenshots, and provides detailed accessibility report with fixes
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
