@@ -73,9 +73,6 @@
 
 ## Project-Specific
 
-- [ ] Waterworks: No semicolons used
-- [ ] Waterworks: No code comments added
-- [ ] Waterworks: Follows existing architecture patterns
 - [ ] Framework-specific patterns followed (Nest, Express, etc.)
 
 ## Verification Commands Run

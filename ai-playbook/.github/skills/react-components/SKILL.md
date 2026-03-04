@@ -116,13 +116,7 @@ useEffect(() => {
 
 ### 8. Apply Project-Specific Conventions
 
-Check if project is Waterworks:
-- Read: `.github/copilot-instructions/waterworks-overrides.md`
-- Load template: `.github/skills/waterworks-library/assets/component-template.tsx`
-- Apply no-semicolon rule
-- Omit code comments
-
-Otherwise, follow project's existing style.
+Follow the project's existing style and conventions.
 
 ### 9. Generate Component File
 
