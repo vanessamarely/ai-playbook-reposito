@@ -34,6 +34,7 @@ import MCPIntegrationGuide from '@/components/guide/MCPIntegrationGuide'
 import InstallationGuide from '@/components/guide/InstallationGuide'
 import UsageGuide from '@/components/guide/UsageGuide'
 import ExamplePromptsLibrary from '@/components/guide/ExamplePromptsLibrary'
+import WorkspaceRootSetup from '@/components/guide/WorkspaceRootSetup'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -56,7 +57,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-11 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-12 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Info className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -64,6 +65,10 @@ function App() {
             <TabsTrigger value="installation" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Download className="h-4 w-4" />
               <span className="hidden sm:inline">Installation</span>
+            </TabsTrigger>
+            <TabsTrigger value="workspace-setup" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Config Files</span>
             </TabsTrigger>
             <TabsTrigger value="usage" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <HelpCircle className="h-4 w-4" />
@@ -105,6 +110,10 @@ function App() {
 
           <TabsContent value="installation" className="space-y-6">
             <InstallationGuide />
+          </TabsContent>
+
+          <TabsContent value="workspace-setup" className="space-y-6">
+            <WorkspaceRootSetup />
           </TabsContent>
 
           <TabsContent value="usage" className="space-y-6">
