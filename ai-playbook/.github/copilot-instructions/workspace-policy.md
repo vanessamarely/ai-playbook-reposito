@@ -1,5 +1,21 @@
 # Workspace Policy
 
+## Supported AI Tools
+
+This playbook supports multiple AI coding assistants. The following files serve as the primary instruction entry point for each tool:
+
+| AI Tool | Instruction File | Location |
+|---|---|---|
+| GitHub Copilot | `copilot-instructions.md` | `<repo-root>/.github/copilot-instructions.md` |
+| Claude (Code / claude.ai) | `CLAUDE.md` | `<repo-root>/CLAUDE.md` |
+| Cursor IDE | `.cursorrules` | `<repo-root>/.cursorrules` |
+| Windsurf (Codeium) | `.windsurfrules` | `<repo-root>/.windsurfrules` |
+
+All of these files reference the same playbook skills and policies. Use the `ai-tool-setup` skill to generate or refresh them:
+```
+Skill: ai-playbook/.github/skills/ai-tool-setup/SKILL.md
+```
+
 ## Scope Enforcement
 
 The agent operates within a multi-repository workspace structure. Each target project is isolated.
@@ -49,3 +65,4 @@ Before committing changes:
 1. Run `tools/scope-guard.mjs` with the list of modified file paths.
 2. Verify all paths are within the target root.
 3. Abort if scope violation detected.
+

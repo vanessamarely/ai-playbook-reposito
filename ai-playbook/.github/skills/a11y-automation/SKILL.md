@@ -1,13 +1,18 @@
 ---
 name: a11y-automation
-description: Automate accessibility testing with linting and Playwright-based axe checks
+description: Automates accessibility testing using eslint-plugin-jsx-a11y linting and Playwright-based axe-core checks. Use when the user wants to run, configure, or integrate automated accessibility tests into a React project. Do not use for manually reviewing component structure, building new components, or non-React/non-browser environments.
 triggers:
-  - accessibility testing
+  - run accessibility tests
+  - automate a11y checks
+  - set up axe testing
+  - configure eslint-plugin-jsx-a11y
+  - integrate accessibility into CI
   - a11y audit automation
-  - run accessibility checks
 negative_triggers:
   - manual accessibility review
   - component implementation
+  - design accessibility guidelines
+  - Python or backend accessibility
 ---
 
 # Skill: Accessibility Automation
