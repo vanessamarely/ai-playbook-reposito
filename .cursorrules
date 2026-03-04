@@ -1,0 +1,59 @@
+# Cursor Rules
+
+## Overview
+This repository contains an AI Playbook for developer tooling. Follow these rules when assisting with any task.
+
+## Skill Routing
+Before implementing any task, check the project type and load the relevant skill:
+
+- React component work → read `ai-playbook/.github/skills/react-components/SKILL.md`
+- Accessibility testing → read `ai-playbook/.github/skills/a11y-automation/SKILL.md`
+- Node.js/TypeScript service → read `ai-playbook/.github/skills/node-typescript-service/SKILL.md`
+- New skill creation → read `ai-playbook/.github/skills/skill-creator/SKILL.md`
+- AI tool setup → read `ai-playbook/.github/skills/ai-tool-setup/SKILL.md`
+
+To detect the project type automatically, run:
+```
+node ai-playbook/tools/project-detect.mjs <targetFolder>
+```
+
+## Scope Enforcement
+- Only modify files within the stated target project folder.
+- Never traverse above the project root.
+- Run `node ai-playbook/tools/scope-guard.mjs <targetFolder> <changedFiles...>` before finalizing changes.
+
+## Code Style
+- Use minimal diffs: change only the lines necessary.
+- Do not reformat unrelated code or reorganize imports.
+- Do not rename variables outside the task scope.
+- Use forward slashes in all file paths.
+
+## Frontend Standards (React + TypeScript)
+- Functional components with explicit TypeScript interfaces for props.
+- WCAG 2.2 Level AA accessibility required on all interactive elements.
+- Semantic HTML preferred over ARIA overrides.
+- Tailwind utility classes only — no inline styles or CSS modules.
+- All new components require a corresponding test file using Vitest + React Testing Library.
+
+## Backend Standards (Node.js/TypeScript)
+- Async/await with typed request/response.
+- Validate all inputs (Zod, Joi, or class-validator).
+- Return structured error responses (success, error.code, error.message).
+- Structured logging — no `console.log` in production code.
+
+## Security
+- Never hardcode secrets, API keys, or passwords.
+- Validate and sanitize all user inputs.
+- Use parameterized queries for database access.
+
+## Testing
+- Run `npm test` to execute the test suite.
+- Run `npm run lint` for linting.
+- Run `npx tsc --noEmit` for type checking.
+
+## Policy Files
+For detailed rules, load:
+- `ai-playbook/.github/copilot-instructions/workspace-policy.md`
+- `ai-playbook/.github/copilot-instructions/frontend-policy.md`
+- `ai-playbook/.github/copilot-instructions/backend-policy.md`
+- `ai-playbook/.github/copilot-instructions/style-output.md`

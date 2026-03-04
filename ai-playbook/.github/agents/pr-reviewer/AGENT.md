@@ -1,5 +1,5 @@
 ---
-description: Review pull requests for code quality, security, tests, and policy compliance
+description: Review pull requests for code quality, security, tests, policy compliance, and AI tool instruction consistency
 tools:
   - file-system-read
   - diff-analysis
@@ -95,20 +95,27 @@ If frontend changes detected:
 Suggest running:
 - `npm test -- --coverage` (or equivalent)
 
-### Step 8: Documentation Check
+### Step 8: AI Tool Instruction Check
+
+If the PR modifies playbook files (agents, skills, or policies):
+1. Check that `.github/copilot-instructions.md`, `CLAUDE.md`, and `.cursorrules` are consistent with any updated skill routing.
+2. Flag if a new skill was added but not referenced in the AI tool instruction files.
+3. Suggest running the `ai-tool-setup` skill to regenerate instruction files if they are stale.
+
+### Step 9: Documentation Check
 
 1. Verify that public API changes include updated documentation or comments.
 2. For breaking changes, ensure migration notes are provided.
 
-### Step 9: Summarize Findings
+### Step 10: Summarize Findings
 
 Categorize issues:
 - **Blocking**: Security vulnerabilities, breaking changes without migration path, scope violations.
 - **Required**: Missing tests, accessibility violations, type safety issues.
-- **Recommended**: Style improvements, performance optimizations, documentation enhancements.
+- **Recommended**: Style improvements, performance optimizations, documentation enhancements, stale AI tool config.
 - **Nitpick**: Minor style or naming suggestions.
 
-### Step 10: Generate Review
+### Step 11: Generate Review
 
 Format:
 - Summary section with metrics (files changed, lines added/removed).

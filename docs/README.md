@@ -2,6 +2,22 @@
 
 Welcome to the project documentation. This directory contains comprehensive guides to help you understand and work with the codebase effectively.
 
+## 🤖 AI Playbook
+
+This project is equipped with an **AI Playbook** to help AI coding assistants (GitHub Copilot, Claude, Cursor) work effectively with the codebase.
+
+| Resource | Purpose |
+|---|---|
+| [`README.md`](../README.md) | AI Playbook overview and getting started guide |
+| [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) | GitHub Copilot workspace instructions |
+| [`CLAUDE.md`](../CLAUDE.md) | Claude AI project instructions |
+| [`.cursorrules`](../.cursorrules) | Cursor IDE project rules |
+| [`ai-playbook/`](../ai-playbook/.github/) | Agents, skills, and policies |
+
+See the [root README](../README.md) for the full AI Playbook documentation.
+
+---
+
 ## 📚 Documentation Index
 
 ### [PROJECT_CONTEXT.md](./PROJECT_CONTEXT.md)
@@ -178,6 +194,12 @@ Before considering a component complete:
 - [WCAG 2.2 Guidelines](https://www.w3.org/WAI/WCAG22/quickref/)
 - [React Testing Library](https://testing-library.com/react)
 - [Vitest Documentation](https://vitest.dev)
+
+### AI Tool Resources
+- [GitHub Copilot Custom Instructions](https://docs.github.com/en/copilot/customizing-copilot/adding-repository-custom-instructions-for-github-copilot)
+- [Claude Code Memory (CLAUDE.md)](https://docs.anthropic.com/en/docs/claude-code/memory)
+- [Cursor Rules for AI](https://docs.cursor.com/context/rules-for-ai)
+- [Skills Best Practices](https://github.com/mgechev/skills-best-practices)
 
 ## 🆘 Getting Help
 

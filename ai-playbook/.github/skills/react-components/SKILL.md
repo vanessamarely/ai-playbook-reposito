@@ -1,15 +1,22 @@
 ---
 name: react-components
-description: Build accessible React components with TypeScript following WCAG 2.2 and semantic HTML patterns
+description: Creates and modifies React components using TypeScript, Tailwind CSS, shadcn/ui, and WCAG 2.2 Level AA accessibility patterns. Use when the user wants to build, update, or fix a React UI component, add keyboard navigation, or apply ARIA attributes. Do not use for Node.js services, API endpoints, database schemas, or non-React frontend frameworks (Vue, Svelte, Angular).
 triggers:
   - creating a React component
-  - building a component
+  - building a UI component
   - implement component
-  - accessibility requirements
+  - add keyboard navigation
+  - fix accessibility in a component
+  - add ARIA attributes
+  - build a form
+  - create a modal
 negative_triggers:
   - backend service
   - API endpoint
   - database schema
+  - Vue component
+  - Angular component
+  - Svelte component
 ---
 
 # Skill: React Components

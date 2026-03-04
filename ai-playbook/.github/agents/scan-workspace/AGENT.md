@@ -1,5 +1,5 @@
 ---
-description: Scan a workspace folder to detect project type and route to appropriate skills
+description: Scan a workspace folder to detect project type and route to appropriate skills and AI tool configurations
 tools:
   - file-system-read
   - command-execution
@@ -9,7 +9,7 @@ tools:
 
 ## Purpose
 
-Identify the project type within a target folder and determine which skills apply.
+Identify the project type within a target folder, determine which skills apply, and verify that AI tool instruction files (GitHub Copilot, Claude, Cursor) are present and up to date.
 
 ## Inputs
 
@@ -20,7 +20,8 @@ Identify the project type within a target folder and determine which skills appl
 - JSON structure containing:
   - `projectType`: Detected type (e.g., `react`, `node-service`, `java-spring`, `python-fastapi`).
   - `skills`: List of applicable skill identifiers.
-  - `warnings`: Any issues detected (missing dependencies, inconsistent configuration).
+  - `aiTools`: Status of AI instruction files present in the project.
+  - `warnings`: Any issues detected (missing dependencies, inconsistent configuration, missing AI tool files).
 
 ## Procedure
 
@@ -61,7 +62,23 @@ Use the following routing table:
 | `python-fastapi`   | (Refer to backend-policy.md; no specific skill yet)     |
 | `unknown`          | Fallback to manual inspection                           |
 
-### Step 5: Apply Scope Guard
+### Step 5: Check AI Tool Instruction Files
+
+For each AI tool, verify the instruction file exists in `targetFolder`:
+
+| AI Tool | File | Required |
+|---|---|---|
+| GitHub Copilot | `.github/copilot-instructions.md` | Recommended |
+| Claude | `CLAUDE.md` | Recommended |
+| Cursor | `.cursorrules` | Optional |
+| Windsurf | `.windsurfrules` | Optional |
+
+For any missing recommended file, add a warning:
+```
+WARNING: .github/copilot-instructions.md not found. Run the ai-tool-setup skill to generate it.
+```
+
+### Step 6: Apply Scope Guard
 
 Execute: `node tools/scope-guard.mjs <targetFolder>`
 
@@ -69,12 +86,13 @@ This ensures subsequent operations remain within the target folder.
 
 If scope violations are detected, abort and notify.
 
-### Step 6: Output Recommendations
+### Step 7: Output Recommendations
 
 Print:
 - Detected project type.
 - List of recommended skills to load.
-- Relevant policy files (workspace-policy.md, frontend-policy.md, backend-policy.md).
+- Relevant policy files.
+- AI tool instruction file status.
 
 Example output:
 ```json
@@ -87,7 +105,14 @@ Example output:
     ".github/copilot-instructions/workspace-policy.md",
     ".github/copilot-instructions/frontend-policy.md"
   ],
-  "warnings": []
+  "aiTools": {
+    "copilot": { "present": true, "path": ".github/copilot-instructions.md" },
+    "claude":  { "present": true, "path": "CLAUDE.md" },
+    "cursor":  { "present": false, "path": ".cursorrules" }
+  },
+  "warnings": [
+    "WARNING: .cursorrules not found. Run the ai-tool-setup skill to generate it."
+  ]
 }
 ```
 
@@ -96,3 +121,4 @@ Example output:
 - **Folder not found**: Output clear error message with the attempted path.
 - **Detection script failure**: Output stderr from `project-detect.mjs`.
 - **Ambiguous project type**: List candidates and request clarification.
+- **Missing AI tool files**: Include in warnings; suggest running `ai-tool-setup` skill.

@@ -1,13 +1,17 @@
 ---
 name: skill-creator
-description: Create new skills following agentskills.io structure with metadata validation and progressive disclosure
+description: Scaffolds new agent skill documentation following the agentskills.io structure with validated YAML frontmatter, progressive disclosure, and agent-oriented procedural instructions. Use when the user wants to author a new skill, convert prose documentation into an agent skill, or validate an existing SKILL.md. Do not use for writing human-facing README files, changelogs, or general project documentation.
 triggers:
-  - creating a new skill
-  - scaffolding skill documentation
-  - defining agent procedures
+  - create a new skill
+  - scaffold skill documentation
+  - add agent skill
+  - write SKILL.md
+  - define agent procedures
 negative_triggers:
-  - writing human-facing documentation
-  - creating README files
+  - write README
+  - update changelog
+  - create human documentation
+  - write user guide
 ---
 
 # Skill: Skill Creator

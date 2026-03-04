@@ -1,15 +1,20 @@
 ---
 name: node-typescript-service
-description: Build Node.js/TypeScript microservices with validation, error handling, and structured responses
+description: Builds and extends Node.js/TypeScript microservice endpoints with request validation (Zod/Joi/class-validator), structured error handling, and unit + integration tests. Use when the user wants to create or modify an API endpoint, service layer, or route handler in Express, Nest.js, or Fastify. Do not use for React frontend components, UI elements, or accessibility audits.
 triggers:
   - create API endpoint
   - build microservice
   - Node.js service
   - TypeScript backend
+  - add route handler
+  - implement REST endpoint
+  - add request validation
 negative_triggers:
-  - frontend component
   - React component
+  - frontend component
   - UI element
+  - accessibility audit
+  - database migration
 ---
 
 # Skill: Node.js/TypeScript Service
