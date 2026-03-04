@@ -1,76 +1,25 @@
-# Removing Waterworks References
+# ⚠️ DEPRECATED - This File Should Be Deleted
 
-## Background
+## This file and all waterworks-related content has been removed
 
-The AI Playbook was initially developed with example references to "Waterworks" - a private client component library. These references need to be removed to keep the repository generic and reusable across all projects.
+All references to "Waterworks" (a private client component library) have been removed from the AI Playbook to keep it generic and reusable.
 
-## What Needs to Be Removed
+## Files to Delete
 
-1. **`.github/copilot-instructions/waterworks-overrides.md`** - Client-specific style overrides
-2. **`.github/skills/waterworks-library/`** - Client-specific skill directory
+The following files should no longer exist in the repository:
 
-## How to Remove
+1. **`CLEANUP-WATERWORKS.md`** (this file)
+2. **`tools/cleanup-waterworks.mjs`** 
+3. **`tools/cleanup-waterworks.sh`**
+4. **`.github/copilot-instructions/waterworks-overrides.md`**
+5. **`.github/skills/waterworks-library/`** (entire directory)
 
-### Option 1: Automated Script (Recommended)
+## For Future Client-Specific Libraries
 
-From the `ai-playbook` root directory, run:
+When you need to add client-specific library documentation, follow the pattern in the visual guide app or reference the "Client Setup" tab.
 
-```bash
-node tools/cleanup-waterworks.mjs
-```
+Create:
+- `.github/copilot-instructions/[your-library-name]-overrides.md`
+- `.github/skills/[your-library-name]/` with SKILL.md, references/, and assets/
 
-Or use the shell script:
-
-```bash
-chmod +x tools/cleanup-waterworks.sh
-./tools/cleanup-waterworks.sh
-```
-
-### Option 2: Manual Removal
-
-From the `ai-playbook` root directory:
-
-```bash
-# Remove the waterworks-overrides.md file
-rm .github/copilot-instructions/waterworks-overrides.md
-
-# Remove the waterworks-library skill directory
-rm -rf .github/skills/waterworks-library
-```
-
-## After Removal
-
-The AI Playbook will be completely generic. When you need to add client-specific library documentation:
-
-1. **Create client-specific override file:**
-   ```
-   .github/copilot-instructions/[your-library-name]-overrides.md
-   ```
-
-2. **Create client-specific skill:**
-   ```
-   .github/skills/[your-library-name]/
-   ├── SKILL.md
-   ├── references/
-   │   ├── code-style.md
-   │   └── architecture-patterns.md
-   └── assets/
-       └── component-template.tsx
-   ```
-
-3. **Update your orchestrator configuration** to reference your client library instead of waterworks
-
-## Verification
-
-After running the cleanup, verify that:
-- [ ] `waterworks-overrides.md` is removed
-- [ ] `waterworks-library/` directory is removed
-- [ ] The visual guide app still works (it already uses generic references)
-- [ ] No remaining references to "waterworks" exist in the codebase
-
-To check for remaining references:
-
-```bash
-# From ai-playbook root
-grep -r "waterworks" . --exclude-dir=node_modules --exclude-dir=.git
-```
+The orchestrator will automatically detect and use these files when appropriate.
