@@ -49,12 +49,9 @@ Refer to: `.github/skills/react-components/references/a11y-wcag22.md` for WCAG 2
 
 ### Step 4: Apply Project-Specific Overrides
 
-Check if the project is Waterworks:
-- If yes, read `.github/copilot-instructions/waterworks-overrides.md`.
-- Apply no-semicolon and no-comment rules.
-- Use the template from `.github/skills/waterworks-library/assets/component-template.tsx`.
-
-Otherwise, follow the project's existing style.
+Check for project-specific style guides or component library documentation:
+- If the project has `.github/component-library-overrides.md`, read and apply those rules.
+- Otherwise, follow the project's existing code style and conventions.
 
 ### Step 5: Validate Accessibility
 

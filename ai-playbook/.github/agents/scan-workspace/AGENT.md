@@ -56,7 +56,6 @@ Use the following routing table:
 | Project Type       | Skills                                                  |
 |--------------------|---------------------------------------------------------|
 | `react`            | `react-components`, `a11y-automation`                   |
-| `react-waterworks` | `waterworks-library`, `a11y-automation`                 |
 | `node-typescript`  | `node-typescript-service`                               |
 | `java-spring`      | (Refer to backend-policy.md; no specific skill yet)     |
 | `python-fastapi`   | (Refer to backend-policy.md; no specific skill yet)     |

@@ -54,18 +54,6 @@ const detectProject = () => {
     const hasNest = deps['@nestjs/core']
     const hasFastify = deps.fastify
 
-    const isWaterworks = 
-      pkg.name?.includes('waterworks') ||
-      pkg.name?.startsWith('@waterworks/') ||
-      existsSync(join(targetPath, '.waterworks'))
-
-    if (hasReact && isWaterworks) {
-      result.projectType = 'react-waterworks'
-      result.framework = hasVite ? 'vite' : hasNext ? 'next' : 'react'
-      result.language = hasTypeScript ? 'typescript' : 'javascript'
-      return
-    }
-
     if (hasReact) {
       result.projectType = 'react'
       result.framework = hasVite ? 'vite' : hasNext ? 'next' : 'react'

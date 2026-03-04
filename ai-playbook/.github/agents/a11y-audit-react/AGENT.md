@@ -19,9 +19,9 @@ Identify accessibility violations in React components and provide actionable rem
 
 ## Outputs
 
-- Accessibility report in markdown format.
-- List of violations with severity (critical, serious, moderate, minor).
-- Suggested code fixes.
+- Summary of violations with severity (critical, serious, moderate, minor).
+- Actionable code fixes with minimal diffs.
+- Verification commands to test changes.
 
 ## Procedure
 
@@ -78,17 +78,23 @@ Assign severity:
 - **Moderate**: Suboptimal patterns that hinder usability.
 - **Minor**: Best practice improvements.
 
-### Step 6: Generate Report
+### Step 6: Summarize Findings
 
-Use template: `.github/skills/a11y-automation/assets/a11y-report.template.md`
-
-Include:
+Output to chat:
 - Summary statistics (total issues, by severity).
 - Per-file breakdown with line numbers.
-- Code snippets showing violations.
-- Suggested fixes with corrected code.
+- Brief description of each violation.
 
-### Step 7: Suggest Automated Tests
+### Step 7: Propose Fixes
+
+For each violation:
+1. Show the problematic code snippet.
+2. Provide corrected version with minimal changes.
+3. Explain the accessibility benefit.
+
+Apply fixes using minimal diffs.
+
+### Step 8: Suggest Automated Tests
 
 If Playwright is available:
 - Reference `.github/skills/a11y-automation/scripts/run-axe-playwright.mjs`.

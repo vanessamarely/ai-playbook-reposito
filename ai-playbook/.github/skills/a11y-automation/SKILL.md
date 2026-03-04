@@ -23,9 +23,9 @@ Run automated accessibility checks using linters and browser-based testing tools
 
 ## Outputs
 
-- Accessibility violations report
+- Violation summary with counts by severity
 - Exit code (0 for pass, non-zero for failures)
-- Actionable remediation steps
+- Actionable remediation steps with code fixes
 
 ## Procedures
 
@@ -68,15 +68,20 @@ Extract:
 - Violations by rule (grouped)
 - File and line number for each violation
 
-### 5. Generate Report
+### 5. Summarize Findings
 
-Use template: `assets/a11y-report.template.md`
+Output to chat:
+- Summary statistics (total violations, by severity, by rule)
+- Per-file breakdown with line numbers
+- Brief descriptions of each violation type
 
-Include:
-- Summary statistics
-- Per-file breakdown
-- Code snippets with violations highlighted
-- Suggested fixes with references to WCAG guidelines
+### 6. Propose Fixes
+
+For critical and serious violations:
+- Show code snippet with issue
+- Provide corrected version
+- Reference applicable WCAG guideline
+- Apply fixes using minimal diffs
 
 ### 6. Output Remediation Steps
 
