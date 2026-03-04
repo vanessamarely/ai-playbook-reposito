@@ -27,76 +27,137 @@ export default function InstallationGuide() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Terminal className="h-5 w-5 text-accent" />
-              Step 1: Clone or Copy the AI Playbook
+              Step 1: Choose Your Installation Method
             </h3>
             <p className="text-sm text-muted-foreground">
-              You have two options to integrate the AI Playbook into your workspace:
+              You have three options to integrate the AI Playbook into your workspace:
             </p>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card className="bg-muted/30">
+            <div className="space-y-4">
+              <Card className="bg-accent/10 border-accent/40">
                 <CardHeader>
-                  <Badge className="w-fit mb-2" variant="outline">Option A</Badge>
-                  <CardTitle className="text-base">Git Submodule</CardTitle>
+                  <Badge className="w-fit mb-2 bg-accent text-accent-foreground">Recommended for Multi-Repo Workspaces</Badge>
+                  <CardTitle className="text-base">Option A: Workspace Root Installation</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <p className="text-xs text-muted-foreground">
-                    Keep the playbook synced with the main repository for easy updates
+                    Install once at the workspace root to use across all project repositories without duplication. 
+                    Perfect for IDEs with multiple repo folders open simultaneously.
                   </p>
                   <div className="rounded-lg bg-background p-3 font-mono text-xs space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <code className="flex-1">git submodule add &lt;repo-url&gt; ai-playbook</code>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-6 w-6 p-0"
-                        onClick={() => copyToClipboard('git submodule add <repo-url> ai-playbook', 'Submodule command')}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                    <div className="space-y-1">
+                      <p className="text-muted-foreground text-[10px]">Clone at workspace root:</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="flex-1">cd ~/workspace && git clone &lt;repo-url&gt; ai-playbook</code>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-6 w-6 p-0"
+                          onClick={() => copyToClipboard('cd ~/workspace && git clone <repo-url> ai-playbook', 'Workspace clone command')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <code className="flex-1">git submodule update --init --recursive</code>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-6 w-6 p-0"
-                        onClick={() => copyToClipboard('git submodule update --init --recursive', 'Update command')}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                  </div>
+                  <div className="rounded-lg bg-muted/50 p-3 text-xs space-y-2">
+                    <p className="font-medium">Workspace Structure:</p>
+                    <div className="font-mono text-[10px] space-y-0.5">
+                      <div>~/workspace/</div>
+                      <div className="pl-3 text-accent">├── ai-playbook/  <span className="text-muted-foreground">← Shared resource</span></div>
+                      <div className="pl-3">├── project-a/  <span className="text-muted-foreground">← Repository 1</span></div>
+                      <div className="pl-3">├── project-b/  <span className="text-muted-foreground">← Repository 2</span></div>
+                      <div className="pl-3">└── project-c/  <span className="text-muted-foreground">← Repository 3</span></div>
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-primary/5 border border-primary/20 p-3 space-y-2">
+                    <p className="text-xs font-medium flex items-center gap-2">
+                      <CheckCircle2 className="h-3 w-3" />
+                      Usage with AI Tools:
+                    </p>
+                    <div className="space-y-2 text-[10px] text-muted-foreground">
+                      <div className="flex items-start gap-2">
+                        <span className="font-semibold text-foreground min-w-[70px]">Claude/Cursor:</span>
+                        <code className="bg-muted px-1 rounded flex-1">@ai-playbook/.github/orchestrator.md scan this project</code>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-semibold text-foreground min-w-[70px]">Copilot:</span>
+                        <code className="bg-muted px-1 rounded flex-1">Reference ../ai-playbook/.github/agents/[agent]/AGENT.md</code>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <span className="font-semibold text-foreground min-w-[70px]">Cline:</span>
+                        <code className="bg-muted px-1 rounded flex-1">Use agent from ../ai-playbook/.github/agents/code-reviewer/</code>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-muted/30">
-                <CardHeader>
-                  <Badge className="w-fit mb-2" variant="outline">Option B</Badge>
-                  <CardTitle className="text-base">Direct Copy</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-xs text-muted-foreground">
-                    Copy the playbook directly into your project for full customization
-                  </p>
-                  <div className="rounded-lg bg-background p-3 font-mono text-xs space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <code className="flex-1">cp -r ai-playbook /path/to/project/</code>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-6 w-6 p-0"
-                        onClick={() => copyToClipboard('cp -r ai-playbook /path/to/project/', 'Copy command')}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Card className="bg-muted/30">
+                  <CardHeader>
+                    <Badge className="w-fit mb-2" variant="outline">Option B</Badge>
+                    <CardTitle className="text-base">Git Submodule Per Project</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      Keep the playbook synced within each project repository for easy updates
+                    </p>
+                    <div className="rounded-lg bg-background p-3 font-mono text-xs space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="flex-1">git submodule add &lt;repo-url&gt; ai-playbook</code>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-6 w-6 p-0"
+                          onClick={() => copyToClipboard('git submodule add <repo-url> ai-playbook', 'Submodule command')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="flex-1">git submodule update --init --recursive</code>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-6 w-6 p-0"
+                          onClick={() => copyToClipboard('git submodule update --init --recursive', 'Update command')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground italic">
-                    Then commit to version control for team sharing
-                  </p>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-muted/30">
+                  <CardHeader>
+                    <Badge className="w-fit mb-2" variant="outline">Option C</Badge>
+                    <CardTitle className="text-base">Direct Copy Per Project</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-xs text-muted-foreground">
+                      Copy the playbook directly into each project for full customization
+                    </p>
+                    <div className="rounded-lg bg-background p-3 font-mono text-xs space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="flex-1">cp -r ai-playbook /path/to/project/</code>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-6 w-6 p-0"
+                          onClick={() => copyToClipboard('cp -r ai-playbook /path/to/project/', 'Copy command')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground italic">
+                      Then commit to version control for team sharing
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
 
@@ -105,21 +166,45 @@ export default function InstallationGuide() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <FolderGit2 className="h-5 w-5 text-accent" />
-              Step 2: Repository Structure
+              Step 2: Verify Repository Structure
             </h3>
             <p className="text-sm text-muted-foreground">
-              After installation, your project should contain this structure:
+              After installation, verify the AI Playbook structure exists:
             </p>
-            <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-1">
-              <div>your-project/</div>
-              <div className="pl-4">├── ai-playbook/</div>
-              <div className="pl-8 text-primary">├── .github/</div>
-              <div className="pl-12 text-muted-foreground">├── copilot-instructions/</div>
-              <div className="pl-12 text-muted-foreground">├── agents/</div>
-              <div className="pl-12 text-muted-foreground">└── skills/</div>
-              <div className="pl-8 text-primary">└── tools/</div>
-              <div className="pl-4">├── src/</div>
-              <div className="pl-4">└── ...</div>
+            
+            <div className="space-y-3">
+              <div className="rounded-lg bg-muted/50 p-4 space-y-3">
+                <p className="text-xs font-medium">Workspace Root Structure (Option A):</p>
+                <div className="font-mono text-xs space-y-0.5">
+                  <div>~/workspace/</div>
+                  <div className="pl-4 text-accent">├── ai-playbook/</div>
+                  <div className="pl-8 text-primary">├── .github/</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── skills/</div>
+                  <div className="pl-12 text-muted-foreground">│   └── orchestrator.md</div>
+                  <div className="pl-8 text-primary">└── tools/</div>
+                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repos here</span></div>
+                  <div className="pl-4">├── project-b/</div>
+                  <div className="pl-4">└── project-c/</div>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-muted/50 p-4 space-y-3">
+                <p className="text-xs font-medium">Per-Project Structure (Options B & C):</p>
+                <div className="font-mono text-xs space-y-0.5">
+                  <div>your-project/</div>
+                  <div className="pl-4 text-accent">├── ai-playbook/</div>
+                  <div className="pl-8 text-primary">├── .github/</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── skills/</div>
+                  <div className="pl-12 text-muted-foreground">│   └── orchestrator.md</div>
+                  <div className="pl-8 text-primary">└── tools/</div>
+                  <div className="pl-4">├── src/</div>
+                  <div className="pl-4">└── ...</div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -128,7 +213,7 @@ export default function InstallationGuide() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Step 3: Configure Your AI Tool</h3>
             <p className="text-sm text-muted-foreground">
-              Choose your AI tool and follow the appropriate setup:
+              Choose your AI tool and follow the appropriate setup for your installation method:
             </p>
 
             <div className="space-y-3">
@@ -139,22 +224,38 @@ export default function InstallationGuide() {
                     GitHub Copilot
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    Copilot automatically reads instructions from <code className="bg-muted px-1 py-0.5 rounded text-xs">.github/copilot-instructions.md</code>
-                  </p>
-                  <div className="rounded-lg bg-background p-3 space-y-2">
-                    <p className="text-xs font-medium">Create a symlink in your project root:</p>
-                    <div className="flex items-center justify-between gap-2">
-                      <code className="flex-1 text-xs">ln -s ai-playbook/.github/copilot-instructions .github/</code>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-6 w-6 p-0"
-                        onClick={() => copyToClipboard('ln -s ai-playbook/.github/copilot-instructions .github/', 'Symlink command')}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Workspace Root Setup (Option A):</p>
+                    <p className="text-xs text-muted-foreground">
+                      Reference the orchestrator with relative paths from your project
+                    </p>
+                    <div className="rounded-lg bg-background p-3 space-y-2">
+                      <div className="bg-muted/50 p-2 rounded text-[10px] font-mono space-y-1">
+                        <div className="text-muted-foreground"># In GitHub Copilot Chat from project-a/:</div>
+                        <div>@workspace Use ../ai-playbook/.github/orchestrator.md to scan this project</div>
+                      </div>
+                    </div>
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Per-Project Setup (Options B & C):</p>
+                    <p className="text-xs text-muted-foreground">
+                      Copilot reads instructions from <code className="bg-muted px-1 py-0.5 rounded text-xs">.github/copilot-instructions.md</code> automatically
+                    </p>
+                    <div className="rounded-lg bg-background p-3 space-y-2">
+                      <p className="text-xs">Create a symlink in your project root:</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <code className="flex-1 text-xs">ln -s ai-playbook/.github/copilot-instructions .github/</code>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          className="h-6 w-6 p-0"
+                          onClick={() => copyToClipboard('ln -s ai-playbook/.github/copilot-instructions .github/', 'Symlink command')}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -167,14 +268,29 @@ export default function InstallationGuide() {
                     Claude (Cursor, Cline, etc.)
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    Claude uses the orchestrator to route requests to agents
-                  </p>
-                  <div className="rounded-lg bg-background p-3 space-y-2">
-                    <p className="text-xs font-medium">Reference the orchestrator in your prompts or .cursorrules:</p>
-                    <div className="bg-muted/50 p-2 rounded text-xs font-mono">
-                      Use the AI Playbook orchestrator at ai-playbook/.github/orchestrator.md
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Workspace Root Setup (Option A - Recommended):</p>
+                    <p className="text-xs text-muted-foreground">
+                      Reference the orchestrator using @ mentions or relative paths
+                    </p>
+                    <div className="rounded-lg bg-background p-3 space-y-2">
+                      <div className="bg-muted/50 p-2 rounded text-[10px] font-mono space-y-1">
+                        <div className="text-muted-foreground"># From any project in workspace:</div>
+                        <div>@../ai-playbook/.github/orchestrator.md scan this project</div>
+                        <div className="mt-2 text-muted-foreground"># Or use a specific agent:</div>
+                        <div>@../ai-playbook/.github/agents/code-reviewer/AGENT.md review this file</div>
+                      </div>
+                    </div>
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Per-Project Setup (Options B & C):</p>
+                    <div className="rounded-lg bg-background p-3 space-y-2">
+                      <p className="text-xs">Add to your .cursorrules or .clinerules:</p>
+                      <div className="bg-muted/50 p-2 rounded text-[10px] font-mono">
+                        Use the AI Playbook orchestrator at ai-playbook/.github/orchestrator.md
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -187,14 +303,26 @@ export default function InstallationGuide() {
                     Other AI Tools (Amazon Q, Tabnine, etc.)
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    Manually reference agent files when requesting specific tasks
-                  </p>
-                  <div className="rounded-lg bg-background p-3 space-y-2">
-                    <p className="text-xs">Example prompt:</p>
-                    <div className="bg-muted/50 p-2 rounded text-xs">
-                      "Follow the instructions in ai-playbook/.github/agents/code-reviewer/AGENT.md to review this file"
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Workspace Root Setup (Option A):</p>
+                    <p className="text-xs text-muted-foreground">
+                      Manually reference files using relative paths from your current project
+                    </p>
+                    <div className="rounded-lg bg-background p-3 space-y-2">
+                      <div className="bg-muted/50 p-2 rounded text-[10px] font-mono space-y-1">
+                        <div className="text-muted-foreground"># Example prompt from project-a/:</div>
+                        <div>Follow ../ai-playbook/.github/agents/code-reviewer/AGENT.md to review this code</div>
+                      </div>
+                    </div>
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium">Per-Project Setup (Options B & C):</p>
+                    <div className="rounded-lg bg-background p-3 space-y-2">
+                      <div className="bg-muted/50 p-2 rounded text-[10px]">
+                        "Follow the instructions in ai-playbook/.github/agents/code-reviewer/AGENT.md to review this file"
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -214,7 +342,16 @@ export default function InstallationGuide() {
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Check Files Exist</p>
                       <p className="text-xs text-muted-foreground">
-                        Verify <code className="bg-muted px-1 py-0.5 rounded">ai-playbook/.github/agents/</code> contains agent files
+                        Verify the ai-playbook directory contains <code className="bg-muted px-1 py-0.5 rounded">.github/agents/</code> and <code className="bg-muted px-1 py-0.5 rounded">.github/orchestrator.md</code>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Test Path References</p>
+                      <p className="text-xs text-muted-foreground">
+                        If using workspace root (Option A), verify relative paths work from your projects
                       </p>
                     </div>
                   </div>
@@ -232,7 +369,7 @@ export default function InstallationGuide() {
                     <div className="space-y-1">
                       <p className="text-sm font-medium">Review Policies</p>
                       <p className="text-xs text-muted-foreground">
-                        Customize policies in <code className="bg-muted px-1 py-0.5 rounded">.github/copilot-instructions/</code> as needed
+                        Customize policies in <code className="bg-muted px-1 py-0.5 rounded">ai-playbook/.github/copilot-instructions/</code> as needed
                       </p>
                     </div>
                   </div>
@@ -246,12 +383,15 @@ export default function InstallationGuide() {
           <div className="rounded-lg bg-primary/5 border border-primary/20 p-4 space-y-2">
             <div className="flex items-start gap-2">
               <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <p className="text-sm font-medium">Important Notes</p>
-                <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
+                  <li><strong>Workspace Root (Option A) Benefits:</strong> Single installation serves all projects, no duplication, easier updates</li>
+                  <li><strong>Workspace Root Considerations:</strong> Requires using relative paths (../) when referencing from projects</li>
+                  <li><strong>Per-Project (Options B & C) Benefits:</strong> Self-contained, can customize per project, easier team sharing via git</li>
                   <li>The AI Playbook is designed to be client-agnostic and reusable</li>
                   <li>Customize client-specific overrides in your project's documentation, not in the playbook itself</li>
-                  <li>Keep the playbook updated by pulling changes if using git submodules</li>
+                  <li>Keep the playbook updated by pulling changes if using git submodules or workspace root installation</li>
                   <li>Agents work across different AI tools with the orchestrator pattern</li>
                 </ul>
               </div>
