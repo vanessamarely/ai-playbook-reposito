@@ -25,6 +25,7 @@ import SkillGuide from '@/components/guide/SkillGuide'
 import ClientLibraryGuide from '@/components/guide/ClientLibraryGuide'
 import WorkflowView from '@/components/guide/WorkflowView'
 import DataFlowDiagram from '@/components/guide/DataFlowDiagram'
+import AlternativeSetups from '@/components/guide/AlternativeSetups'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -47,7 +48,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-6 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Info className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -63,6 +64,10 @@ function App() {
             <TabsTrigger value="skills" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Skills</span>
+            </TabsTrigger>
+            <TabsTrigger value="ai-tools" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <Terminal className="h-4 w-4" />
+              <span className="hidden sm:inline">AI Tools</span>
             </TabsTrigger>
             <TabsTrigger value="client" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Shield className="h-4 w-4" />
@@ -199,6 +204,10 @@ function App() {
 
           <TabsContent value="skills" className="space-y-6">
             <SkillGuide />
+          </TabsContent>
+
+          <TabsContent value="ai-tools" className="space-y-6">
+            <AlternativeSetups />
           </TabsContent>
 
           <TabsContent value="client" className="space-y-6">
