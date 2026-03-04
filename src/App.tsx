@@ -27,6 +27,7 @@ import WorkflowView from '@/components/guide/WorkflowView'
 import DataFlowDiagram from '@/components/guide/DataFlowDiagram'
 import AlternativeSetups from '@/components/guide/AlternativeSetups'
 import OrchestratorGuide from '@/components/guide/OrchestratorGuide'
+import MCPIntegrationGuide from '@/components/guide/MCPIntegrationGuide'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -49,7 +50,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-7 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-8 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Info className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -73,6 +74,10 @@ function App() {
             <TabsTrigger value="ai-tools" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Terminal className="h-4 w-4" />
               <span className="hidden sm:inline">AI Tools</span>
+            </TabsTrigger>
+            <TabsTrigger value="mcp" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <FileCode className="h-4 w-4" />
+              <span className="hidden sm:inline">MCP</span>
             </TabsTrigger>
             <TabsTrigger value="client" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Shield className="h-4 w-4" />
@@ -217,6 +222,10 @@ function App() {
 
           <TabsContent value="ai-tools" className="space-y-6">
             <AlternativeSetups />
+          </TabsContent>
+
+          <TabsContent value="mcp" className="space-y-6">
+            <MCPIntegrationGuide />
           </TabsContent>
 
           <TabsContent value="client" className="space-y-6">
