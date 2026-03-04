@@ -22,4 +22,10 @@ export default defineConfig({
       '@': resolve(projectRoot, 'src')
     }
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test-setup.ts',
+    css: true,
+  },
 });
