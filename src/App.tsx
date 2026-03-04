@@ -24,6 +24,7 @@ import AgentGuide from '@/components/guide/AgentGuide'
 import SkillGuide from '@/components/guide/SkillGuide'
 import ClientLibraryGuide from '@/components/guide/ClientLibraryGuide'
 import WorkflowView from '@/components/guide/WorkflowView'
+import DataFlowDiagram from '@/components/guide/DataFlowDiagram'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -182,6 +183,8 @@ function App() {
                 </div>
               </CardContent>
             </Card>
+
+            <DataFlowDiagram />
 
             <WorkflowView />
           </TabsContent>
