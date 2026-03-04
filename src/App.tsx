@@ -19,7 +19,8 @@ import {
   CheckCircle2,
   XCircle,
   Download,
-  HelpCircle
+  HelpCircle,
+  MessageSquare
 } from 'lucide-react'
 import StructureView from '@/components/guide/StructureView'
 import AgentGuide from '@/components/guide/AgentGuide'
@@ -32,6 +33,7 @@ import OrchestratorGuide from '@/components/guide/OrchestratorGuide'
 import MCPIntegrationGuide from '@/components/guide/MCPIntegrationGuide'
 import InstallationGuide from '@/components/guide/InstallationGuide'
 import UsageGuide from '@/components/guide/UsageGuide'
+import ExamplePromptsLibrary from '@/components/guide/ExamplePromptsLibrary'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -54,7 +56,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-10 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-11 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <Info className="h-4 w-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -66,6 +68,10 @@ function App() {
             <TabsTrigger value="usage" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <HelpCircle className="h-4 w-4" />
               <span className="hidden sm:inline">Usage</span>
+            </TabsTrigger>
+            <TabsTrigger value="prompts" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Prompts</span>
             </TabsTrigger>
             <TabsTrigger value="orchestrator" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               <GitBranch className="h-4 w-4" />
@@ -103,6 +109,10 @@ function App() {
 
           <TabsContent value="usage" className="space-y-6">
             <UsageGuide />
+          </TabsContent>
+
+          <TabsContent value="prompts" className="space-y-6">
+            <ExamplePromptsLibrary />
           </TabsContent>
 
           <TabsContent value="orchestrator" className="space-y-6">
