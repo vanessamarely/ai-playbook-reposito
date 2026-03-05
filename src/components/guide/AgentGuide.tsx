@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Workflow, Play, CheckCircle, Boxes, Copy, Check, FileText, ChevronDown } from 'lucide-react'
+import { Workflow, Play, CheckCircle, Boxes, Copy, Check, FileText, ChevronDown, FolderOpen } from 'lucide-react'
 import { toast } from 'sonner'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -157,7 +157,8 @@ Example output:
 - **Folder not found**: Output clear error message with the attempted path.
 - **Detection script failure**: Output stderr from \`project-detect.mjs\`.
 - **Ambiguous project type**: List candidates and request clarification.
-- **Missing AI tool files**: Include in warnings; suggest running \`ai-tool-setup\` skill.`
+- **Missing AI tool files**: Include in warnings; suggest running \`ai-tool-setup\` skill.`,
+      filePath: 'ai-playbook/.github/agents/scan-workspace/AGENT.md'
     },
     {
       name: 'react-component-builder',
@@ -974,6 +975,13 @@ The developer reviews the suggestions and applies them manually, maintaining ful
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
+              {agent.filePath && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded">
+                  <FolderOpen className="h-3.5 w-3.5" />
+                  <code>{agent.filePath}</code>
+                </div>
+              )}
+              
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Play className="h-4 w-4 text-accent" />
