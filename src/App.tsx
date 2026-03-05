@@ -38,6 +38,7 @@ import UsageGuide from '@/components/guide/UsageGuide'
 import ExamplePromptsLibrary from '@/components/guide/ExamplePromptsLibrary'
 import WorkspaceRootSetup from '@/components/guide/WorkspaceRootSetup'
 import SearchBar from '@/components/guide/SearchBar'
+import PolicyRulesGuide from '@/components/guide/PolicyRulesGuide'
 import { toast } from 'sonner'
 
 function App() {
@@ -90,7 +91,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Info className="h-4 w-4 shrink-0" />
               <span className="text-xs sm:text-sm">Overview</span>
@@ -98,6 +99,10 @@ function App() {
             <TabsTrigger value="setup" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Settings className="h-4 w-4 shrink-0" />
               <span className="text-xs sm:text-sm">Setup</span>
+            </TabsTrigger>
+            <TabsTrigger value="rules" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <BookOpen className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">Rules</span>
             </TabsTrigger>
             <TabsTrigger value="core" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Layers className="h-4 w-4 shrink-0" />
@@ -163,6 +168,10 @@ function App() {
               </Card>
               <ExamplePromptsLibrary />
             </div>
+          </TabsContent>
+
+          <TabsContent value="rules" className="space-y-6">
+            <PolicyRulesGuide />
           </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
