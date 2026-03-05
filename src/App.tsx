@@ -20,7 +20,9 @@ import {
   XCircle,
   Download,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  Settings,
+  Layers
 } from 'lucide-react'
 import StructureView from '@/components/guide/StructureView'
 import AgentGuide from '@/components/guide/AgentGuide'
@@ -57,75 +59,79 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-12 h-auto gap-2 bg-muted/50 p-2">
-            <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Info className="h-4 w-4" />
-              <span className="hidden sm:inline">Overview</span>
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-muted/50 p-2">
+            <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <Info className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="installation" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Download className="h-4 w-4" />
-              <span className="hidden sm:inline">Installation</span>
+            <TabsTrigger value="setup" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <Settings className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">Setup</span>
             </TabsTrigger>
-            <TabsTrigger value="workspace-setup" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <FileText className="h-4 w-4" />
-              <span className="hidden sm:inline">Config Files</span>
+            <TabsTrigger value="core" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <Layers className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">Core</span>
             </TabsTrigger>
-            <TabsTrigger value="usage" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <HelpCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">Usage</span>
+            <TabsTrigger value="ai-tools" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <Terminal className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">AI Tools</span>
             </TabsTrigger>
-            <TabsTrigger value="prompts" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <MessageSquare className="h-4 w-4" />
-              <span className="hidden sm:inline">Prompts</span>
+            <TabsTrigger value="mcp" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <FileCode className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">MCP</span>
             </TabsTrigger>
-            <TabsTrigger value="orchestrator" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <GitBranch className="h-4 w-4" />
-              <span className="hidden sm:inline">Orchestrator</span>
-            </TabsTrigger>
-            <TabsTrigger value="structure" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <FolderTree className="h-4 w-4" />
-              <span className="hidden sm:inline">Structure</span>
-            </TabsTrigger>
-            <TabsTrigger value="agents" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Workflow className="h-4 w-4" />
-              <span className="hidden sm:inline">Agents</span>
-            </TabsTrigger>
-            <TabsTrigger value="skills" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Skills</span>
-            </TabsTrigger>
-            <TabsTrigger value="ai-tools" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Terminal className="h-4 w-4" />
-              <span className="hidden sm:inline">AI Tools</span>
-            </TabsTrigger>
-            <TabsTrigger value="mcp" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <FileCode className="h-4 w-4" />
-              <span className="hidden sm:inline">MCP</span>
-            </TabsTrigger>
-            <TabsTrigger value="client" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">Client Setup</span>
+            <TabsTrigger value="client" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
+              <Shield className="h-4 w-4 shrink-0" />
+              <span className="text-xs sm:text-sm">Client</span>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="installation" className="space-y-6">
-            <InstallationGuide />
-          </TabsContent>
-
-          <TabsContent value="workspace-setup" className="space-y-6">
-            <WorkspaceRootSetup />
-          </TabsContent>
-
-          <TabsContent value="usage" className="space-y-6">
-            <UsageGuide />
-          </TabsContent>
-
-          <TabsContent value="prompts" className="space-y-6">
-            <ExamplePromptsLibrary />
-          </TabsContent>
-
-          <TabsContent value="orchestrator" className="space-y-6">
-            <OrchestratorGuide />
+          <TabsContent value="setup" className="space-y-6">
+            <div className="grid gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Download className="h-5 w-5 text-primary" />
+                    Installation
+                  </CardTitle>
+                  <CardDescription>How to set up the AI Playbook in your workspace</CardDescription>
+                </CardHeader>
+              </Card>
+              <InstallationGuide />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-primary" />
+                    Workspace Configuration
+                  </CardTitle>
+                  <CardDescription>Setting up config files at your workspace root</CardDescription>
+                </CardHeader>
+              </Card>
+              <WorkspaceRootSetup />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <HelpCircle className="h-5 w-5 text-primary" />
+                    Usage Guide
+                  </CardTitle>
+                  <CardDescription>How to use agents and skills effectively</CardDescription>
+                </CardHeader>
+              </Card>
+              <UsageGuide />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="h-5 w-5 text-primary" />
+                    Example Prompts
+                  </CardTitle>
+                  <CardDescription>Ready-to-use prompts for common tasks</CardDescription>
+                </CardHeader>
+              </Card>
+              <ExamplePromptsLibrary />
+            </div>
           </TabsContent>
 
           <TabsContent value="overview" className="space-y-6">
@@ -247,16 +253,52 @@ function App() {
             <WorkflowView />
           </TabsContent>
 
-          <TabsContent value="structure" className="space-y-6">
-            <StructureView />
-          </TabsContent>
-
-          <TabsContent value="agents" className="space-y-6">
-            <AgentGuide />
-          </TabsContent>
-
-          <TabsContent value="skills" className="space-y-6">
-            <SkillGuide />
+          <TabsContent value="core" className="space-y-6">
+            <div className="grid gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <GitBranch className="h-5 w-5 text-primary" />
+                    Orchestrator
+                  </CardTitle>
+                  <CardDescription>Understanding the AI orchestration layer</CardDescription>
+                </CardHeader>
+              </Card>
+              <OrchestratorGuide />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FolderTree className="h-5 w-5 text-primary" />
+                    Repository Structure
+                  </CardTitle>
+                  <CardDescription>File and folder organization explained</CardDescription>
+                </CardHeader>
+              </Card>
+              <StructureView />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Workflow className="h-5 w-5 text-primary" />
+                    Agents
+                  </CardTitle>
+                  <CardDescription>Specialized AI agents and their capabilities</CardDescription>
+                </CardHeader>
+              </Card>
+              <AgentGuide />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    Skills
+                  </CardTitle>
+                  <CardDescription>Reusable skill modules for specific tasks</CardDescription>
+                </CardHeader>
+              </Card>
+              <SkillGuide />
+            </div>
           </TabsContent>
 
           <TabsContent value="ai-tools" className="space-y-6">
