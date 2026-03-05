@@ -37,21 +37,52 @@ import InstallationGuide from '@/components/guide/InstallationGuide'
 import UsageGuide from '@/components/guide/UsageGuide'
 import ExamplePromptsLibrary from '@/components/guide/ExamplePromptsLibrary'
 import WorkspaceRootSetup from '@/components/guide/WorkspaceRootSetup'
+import SearchBar from '@/components/guide/SearchBar'
+import { toast } from 'sonner'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
+
+  const handleSearchItemSelect = (item: { id: string; title: string; type: string; path: string }) => {
+    if (item.type === 'agent') {
+      setActiveTab('core')
+      toast.success(`Opening ${item.title}`, {
+        description: 'Check the Agents section for details'
+      })
+    } else if (item.type === 'skill') {
+      setActiveTab('core')
+      toast.success(`Opening ${item.title}`, {
+        description: 'Check the Skills section for details'
+      })
+    } else if (item.type === 'policy') {
+      setActiveTab('core')
+      toast.success(`Opening ${item.title}`, {
+        description: 'Check the Core section for policy details'
+      })
+    } else if (item.type === 'tool') {
+      setActiveTab('core')
+      toast.success(`Opening ${item.title}`, {
+        description: 'Check the Core section for tool details'
+      })
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
+                <Sparkles className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight">AI Playbook Visual Guide</h1>
+                <p className="text-sm text-muted-foreground">Understanding agents, skills, and client-specific resources</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">AI Playbook Visual Guide</h1>
-              <p className="text-sm text-muted-foreground">Understanding agents, skills, and client-specific resources</p>
+            <div className="flex justify-center">
+              <SearchBar onItemSelect={handleSearchItemSelect} />
             </div>
           </div>
         </div>
