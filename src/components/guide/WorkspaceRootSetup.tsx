@@ -12,7 +12,7 @@ export default function WorkspaceRootSetup() {
     toast.success(`${label} copied to clipboard`)
   }
 
-  const cursorRulesContent = `# AI Playbook Workspace Root Configuration
+  const cursorRulesContent = `# AI Playbook Workspace Root Configuration (GitHub Copilot)
 # This file enables Cursor to use ai-playbook from workspace root across all projects
 
 # Reference the orchestrator for intelligent routing
@@ -115,59 +115,59 @@ scope:
 `
 
   const claudeProjectContent = `{
-  "name": "Workspace with AI Playbook",
-  "description": "Multi-repository workspace using centralized AI Playbook",
+  "name": "Workspace with AI Playbook (Claude AI)",
+  "description": "Multi-repository workspace using centralized AI Playbook with Claude structure",
   "version": "1.0.0",
   
   "customInstructions": {
-    "orchestrator": "../ai-playbook/.github/orchestrator.md",
+    "orchestrator": "../ai-playbook/orchestrator.md",
     "policies": [
-      "../ai-playbook/.github/copilot-instructions/workspace-policy.md",
-      "../ai-playbook/.github/copilot-instructions/frontend-policy.md",
-      "../ai-playbook/.github/copilot-instructions/backend-policy.md",
-      "../ai-playbook/.github/copilot-instructions/style-output.md"
+      "../ai-playbook/policies/workspace-policy.md",
+      "../ai-playbook/policies/frontend-policy.md",
+      "../ai-playbook/policies/backend-policy.md",
+      "../ai-playbook/policies/style-output.md"
     ]
   },
   
   "agents": [
     {
       "name": "scan-workspace",
-      "path": "../ai-playbook/.github/agents/scan-workspace/AGENT.md",
+      "path": "../ai-playbook/agents/scan-workspace/agent.md",
       "description": "Detect project type and route to appropriate skills"
     },
     {
       "name": "react-component-builder",
-      "path": "../ai-playbook/.github/agents/react-component-builder/AGENT.md",
+      "path": "../ai-playbook/agents/react-component-builder/agent.md",
       "description": "Build accessible React components following best practices"
     },
     {
       "name": "a11y-audit-react",
-      "path": "../ai-playbook/.github/agents/a11y-audit-react/AGENT.md",
+      "path": "../ai-playbook/agents/a11y-audit-react/agent.md",
       "description": "Audit React components for WCAG 2.2 compliance"
     },
     {
       "name": "node-microservice-builder",
-      "path": "../ai-playbook/.github/agents/node-microservice-builder/AGENT.md",
+      "path": "../ai-playbook/agents/node-microservice-builder/agent.md",
       "description": "Build Node.js/TypeScript microservices"
     },
     {
       "name": "code-reviewer",
-      "path": "../ai-playbook/.github/agents/code-reviewer/AGENT.md",
+      "path": "../ai-playbook/agents/code-reviewer/agent.md",
       "description": "Review code quality and suggest improvements inline"
     },
     {
       "name": "pr-reviewer",
-      "path": "../ai-playbook/.github/agents/pr-reviewer/AGENT.md",
+      "path": "../ai-playbook/agents/pr-reviewer/agent.md",
       "description": "Review pull requests for quality and standards compliance"
     }
   ],
   
   "knowledgeBase": {
     "skills": [
-      "../ai-playbook/.github/skills/react-components/SKILL.md",
-      "../ai-playbook/.github/skills/node-typescript-service/SKILL.md",
-      "../ai-playbook/.github/skills/a11y-automation/SKILL.md",
-      "../ai-playbook/.github/skills/component-library-integration/SKILL.md"
+      "../ai-playbook/skills/react-components/skill.md",
+      "../ai-playbook/skills/node-typescript-service/skill.md",
+      "../ai-playbook/skills/a11y-automation/skill.md",
+      "../ai-playbook/skills/component-library-integration/skill.md"
     ]
   },
   
@@ -180,9 +180,9 @@ scope:
   },
   
   "usage": [
-    "Reference @ai-playbook to use orchestrator: 'Use @ai-playbook orchestrator to scan this React project'",
-    "Direct agent invocation: 'Apply react-component-builder to create UserCard'",
-    "Inline code review: 'Review this component using code-reviewer agent'"
+    "Reference @ai-playbook to use orchestrator: 'Use @ai-playbook/orchestrator.md to scan this React project'",
+    "Direct agent invocation: 'Apply @ai-playbook/agents/react-component-builder/agent.md to create UserCard'",
+    "Inline code review: 'Review this component using @ai-playbook/agents/code-reviewer/agent.md'"
   ]
 }
 `
@@ -250,23 +250,72 @@ scope:
               <Terminal className="h-4 w-4 text-primary" />
               Workspace Structure Overview
             </h3>
-            <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-0.5">
-              <div>~/workspace/</div>
-              <div className="pl-4 text-accent">├── .cursorrules  <span className="text-muted-foreground">← Add this file (Cursor)</span></div>
-              <div className="pl-4 text-accent">├── .clinerules  <span className="text-muted-foreground">← Add this file (Cline)</span></div>
-              <div className="pl-4 text-accent">├── .vscode/</div>
-              <div className="pl-8 text-accent">└── settings.json  <span className="text-muted-foreground">← Workspace settings</span></div>
-              <div className="pl-4 text-primary">├── ai-playbook/  <span className="text-muted-foreground">← Cloned once, shared by all</span></div>
-              <div className="pl-8">├── .github/</div>
-              <div className="pl-12 text-muted-foreground">│   ├── orchestrator.md</div>
-              <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
-              <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
-              <div className="pl-12 text-muted-foreground">│   └── skills/</div>
-              <div className="pl-8">└── tools/</div>
-              <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
-              <div className="pl-4">├── project-b/</div>
-              <div className="pl-4">└── project-c/</div>
-            </div>
+            
+            <Tabs defaultValue="copilot" className="space-y-3">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="copilot">GitHub Copilot Structure</TabsTrigger>
+                <TabsTrigger value="claude">Claude AI Structure</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="copilot" className="space-y-2">
+                <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-0.5">
+                  <div>~/workspace/</div>
+                  <div className="pl-4 text-accent">├── .cursorrules  <span className="text-muted-foreground">← Add this file (Cursor)</span></div>
+                  <div className="pl-4 text-accent">├── .clinerules  <span className="text-muted-foreground">← Add this file (Cline)</span></div>
+                  <div className="pl-4 text-accent">├── .vscode/</div>
+                  <div className="pl-8 text-accent">└── settings.json  <span className="text-muted-foreground">← Workspace settings</span></div>
+                  <div className="pl-4 text-primary">├── ai-playbook/  <span className="text-muted-foreground">← GitHub Copilot version</span></div>
+                  <div className="pl-8 text-accent">├── .github/  <span className="text-muted-foreground">← Uses .github directory</span></div>
+                  <div className="pl-12 text-muted-foreground">│   ├── orchestrator.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   ├── workspace-policy.md</div>
+                  <div className="pl-16 text-muted-foreground">│   │   ├── frontend-policy.md</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── backend-policy.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   ├── scan-workspace/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── react-component-builder/</div>
+                  <div className="pl-12 text-muted-foreground">│   └── skills/</div>
+                  <div className="pl-8">└── tools/</div>
+                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
+                  <div className="pl-4">├── project-b/</div>
+                  <div className="pl-4">└── project-c/</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <strong>Key:</strong> Uses <code className="bg-muted px-1 rounded">.github/</code> directory for all AI configurations, following GitHub Copilot conventions.
+                </p>
+              </TabsContent>
+              
+              <TabsContent value="claude" className="space-y-2">
+                <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-0.5">
+                  <div>~/workspace/</div>
+                  <div className="pl-4 text-accent">├── .cursorrules  <span className="text-muted-foreground">← Add this file (Cursor)</span></div>
+                  <div className="pl-4 text-accent">├── .clinerules  <span className="text-muted-foreground">← Add this file (Cline)</span></div>
+                  <div className="pl-4 text-accent">├── .vscode/</div>
+                  <div className="pl-8 text-accent">└── settings.json  <span className="text-muted-foreground">← Workspace settings</span></div>
+                  <div className="pl-4 text-primary">├── ai-playbook/  <span className="text-muted-foreground">← Claude AI version</span></div>
+                  <div className="pl-8 text-accent">├── orchestrator.md  <span className="text-muted-foreground">← At root level</span></div>
+                  <div className="pl-8 text-accent">├── policies/  <span className="text-muted-foreground">← Root-level directory</span></div>
+                  <div className="pl-12 text-muted-foreground">│   ├── workspace-policy.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── frontend-policy.md</div>
+                  <div className="pl-12 text-muted-foreground">│   └── backend-policy.md</div>
+                  <div className="pl-8 text-accent">├── agents/  <span className="text-muted-foreground">← Root-level directory</span></div>
+                  <div className="pl-12 text-muted-foreground">│   ├── scan-workspace/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-12 text-muted-foreground">│   └── react-component-builder/</div>
+                  <div className="pl-16 text-muted-foreground">│       └── agent.md</div>
+                  <div className="pl-8 text-accent">├── skills/  <span className="text-muted-foreground">← Root-level directory</span></div>
+                  <div className="pl-12 text-muted-foreground">│   └── react-components/</div>
+                  <div className="pl-16 text-muted-foreground">│       └── skill.md</div>
+                  <div className="pl-8">└── tools/</div>
+                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
+                  <div className="pl-4">├── project-b/</div>
+                  <div className="pl-4">└── project-c/</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  <strong>Key:</strong> Uses root-level directories (<code className="bg-muted px-1 rounded">policies/</code>, <code className="bg-muted px-1 rounded">agents/</code>, <code className="bg-muted px-1 rounded">skills/</code>) with lowercase filenames.
+                </p>
+              </TabsContent>
+            </Tabs>
           </div>
 
           <Separator />

@@ -169,40 +169,117 @@ export default function InstallationGuide() {
               Step 2: Verify Repository Structure
             </h3>
             <p className="text-sm text-muted-foreground">
-              After installation, verify the AI Playbook structure exists:
+              After installation, verify the AI Playbook structure exists. The structure differs based on your AI tool:
             </p>
             
-            <div className="space-y-3">
-              <div className="rounded-lg bg-muted/50 p-4 space-y-3">
-                <p className="text-xs font-medium">Workspace Root Structure (Option A):</p>
+            <div className="space-y-4">
+              <div className="rounded-lg bg-accent/5 border border-accent/30 p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="bg-accent/20">GitHub Copilot</Badge>
+                  <p className="text-xs font-medium">Uses .github/ directory structure</p>
+                </div>
                 <div className="font-mono text-xs space-y-0.5">
-                  <div>~/workspace/</div>
-                  <div className="pl-4 text-accent">├── ai-playbook/</div>
-                  <div className="pl-8 text-primary">├── .github/</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── skills/</div>
-                  <div className="pl-12 text-muted-foreground">│   └── orchestrator.md</div>
-                  <div className="pl-8 text-primary">└── tools/</div>
-                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repos here</span></div>
-                  <div className="pl-4">├── project-b/</div>
-                  <div className="pl-4">└── project-c/</div>
+                  <div>ai-playbook/</div>
+                  <div className="pl-4 text-primary">├── .github/</div>
+                  <div className="pl-8 text-accent">│   ├── copilot-instructions/  <span className="text-muted-foreground">← Policies & rules</span></div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── workspace-policy.md</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── frontend-policy.md</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── backend-policy.md</div>
+                  <div className="pl-12 text-muted-foreground">│   │   └── style-output.md</div>
+                  <div className="pl-8 text-accent">│   ├── agents/  <span className="text-muted-foreground">← Agent definitions</span></div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── scan-workspace/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── react-component-builder/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── a11y-audit-react/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   └── code-reviewer/</div>
+                  <div className="pl-8 text-accent">│   ├── skills/  <span className="text-muted-foreground">← Reusable skills</span></div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── react-components/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── node-typescript-service/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   └── a11y-automation/</div>
+                  <div className="pl-8 text-accent">│   └── orchestrator.md  <span className="text-muted-foreground">← Main routing logic</span></div>
+                  <div className="pl-4 text-primary">└── tools/</div>
+                </div>
+                <div className="rounded-lg bg-background p-3 mt-2">
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Usage:</strong> GitHub Copilot automatically reads from <code className="bg-muted px-1 rounded">.github/copilot-instructions/</code>
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-primary/5 border border-primary/30 p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="bg-primary/20">Claude AI</Badge>
+                  <p className="text-xs font-medium">Uses root-level directory structure</p>
+                </div>
+                <div className="font-mono text-xs space-y-0.5">
+                  <div>ai-playbook/</div>
+                  <div className="pl-4 text-accent">├── policies/  <span className="text-muted-foreground">← Core rules & constraints</span></div>
+                  <div className="pl-8 text-muted-foreground">│   ├── workspace-policy.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── frontend-policy.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── backend-policy.md</div>
+                  <div className="pl-8 text-muted-foreground">│   └── style-output.md</div>
+                  <div className="pl-4 text-accent">├── agents/  <span className="text-muted-foreground">← Specialized AI agents</span></div>
+                  <div className="pl-8 text-muted-foreground">│   ├── scan-workspace/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── react-component-builder/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── a11y-audit-react/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-8 text-muted-foreground">│   └── code-reviewer/</div>
+                  <div className="pl-8 text-muted-foreground">│       └── agent.md</div>
+                  <div className="pl-4 text-accent">├── skills/  <span className="text-muted-foreground">← Task-specific modules</span></div>
+                  <div className="pl-8 text-muted-foreground">│   ├── react-components/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── node-typescript-service/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-8 text-muted-foreground">│   └── a11y-automation/</div>
+                  <div className="pl-8 text-muted-foreground">│       └── skill.md</div>
+                  <div className="pl-4 text-accent">├── orchestrator.md  <span className="text-muted-foreground">← Central coordination</span></div>
+                  <div className="pl-4 text-primary">└── tools/</div>
+                </div>
+                <div className="rounded-lg bg-background p-3 mt-2">
+                  <p className="text-xs text-muted-foreground">
+                    <strong>Usage:</strong> Reference with <code className="bg-muted px-1 rounded">@ai-playbook/orchestrator.md</code> or specific agents via <code className="bg-muted px-1 rounded">@ai-playbook/agents/[agent-name]/agent.md</code>
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-muted/30 border border-muted p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Key Structural Differences</p>
+                    <div className="grid md:grid-cols-2 gap-3 text-xs">
+                      <div className="space-y-1.5">
+                        <p className="font-medium text-foreground">GitHub Copilot Structure:</p>
+                        <ul className="space-y-1 text-muted-foreground list-disc list-inside pl-2">
+                          <li>Policies in <code className="bg-muted px-1 rounded">.github/copilot-instructions/</code></li>
+                          <li>Agents in <code className="bg-muted px-1 rounded">.github/agents/</code></li>
+                          <li>Orchestrator at <code className="bg-muted px-1 rounded">.github/orchestrator.md</code></li>
+                          <li>Agent files named <code className="bg-muted px-1 rounded">AGENT.md</code></li>
+                        </ul>
+                      </div>
+                      <div className="space-y-1.5">
+                        <p className="font-medium text-foreground">Claude AI Structure:</p>
+                        <ul className="space-y-1 text-muted-foreground list-disc list-inside pl-2">
+                          <li>Policies in <code className="bg-muted px-1 rounded">policies/</code> at root</li>
+                          <li>Agents in <code className="bg-muted px-1 rounded">agents/</code> at root</li>
+                          <li>Orchestrator at <code className="bg-muted px-1 rounded">orchestrator.md</code> at root</li>
+                          <li>Agent files named <code className="bg-muted px-1 rounded">agent.md</code> (lowercase)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
               <div className="rounded-lg bg-muted/50 p-4 space-y-3">
-                <p className="text-xs font-medium">Per-Project Structure (Options B & C):</p>
+                <p className="text-xs font-medium">Complete Workspace Example (Option A):</p>
                 <div className="font-mono text-xs space-y-0.5">
-                  <div>your-project/</div>
-                  <div className="pl-4 text-accent">├── ai-playbook/</div>
-                  <div className="pl-8 text-primary">├── .github/</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── skills/</div>
-                  <div className="pl-12 text-muted-foreground">│   └── orchestrator.md</div>
-                  <div className="pl-8 text-primary">└── tools/</div>
-                  <div className="pl-4">├── src/</div>
-                  <div className="pl-4">└── ...</div>
+                  <div>~/workspace/</div>
+                  <div className="pl-4 text-accent">├── ai-playbook/  <span className="text-muted-foreground">← Shared resource (choose structure above)</span></div>
+                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
+                  <div className="pl-4">├── project-b/</div>
+                  <div className="pl-4">└── project-c/</div>
                 </div>
               </div>
             </div>
