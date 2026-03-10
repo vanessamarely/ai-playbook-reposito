@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
   Network, 
   Cpu, 
@@ -10,7 +11,8 @@ import {
   Info,
   Lightbulb,
   GitBranch,
-  Layers
+  Layers,
+  Route
 } from 'lucide-react'
 
 export default function OrchestratorGuide() {
@@ -310,6 +312,374 @@ models:
               <span>Test with multiple AI tools to verify consistency</span>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Route className="h-5 w-5 text-accent" />
+            Skill Routing by AI Tool
+          </CardTitle>
+          <CardDescription>
+            Common skills and their file paths across different AI assistants
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="github-copilot" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-2 bg-muted/50 p-2">
+              <TabsTrigger value="github-copilot" className="text-xs">GitHub Copilot</TabsTrigger>
+              <TabsTrigger value="claude" className="text-xs">Claude</TabsTrigger>
+              <TabsTrigger value="cursor" className="text-xs">Cursor</TabsTrigger>
+              <TabsTrigger value="cline" className="text-xs">Cline</TabsTrigger>
+              <TabsTrigger value="other" className="text-xs">Other Tools</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="github-copilot" className="space-y-3">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle className="text-sm">GitHub Copilot Structure</AlertTitle>
+                <AlertDescription className="text-xs">
+                  GitHub Copilot automatically reads from <code className="bg-muted px-1 py-0.5 rounded">.github/</code> directories
+                </AlertDescription>
+              </Alert>
+              
+              <div className="rounded-lg border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-3 font-semibold">Task</th>
+                      <th className="text-left p-3 font-semibold">Skill Path</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Build or modify React components</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          ai-playbook/.github/skills/react-components/SKILL.md
+                        </code>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Run or integrate accessibility tests</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          ai-playbook/.github/skills/a11y-automation/SKILL.md
+                        </code>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create or extend Node.js/TypeScript services</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          ai-playbook/.github/skills/node-typescript-service/SKILL.md
+                        </code>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create a new skill</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          ai-playbook/.github/skills/skill-creator/SKILL.md
+                        </code>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Configure AI tool instructions</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          ai-playbook/.github/skills/ai-tool-setup/SKILL.md
+                        </code>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="claude" className="space-y-3">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle className="text-sm">Claude Projects Structure</AlertTitle>
+                <AlertDescription className="text-xs">
+                  Claude Projects can reference skills from <code className="bg-muted px-1 py-0.5 rounded">.github/</code> or use <code className="bg-muted px-1 py-0.5 rounded">.claude/</code> directory
+                </AlertDescription>
+              </Alert>
+              
+              <div className="rounded-lg border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-3 font-semibold">Task</th>
+                      <th className="text-left p-3 font-semibold">Skill Path</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Build or modify React components</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .claude/skills/react-components/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Run or integrate accessibility tests</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .claude/skills/a11y-automation/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create or extend Node.js/TypeScript services</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .claude/skills/node-typescript-service/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create a new skill</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .claude/skills/skill-creator/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Configure AI tool instructions</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .claude/skills/ai-tool-setup/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="cursor" className="space-y-3">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle className="text-sm">Cursor Structure</AlertTitle>
+                <AlertDescription className="text-xs">
+                  Cursor uses <code className="bg-muted px-1 py-0.5 rounded">.cursor/</code> or <code className="bg-muted px-1 py-0.5 rounded">.cursorrules</code> to reference skills
+                </AlertDescription>
+              </Alert>
+              
+              <div className="rounded-lg border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-3 font-semibold">Task</th>
+                      <th className="text-left p-3 font-semibold">Skill Path</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Build or modify React components</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cursor/skills/react-components/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .cursorrules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Run or integrate accessibility tests</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cursor/skills/a11y-automation/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .cursorrules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create or extend Node.js/TypeScript services</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cursor/skills/node-typescript-service/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .cursorrules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create a new skill</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cursor/skills/skill-creator/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .cursorrules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Configure AI tool instructions</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cursor/skills/ai-tool-setup/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .cursorrules</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="cline" className="space-y-3">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle className="text-sm">Cline Structure</AlertTitle>
+                <AlertDescription className="text-xs">
+                  Cline uses <code className="bg-muted px-1 py-0.5 rounded">.cline/</code> or <code className="bg-muted px-1 py-0.5 rounded">.clinerules</code> to configure skills
+                </AlertDescription>
+              </Alert>
+              
+              <div className="rounded-lg border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-3 font-semibold">Task</th>
+                      <th className="text-left p-3 font-semibold">Skill Path</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Build or modify React components</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cline/skills/react-components/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .clinerules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Run or integrate accessibility tests</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cline/skills/a11y-automation/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .clinerules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create or extend Node.js/TypeScript services</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cline/skills/node-typescript-service/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .clinerules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create a new skill</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cline/skills/skill-creator/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .clinerules</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Configure AI tool instructions</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          .cline/skills/ai-tool-setup/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or reference via .clinerules</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="other" className="space-y-3">
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle className="text-sm">Other AI Tools</AlertTitle>
+                <AlertDescription className="text-xs">
+                  For tools without auto-loading, use <code className="bg-muted px-1 py-0.5 rounded">docs/ai-context/</code> or manually reference paths
+                </AlertDescription>
+              </Alert>
+              
+              <div className="rounded-lg border overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-muted/50">
+                    <tr>
+                      <th className="text-left p-3 font-semibold">Task</th>
+                      <th className="text-left p-3 font-semibold">Skill Path</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Build or modify React components</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          docs/ai-context/skills/react-components/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Run or integrate accessibility tests</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          docs/ai-context/skills/a11y-automation/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create or extend Node.js/TypeScript services</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          docs/ai-context/skills/node-typescript-service/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Create a new skill</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          docs/ai-context/skills/skill-creator/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                    <tr className="hover:bg-muted/30">
+                      <td className="p-3">Configure AI tool instructions</td>
+                      <td className="p-3">
+                        <code className="text-xs bg-muted px-2 py-1 rounded">
+                          docs/ai-context/skills/ai-tool-setup/SKILL.md
+                        </code>
+                        <div className="text-xs text-muted-foreground mt-1">or ai-playbook/.github/skills/...</div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </TabsContent>
+          </Tabs>
+
+          <Alert className="bg-accent/10 border-accent/30 mt-4">
+            <CheckCircle2 className="h-4 w-4" />
+            <AlertTitle className="text-sm">Key Principle</AlertTitle>
+            <AlertDescription className="text-xs">
+              The skill content remains identical across all tools - only the directory structure changes. 
+              You can symlink or reference the same <code className="bg-muted px-1 py-0.5 rounded">ai-playbook/.github/skills/</code> 
+              from any AI tool's configuration.
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     </div>
