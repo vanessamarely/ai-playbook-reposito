@@ -12,7 +12,6 @@ import {
   BookOpen, 
   Shield,
   Sparkles,
-  Terminal,
   Info,
   ArrowRight,
   CheckCircle2,
@@ -26,7 +25,6 @@ import SkillGuide from '@/components/guide/SkillGuide'
 import ClientLibraryGuide from '@/components/guide/ClientLibraryGuide'
 import WorkflowView from '@/components/guide/WorkflowView'
 import DataFlowDiagram from '@/components/guide/DataFlowDiagram'
-import AlternativeSetups from '@/components/guide/AlternativeSetups'
 import OrchestratorGuide from '@/components/guide/OrchestratorGuide'
 import MCPIntegrationGuide from '@/components/guide/MCPIntegrationGuide'
 import InstallationGuide from '@/components/guide/InstallationGuide'
@@ -56,7 +54,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-7 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Info className="h-4 w-4 shrink-0" />
               <span className="text-xs sm:text-sm">Overview</span>
@@ -72,10 +70,6 @@ function App() {
             <TabsTrigger value="core" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Layers className="h-4 w-4 shrink-0" />
               <span className="text-xs sm:text-sm">Core</span>
-            </TabsTrigger>
-            <TabsTrigger value="ai-tools" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
-              <Terminal className="h-4 w-4 shrink-0" />
-              <span className="text-xs sm:text-sm">AI Tools</span>
             </TabsTrigger>
             <TabsTrigger value="mcp" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <FileCode className="h-4 w-4 shrink-0" />
@@ -265,10 +259,6 @@ function App() {
               </Card>
               <SkillGuide />
             </div>
-          </TabsContent>
-
-          <TabsContent value="ai-tools" className="space-y-6">
-            <AlternativeSetups />
           </TabsContent>
 
           <TabsContent value="mcp" className="space-y-6">
