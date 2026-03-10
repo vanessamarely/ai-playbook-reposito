@@ -349,14 +349,15 @@ export default function InstallationGuide() {
                   <div className="space-y-2">
                     <p className="text-xs font-medium">Workspace Root Setup (Option A - Recommended):</p>
                     <p className="text-xs text-muted-foreground">
-                      Reference the orchestrator using @ mentions or relative paths
+                      Reference the orchestrator using @ mentions or relative paths. Claude uses a root-level folder structure (no .github/).
                     </p>
                     <div className="rounded-lg bg-background p-3 space-y-2">
                       <div className="bg-muted/50 p-2 rounded text-[10px] font-mono space-y-1">
                         <div className="text-muted-foreground"># From any project in workspace:</div>
-                        <div>@../ai-playbook/.github/orchestrator.md scan this project</div>
+                        <div>@../ai-playbook/orchestrator.md scan this project</div>
                         <div className="mt-2 text-muted-foreground"># Or use a specific agent:</div>
-                        <div>@../ai-playbook/.github/agents/code-reviewer/AGENT.md review this file</div>
+                        <div>@../ai-playbook/agents/code-reviewer/agent.md review this file</div>
+                        <div className="mt-2 text-muted-foreground"># Note: Claude uses lowercase filenames and root-level directories</div>
                       </div>
                     </div>
                   </div>
@@ -366,7 +367,7 @@ export default function InstallationGuide() {
                     <div className="rounded-lg bg-background p-3 space-y-2">
                       <p className="text-xs">Add to your .cursorrules or .clinerules:</p>
                       <div className="bg-muted/50 p-2 rounded text-[10px] font-mono">
-                        Use the AI Playbook orchestrator at ai-playbook/.github/orchestrator.md
+                        Use the AI Playbook orchestrator at ai-playbook/orchestrator.md
                       </div>
                     </div>
                   </div>
@@ -384,12 +385,14 @@ export default function InstallationGuide() {
                   <div className="space-y-2">
                     <p className="text-xs font-medium">Workspace Root Setup (Option A):</p>
                     <p className="text-xs text-muted-foreground">
-                      Manually reference files using relative paths from your current project
+                      Manually reference files using relative paths. Path structure depends on your AI Playbook version (GitHub Copilot uses .github/, Claude uses root-level directories).
                     </p>
                     <div className="rounded-lg bg-background p-3 space-y-2">
                       <div className="bg-muted/50 p-2 rounded text-[10px] font-mono space-y-1">
-                        <div className="text-muted-foreground"># Example prompt from project-a/:</div>
+                        <div className="text-muted-foreground"># GitHub Copilot structure:</div>
                         <div>Follow ../ai-playbook/.github/agents/code-reviewer/AGENT.md to review this code</div>
+                        <div className="mt-2 text-muted-foreground"># Claude AI structure:</div>
+                        <div>Follow ../ai-playbook/agents/code-reviewer/agent.md to review this code</div>
                       </div>
                     </div>
                   </div>
@@ -397,8 +400,11 @@ export default function InstallationGuide() {
                   <div className="space-y-2">
                     <p className="text-xs font-medium">Per-Project Setup (Options B & C):</p>
                     <div className="rounded-lg bg-background p-3 space-y-2">
-                      <div className="bg-muted/50 p-2 rounded text-[10px]">
-                        "Follow the instructions in ai-playbook/.github/agents/code-reviewer/AGENT.md to review this file"
+                      <div className="bg-muted/50 p-2 rounded text-[10px] font-mono space-y-1">
+                        <div className="text-muted-foreground"># GitHub Copilot structure:</div>
+                        <div>"Follow ai-playbook/.github/agents/code-reviewer/AGENT.md"</div>
+                        <div className="mt-2 text-muted-foreground"># Claude AI structure:</div>
+                        <div>"Follow ai-playbook/agents/code-reviewer/agent.md"</div>
                       </div>
                     </div>
                   </div>

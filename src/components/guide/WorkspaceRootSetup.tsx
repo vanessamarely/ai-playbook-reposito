@@ -12,9 +12,13 @@ export default function WorkspaceRootSetup() {
     toast.success(`${label} copied to clipboard`)
   }
 
-  const cursorRulesContent = `# AI Playbook Workspace Root Configuration (GitHub Copilot)
+  const cursorRulesContent = `# AI Playbook Workspace Root Configuration
 # This file enables Cursor to use ai-playbook from workspace root across all projects
+# NOTE: Update paths based on your AI Playbook version:
+#   - GitHub Copilot version: uses .github/ directory
+#   - Claude AI version: uses root-level directories
 
+# === FOR GITHUB COPILOT VERSION ===
 # Reference the orchestrator for intelligent routing
 orchestrator: ./ai-playbook/.github/orchestrator.md
 
@@ -44,6 +48,25 @@ skills:
   - ./ai-playbook/.github/skills/a11y-automation/SKILL.md
   - ./ai-playbook/.github/skills/component-library-integration/SKILL.md
 
+# === FOR CLAUDE AI VERSION (uncomment and use instead) ===
+# orchestrator: ./ai-playbook/orchestrator.md
+# workspace_policy: ./ai-playbook/policies/workspace-policy.md
+# frontend_policy: ./ai-playbook/policies/frontend-policy.md
+# backend_policy: ./ai-playbook/policies/backend-policy.md
+# style_output: ./ai-playbook/policies/style-output.md
+# agents:
+#   - ./ai-playbook/agents/scan-workspace/agent.md
+#   - ./ai-playbook/agents/react-component-builder/agent.md
+#   - ./ai-playbook/agents/a11y-audit-react/agent.md
+#   - ./ai-playbook/agents/node-microservice-builder/agent.md
+#   - ./ai-playbook/agents/pr-reviewer/agent.md
+#   - ./ai-playbook/agents/code-reviewer/agent.md
+# skills:
+#   - ./ai-playbook/skills/react-components/skill.md
+#   - ./ai-playbook/skills/node-typescript-service/skill.md
+#   - ./ai-playbook/skills/a11y-automation/skill.md
+#   - ./ai-playbook/skills/component-library-integration/skill.md
+
 # Usage examples:
 # - "Use @ai-playbook orchestrator to scan this project"
 # - "Apply react-component-builder agent to create LoginForm component"
@@ -53,7 +76,11 @@ skills:
 
   const clineRulesContent = `# AI Playbook Configuration for Cline
 # Location: ~/.clinerules or workspace-root/.clinerules
+# NOTE: Update paths based on your AI Playbook version:
+#   - GitHub Copilot version: uses .github/ directory
+#   - Claude AI version: uses root-level directories
 
+# === FOR GITHUB COPILOT VERSION ===
 # Core Orchestration
 orchestrator_path: "./ai-playbook/.github/orchestrator.md"
 
@@ -65,28 +92,22 @@ policies:
   output_style: "./ai-playbook/.github/copilot-instructions/style-output.md"
 
 # Agent Registry
-# Cline will use these agents when invoked via natural language
 agents:
   scan_workspace:
     path: "./ai-playbook/.github/agents/scan-workspace/AGENT.md"
     triggers: ["analyze project", "scan workspace", "detect project type"]
-  
   react_builder:
     path: "./ai-playbook/.github/agents/react-component-builder/AGENT.md"
     triggers: ["create react component", "build component", "new react"]
-  
   a11y_audit:
     path: "./ai-playbook/.github/agents/a11y-audit-react/AGENT.md"
     triggers: ["accessibility audit", "check a11y", "wcag check"]
-  
   node_service:
     path: "./ai-playbook/.github/agents/node-microservice-builder/AGENT.md"
     triggers: ["create service", "build api", "new endpoint"]
-  
   code_reviewer:
     path: "./ai-playbook/.github/agents/code-reviewer/AGENT.md"
     triggers: ["review code", "code review", "check code quality"]
-  
   pr_reviewer:
     path: "./ai-playbook/.github/agents/pr-reviewer/AGENT.md"
     triggers: ["review pr", "check pull request", "review changes"]
@@ -98,20 +119,49 @@ skills:
   a11y_automation: "./ai-playbook/.github/skills/a11y-automation/SKILL.md"
   component_library: "./ai-playbook/.github/skills/component-library-integration/SKILL.md"
 
+# === FOR CLAUDE AI VERSION (uncomment and use instead) ===
+# orchestrator_path: "./ai-playbook/orchestrator.md"
+# policies:
+#   workspace: "./ai-playbook/policies/workspace-policy.md"
+#   frontend: "./ai-playbook/policies/frontend-policy.md"
+#   backend: "./ai-playbook/policies/backend-policy.md"
+#   output_style: "./ai-playbook/policies/style-output.md"
+# agents:
+#   scan_workspace:
+#     path: "./ai-playbook/agents/scan-workspace/agent.md"
+#     triggers: ["analyze project", "scan workspace", "detect project type"]
+#   react_builder:
+#     path: "./ai-playbook/agents/react-component-builder/agent.md"
+#     triggers: ["create react component", "build component", "new react"]
+#   a11y_audit:
+#     path: "./ai-playbook/agents/a11y-audit-react/agent.md"
+#     triggers: ["accessibility audit", "check a11y", "wcag check"]
+#   node_service:
+#     path: "./ai-playbook/agents/node-microservice-builder/agent.md"
+#     triggers: ["create service", "build api", "new endpoint"]
+#   code_reviewer:
+#     path: "./ai-playbook/agents/code-reviewer/agent.md"
+#     triggers: ["review code", "code review", "check code quality"]
+#   pr_reviewer:
+#     path: "./ai-playbook/agents/pr-reviewer/agent.md"
+#     triggers: ["review pr", "check pull request", "review changes"]
+# skills:
+#   react_components: "./ai-playbook/skills/react-components/skill.md"
+#   node_typescript: "./ai-playbook/skills/node-typescript-service/skill.md"
+#   a11y_automation: "./ai-playbook/skills/a11y-automation/skill.md"
+#   component_library: "./ai-playbook/skills/component-library-integration/skill.md"
+
 # Project Scoping Rules
 scope:
-  # Cline should only modify files in the current project folder
   respect_boundaries: true
-  # Never cross into sibling project folders
   cross_project_edits: false
-  # Reference ai-playbook but never modify it
   readonly_paths: ["./ai-playbook"]
 
 # Usage Instructions
-# 1. From any project folder: "Use the scan_workspace agent to analyze this project"
-# 2. Direct agent call: "Apply react_builder to create a UserProfile component"
-# 3. Natural trigger: "Check a11y on src/components/Modal.tsx" (auto-uses a11y_audit)
-# 4. Code review: "Review code in src/api/userService.ts" (auto-uses code_reviewer)
+# 1. From any project: "Use scan_workspace agent to analyze this project"
+# 2. Direct agent: "Apply react_builder to create UserProfile component"
+# 3. Natural trigger: "Check a11y on src/components/Modal.tsx"
+# 4. Code review: "Review code in src/api/userService.ts"
 `
 
   const claudeProjectContent = `{
