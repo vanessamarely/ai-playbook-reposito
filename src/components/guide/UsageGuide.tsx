@@ -17,13 +17,44 @@ export default function UsageGuide() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          <Card className="bg-accent/5 border-accent/30">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base flex items-center gap-2">
+                <Lightbulb className="h-4 w-4 text-accent" />
+                What is the AI Playbook?
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                The AI Playbook is a <strong>reusable guide and framework</strong> you copy into your individual project or workspace. 
+                It contains agents, skills, and policies that work with your IDE's AI tool (GitHub Copilot, Claude, Cursor, Cline, etc.) 
+                to help you build components, review code, audit accessibility, and more.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Think of it as a <strong>cookbook of best practices</strong> that your AI assistant can reference when working on your code. 
+                You install it once per project or once at workspace root, then use your AI tool's chat interface to invoke agents as needed.
+              </p>
+              <div className="rounded-lg bg-background p-3 mt-3">
+                <p className="text-xs font-medium mb-2">Key Points:</p>
+                <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                  <li>Copy the playbook structure into your project or workspace root</li>
+                  <li>AI agents and skills are markdown files that guide your AI tool</li>
+                  <li>Works with multiple AI tools (Copilot, Claude, Cursor, Cline, etc.)</li>
+                  <li>No scripts to run - just reference files in your AI chat</li>
+                  <li>Customize for your project's specific needs</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-accent" />
               Basic Workflow
             </h3>
             <p className="text-sm text-muted-foreground">
-              The AI Playbook uses an orchestrator pattern that routes your requests to the appropriate agent based on your task.
+              The AI Playbook uses an orchestrator pattern that routes your requests to the appropriate agent based on your task. 
+              The exact syntax differs slightly between AI tools, but the concept is the same.
             </p>
 
             <div className="space-y-3">

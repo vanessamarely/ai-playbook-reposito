@@ -417,43 +417,155 @@ export default function InstallationGuide() {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Step 4: Verify Installation</h3>
-            <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Verify your installation based on which AI tool you're using. The folder structure and file locations differ between tools.
+            </p>
+            
+            <div className="space-y-4">
+              <Card className="bg-accent/5 border-accent/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Badge variant="outline" className="bg-accent/20">GitHub Copilot</Badge>
+                    Verification Steps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">1. Check Directory Structure Exists</p>
+                      <p className="text-xs text-muted-foreground">
+                        Verify <code className="bg-muted px-1 py-0.5 rounded">.github/copilot-instructions/</code>, 
+                        <code className="bg-muted px-1 py-0.5 rounded">.github/agents/</code>, 
+                        <code className="bg-muted px-1 py-0.5 rounded">.github/skills/</code>, and 
+                        <code className="bg-muted px-1 py-0.5 rounded">.github/orchestrator.md</code> exist
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">2. Test Path References</p>
+                      <p className="text-xs text-muted-foreground">
+                        If using workspace root (Option A), open any project and try: <code className="bg-muted px-1 py-0.5 rounded">@workspace Use ../ai-playbook/.github/orchestrator.md</code>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">3. Test an Agent</p>
+                      <p className="text-xs text-muted-foreground">
+                        In GitHub Copilot Chat: <code className="bg-muted px-1 py-0.5 rounded">@workspace scan this project using the scan-workspace agent</code>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">4. Verify Auto-Loading (Per-Project Setup)</p>
+                      <p className="text-xs text-muted-foreground">
+                        GitHub Copilot should automatically read files from <code className="bg-muted px-1 py-0.5 rounded">.github/copilot-instructions/</code>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">5. Review and Customize Policies</p>
+                      <p className="text-xs text-muted-foreground">
+                        Check policies in <code className="bg-muted px-1 py-0.5 rounded">ai-playbook/.github/copilot-instructions/</code> and customize as needed
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-primary/5 border-primary/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <Badge variant="outline" className="bg-primary/20">Claude AI (Cursor, Cline, etc.)</Badge>
+                    Verification Steps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">1. Check Directory Structure Exists</p>
+                      <p className="text-xs text-muted-foreground">
+                        Verify <code className="bg-muted px-1 py-0.5 rounded">policies/</code>, 
+                        <code className="bg-muted px-1 py-0.5 rounded">agents/</code>, 
+                        <code className="bg-muted px-1 py-0.5 rounded">skills/</code>, and 
+                        <code className="bg-muted px-1 py-0.5 rounded">orchestrator.md</code> exist at root level (not in .github/)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">2. Verify Configuration Files</p>
+                      <p className="text-xs text-muted-foreground">
+                        Check that <code className="bg-muted px-1 py-0.5 rounded">.cursorrules</code> or <code className="bg-muted px-1 py-0.5 rounded">.clinerules</code> reference the correct paths to orchestrator and agents
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">3. Test Path References</p>
+                      <p className="text-xs text-muted-foreground">
+                        If using workspace root (Option A), try: <code className="bg-muted px-1 py-0.5 rounded">@../ai-playbook/orchestrator.md scan this project</code>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">4. Test a Specific Agent</p>
+                      <p className="text-xs text-muted-foreground">
+                        In Cursor/Cline: <code className="bg-muted px-1 py-0.5 rounded">@../ai-playbook/agents/code-reviewer/agent.md review this file</code>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">5. Review and Customize Policies</p>
+                      <p className="text-xs text-muted-foreground">
+                        Check policies in <code className="bg-muted px-1 py-0.5 rounded">ai-playbook/policies/</code> and customize as needed
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               <Card className="bg-muted/30">
-                <CardContent className="pt-6 space-y-3">
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Check Files Exist</p>
-                      <p className="text-xs text-muted-foreground">
-                        Verify the ai-playbook directory contains <code className="bg-muted px-1 py-0.5 rounded">.github/agents/</code> and <code className="bg-muted px-1 py-0.5 rounded">.github/orchestrator.md</code>
-                      </p>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-primary" />
+                    Key Differences in Verification
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 gap-4 text-xs">
+                    <div className="space-y-2">
+                      <p className="font-medium text-foreground">GitHub Copilot:</p>
+                      <ul className="space-y-1 text-muted-foreground list-disc list-inside pl-2">
+                        <li>Look for <code className="bg-muted px-1 rounded">.github/</code> directory</li>
+                        <li>Files named in UPPERCASE (AGENT.md, SKILL.md)</li>
+                        <li>Auto-loads from <code className="bg-muted px-1 rounded">copilot-instructions/</code></li>
+                        <li>Reference with <code className="bg-muted px-1 rounded">@workspace</code> in chat</li>
+                      </ul>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Test Path References</p>
-                      <p className="text-xs text-muted-foreground">
-                        If using workspace root (Option A), verify relative paths work from your projects
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Test an Agent</p>
-                      <p className="text-xs text-muted-foreground">
-                        Ask your AI tool to scan your workspace or create a component
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Review Policies</p>
-                      <p className="text-xs text-muted-foreground">
-                        Customize policies in <code className="bg-muted px-1 py-0.5 rounded">ai-playbook/.github/copilot-instructions/</code> as needed
-                      </p>
+                    <div className="space-y-2">
+                      <p className="font-medium text-foreground">Claude AI:</p>
+                      <ul className="space-y-1 text-muted-foreground list-disc list-inside pl-2">
+                        <li>Look for root-level directories (no .github/)</li>
+                        <li>Files named in lowercase (agent.md, skill.md)</li>
+                        <li>Loads via <code className="bg-muted px-1 rounded">.cursorrules</code> or <code className="bg-muted px-1 rounded">.clinerules</code></li>
+                        <li>Reference with <code className="bg-muted px-1 rounded">@path</code> mentions</li>
+                      </ul>
                     </div>
                   </div>
                 </CardContent>
