@@ -9,8 +9,7 @@ import {
   GitBranch, 
   FileCode, 
   Workflow, 
-  BookOpen, 
-  Shield,
+  BookOpen,
   Sparkles,
   Info,
   ArrowRight,
@@ -22,7 +21,6 @@ import {
 import StructureView from '@/components/guide/StructureView'
 import AgentGuide from '@/components/guide/AgentGuide'
 import SkillGuide from '@/components/guide/SkillGuide'
-import ClientLibraryGuide from '@/components/guide/ClientLibraryGuide'
 import WorkflowView from '@/components/guide/WorkflowView'
 import DataFlowDiagram from '@/components/guide/DataFlowDiagram'
 import OrchestratorGuide from '@/components/guide/OrchestratorGuide'
@@ -54,7 +52,7 @@ function App() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 h-auto gap-2 bg-muted/50 p-2">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-5 h-auto gap-2 bg-muted/50 p-2">
             <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Info className="h-4 w-4 shrink-0" />
               <span className="text-xs sm:text-sm">Overview</span>
@@ -74,10 +72,6 @@ function App() {
             <TabsTrigger value="mcp" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <FileCode className="h-4 w-4 shrink-0" />
               <span className="text-xs sm:text-sm">MCP</span>
-            </TabsTrigger>
-            <TabsTrigger value="client" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
-              <Shield className="h-4 w-4 shrink-0" />
-              <span className="text-xs sm:text-sm">Client</span>
             </TabsTrigger>
           </TabsList>
 
@@ -116,13 +110,13 @@ function App() {
                   <Card className="bg-muted/50 border-accent/30">
                     <CardHeader className="pb-3">
                       <div className="h-10 w-10 rounded-lg bg-accent/10 flex items-center justify-center mb-2">
-                        <Shield className="h-5 w-5 text-accent" />
+                        <BookOpen className="h-5 w-5 text-accent" />
                       </div>
                       <CardTitle className="text-base">Policies</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <p className="text-xs text-muted-foreground">
-                        <Workflow className="h-5 w-5 text-primary" />
+                        Core rules and constraints that guide all AI interactions across different tools
                       </p>
                     </CardContent>
                   </Card>
@@ -263,10 +257,6 @@ function App() {
 
           <TabsContent value="mcp" className="space-y-6">
             <MCPIntegrationGuide />
-          </TabsContent>
-
-          <TabsContent value="client" className="space-y-6">
-            <ClientLibraryGuide />
           </TabsContent>
         </Tabs>
       </div>
