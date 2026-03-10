@@ -202,7 +202,7 @@ function App() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-xs text-muted-foreground">
-                        High-level rules for workspace scope, frontend/backend standards, and output style
+                        <Workflow className="h-5 w-5 text-primary" />
                       </p>
                     </CardContent>
                   </Card>
