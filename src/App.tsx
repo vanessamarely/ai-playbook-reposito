@@ -12,15 +12,11 @@ import {
   BookOpen, 
   Shield,
   Sparkles,
-  FileText,
   Terminal,
   Info,
   ArrowRight,
   CheckCircle2,
   XCircle,
-  Download,
-  HelpCircle,
-  MessageSquare,
   Settings,
   Layers
 } from 'lucide-react'
@@ -93,48 +89,9 @@ function App() {
 
           <TabsContent value="setup" className="space-y-6">
             <div className="grid gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Download className="h-5 w-5 text-primary" />
-                    Installation
-                  </CardTitle>
-                  <CardDescription>How to set up the AI Playbook in your workspace</CardDescription>
-                </CardHeader>
-              </Card>
               <InstallationGuide />
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-primary" />
-                    Workspace Configuration
-                  </CardTitle>
-                  <CardDescription>Setting up config files at your workspace root</CardDescription>
-                </CardHeader>
-              </Card>
               <WorkspaceRootSetup />
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HelpCircle className="h-5 w-5 text-primary" />
-                    Usage Guide
-                  </CardTitle>
-                  <CardDescription>How to use agents and skills effectively</CardDescription>
-                </CardHeader>
-              </Card>
               <UsageGuide />
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="h-5 w-5 text-primary" />
-                    Example Prompts
-                  </CardTitle>
-                  <CardDescription>Ready-to-use prompts for common tasks</CardDescription>
-                </CardHeader>
-              </Card>
               <ExamplePromptsLibrary />
             </div>
           </TabsContent>

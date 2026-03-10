@@ -33,8 +33,8 @@ export default function OrchestratorGuide() {
             <Lightbulb className="h-4 w-4" />
             <AlertTitle>Core Principle: Write Once, Use Everywhere</AlertTitle>
             <AlertDescription className="text-sm">
-              The general orchestrator lets you define agents and skills once, then use them across different AI tools
-              by adapting only the loading mechanism, not the content.
+              The general orchestrator lets you define agents and skills once in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/agents/</code> and <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/skills/</code>, then use them across different AI tools
+              by adapting only the entry point (e.g., <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursorrules</code>, <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.clinerules</code>), not the content.
             </AlertDescription>
           </Alert>
 
@@ -92,9 +92,9 @@ export default function OrchestratorGuide() {
               </div>
               
               <div className="text-accent mt-4 mb-2"># Tool-specific loaders (choose based on your AI tool)</div>
-              <div>├── .github/copilot-instructions/  <span className="text-muted-foreground"># GitHub Copilot</span></div>
-              <div>├── .cursorrules                    <span className="text-muted-foreground"># Cursor IDE</span></div>
-              <div>├── .claude/project.md              <span className="text-muted-foreground"># Claude Projects</span></div>
+              <div>├── .github/copilot-instructions/  <span className="text-muted-foreground"># GitHub Copilot policies</span></div>
+              <div>├── .cursorrules                    <span className="text-muted-foreground"># Cursor/Claude - references .github/ structure</span></div>
+              <div>├── .clinerules                     <span className="text-muted-foreground"># Cline - references .github/ structure</span></div>
               <div>├── .aws/amazonq/customization.json <span className="text-muted-foreground"># Amazon Q</span></div>
               <div>└── .tabnine/config.json            <span className="text-muted-foreground"># Tabnine</span></div>
               
@@ -270,9 +270,12 @@ models:
             <Info className="h-4 w-4" />
             <AlertTitle>Key Insight: Same Content, Different Entry Points</AlertTitle>
             <AlertDescription className="text-sm">
-              GitHub Copilot starts at <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions/</code>,
-              Cursor starts at <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursorrules</code>,
-              but both end up reading the same agents and skills. The orchestrator pattern eliminates duplication.
+              <p className="mb-2">GitHub Copilot starts at <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions/</code>,
+              Cursor/Cline start at <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursorrules</code> / <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.clinerules</code>,
+              but both end up reading the same agents and skills from <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/</code>.</p>
+              
+              <p className="mt-2 font-semibold">Claude/Cursor/Cline Structure:</p>
+              <p className="text-xs mt-1">These tools reference the <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/</code> structure via root config files (<code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursorrules</code> or <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.clinerules</code>), which point to agents and skills. They don't need policies in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions/</code> - those are Copilot-specific.</p>
             </AlertDescription>
           </Alert>
         </CardContent>
