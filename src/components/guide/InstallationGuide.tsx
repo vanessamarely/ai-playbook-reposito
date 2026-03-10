@@ -196,7 +196,6 @@ export default function InstallationGuide() {
                   <div className="pl-12 text-muted-foreground">│   │   ├── node-typescript-service/</div>
                   <div className="pl-12 text-muted-foreground">│   │   └── a11y-automation/</div>
                   <div className="pl-8 text-accent">│   └── orchestrator.md  <span className="text-muted-foreground">← Main routing logic</span></div>
-                  <div className="pl-4 text-primary">└── tools/</div>
                 </div>
                 <div className="rounded-lg bg-background p-3 mt-2">
                   <p className="text-xs text-muted-foreground">
@@ -234,7 +233,6 @@ export default function InstallationGuide() {
                   <div className="pl-8 text-muted-foreground">│   └── a11y-automation/</div>
                   <div className="pl-8 text-muted-foreground">│       └── skill.md</div>
                   <div className="pl-4 text-accent">├── orchestrator.md  <span className="text-muted-foreground">← Central coordination</span></div>
-                  <div className="pl-4 text-primary">└── tools/</div>
                 </div>
                 <div className="rounded-lg bg-background p-3 mt-2">
                   <p className="text-xs text-muted-foreground">

@@ -67,17 +67,6 @@ export default function StructureView() {
         },
       ],
     },
-    {
-      name: 'tools/',
-      type: 'directory',
-      icon: Wrench,
-      description: 'Deterministic utility scripts',
-      items: [
-        { name: 'project-detect.mjs', desc: 'Detect project type from structure' },
-        { name: 'scope-guard.mjs', desc: 'Validate file changes stay in scope' },
-        { name: 'diagnostics-summarizer.mjs', desc: 'Summarize build/lint errors' },
-      ],
-    },
   ]
 
   const alternativeStructures = [
@@ -176,22 +165,6 @@ export default function StructureView() {
               ))}
             </div>
           )}
-
-          {item.items && !item.children && (
-            <div className="ml-8 border-l-2 border-border pl-6">
-              <ul className="space-y-1.5">
-                {item.items.map((subItem, subIdx) => (
-                  <li key={subIdx} className="flex items-start gap-2 text-sm">
-                    <span className="text-accent mt-1">●</span>
-                    <div>
-                      <code className="font-medium text-foreground">{subItem.name}</code>
-                      <span className="text-muted-foreground ml-2">{subItem.desc}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </div>
       ))}
     </div>
@@ -206,7 +179,7 @@ export default function StructureView() {
             Repository Structure
           </CardTitle>
           <CardDescription>
-            Organization of policies, agents, skills, and tools across different AI tools
+            Organization of policies, agents, and skills across different AI tools
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -325,7 +325,6 @@ scope:
                   <div className="pl-16 text-muted-foreground">│   │   ├── scan-workspace/</div>
                   <div className="pl-16 text-muted-foreground">│   │   └── react-component-builder/</div>
                   <div className="pl-12 text-muted-foreground">│   └── skills/</div>
-                  <div className="pl-8">└── tools/</div>
                   <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
                   <div className="pl-4">├── project-b/</div>
                   <div className="pl-4">└── project-c/</div>
@@ -356,7 +355,6 @@ scope:
                   <div className="pl-8 text-accent">├── skills/  <span className="text-muted-foreground">← Root-level directory</span></div>
                   <div className="pl-12 text-muted-foreground">│   └── react-components/</div>
                   <div className="pl-16 text-muted-foreground">│       └── skill.md</div>
-                  <div className="pl-8">└── tools/</div>
                   <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
                   <div className="pl-4">├── project-b/</div>
                   <div className="pl-4">└── project-c/</div>
