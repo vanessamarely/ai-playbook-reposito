@@ -30,6 +30,7 @@ import UsageGuide from '@/components/guide/UsageGuide'
 import ExamplePromptsLibrary from '@/components/guide/ExamplePromptsLibrary'
 import WorkspaceRootSetup from '@/components/guide/WorkspaceRootSetup'
 import PolicyRulesGuide from '@/components/guide/PolicyRulesGuide'
+import StructureComparison from '@/components/guide/StructureComparison'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -209,6 +210,8 @@ function App() {
 
           <TabsContent value="core" className="space-y-6">
             <div className="grid gap-6">
+              <StructureComparison />
+              
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
