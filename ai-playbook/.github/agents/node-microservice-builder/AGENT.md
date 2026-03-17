@@ -70,19 +70,91 @@ For Express:
 Refer to: `.github/skills/node-typescript-service/references/validation-and-errors.md`
 
 1. Define input schema (request body, query params, path params).
-2. Use appropriate validation library (Zod, Joi, class-validator).
-3. Attach validation middleware or decorator.
+2. Use appropriate validation library based on framework:
+   - **NestJS**: class-validator with DTOs:
+     ```typescript
+     export class CreateUserDto {
+       @IsString()
+       @IsNotEmpty()
+       @MaxLength(100)
+       name!: string
+     
+       @IsEmail()
+       email!: string
+     
+       @IsEnum(UserRole)
+       role!: UserRole
+     }
+     ```
+   - **Express**: Joi or Zod middleware
+3. Ensure DTOs/schemas have explicit types (no `any`).
+4. Use discriminated unions for variant request types.
+5. Attach validation middleware or decorator.
+6. Provide typed response DTOs separate from entities:
+   ```typescript
+   export class UserResponseDto {
+     id: string
+     name: string
+     email: string
+     role: UserRole
+   }
+   ```
 
 ### Step 6: Implement Error Handling
 
-1. Use custom error classes if available.
-2. Map business logic errors to HTTP status codes:
-   - 400 for validation errors.
-   - 401 for authentication failures.
-   - 403 for authorization failures.
-   - 404 for not found.
-   - 500 for unexpected errors.
-3. Return structured error responses with message and optional error code.
+1. Check for existing error handling patterns in the project.
+2. Use Result type pattern for service layer methods:
+   ```typescript
+   type Result<T, E = Error> = 
+     | { success: true; data: T }
+     | { success: false; error: E }
+   
+   async function findUser(id: string): Promise<Result<User>> {
+     try {
+       const user = await userRepository.findOne(id)
+       if (!user) {
+         return { success: false, error: new NotFoundError('User not found') }
+       }
+       return { success: true, data: user }
+     } catch (error) {
+       return { 
+         success: false, 
+         error: error instanceof Error ? error : new Error('Unknown error') 
+       }
+     }
+   }
+   ```
+3. Create or use custom error classes with proper typing:
+   ```typescript
+   class ValidationError extends Error {
+     constructor(
+       message: string,
+       public readonly field: string,
+       public readonly value: unknown
+     ) {
+       super(message)
+       this.name = 'ValidationError'
+     }
+   }
+   ```
+4. Map business logic errors to HTTP status codes:
+   - 400 for validation errors
+   - 401 for authentication failures
+   - 403 for authorization failures
+   - 404 for not found
+   - 409 for conflict errors
+   - 500 for unexpected errors
+5. Return structured error responses:
+   ```typescript
+   interface ErrorResponse {
+     statusCode: number
+     message: string
+     error: string
+     timestamp: string
+     path: string
+   }
+   ```
+6. Always handle promise rejections explicitly with try/catch.
 
 ### Step 7: Generate Tests
 
@@ -103,13 +175,24 @@ If the project has centralized routing:
 ### Step 9: Output Summary
 
 Provide:
-- Path to created handler file.
-- Path to validation schema.
-- Path to test file.
-- Suggested verification commands:
+- Path to created handler file with markdown link
+- Path to validation schema/DTO files with links
+- Path to test file with link
+- List of TypeScript patterns used (Result types, custom errors, DTOs)
+- Error handling approach documented
+- Suggested verification commands (run from project folder):
   - `npm run lint`
   - `npm test -- <serviceName>`
   - `npm run build`
+  - `npm run type-check`
+
+**Mission Control Context**: When this agent completes, session logs should show:
+- Framework detection and selection reasoning
+- Validation strategy chosen and why
+- Error handling patterns applied
+- TypeScript type safety measures
+- Test coverage decisions
+- Any assumptions made about business logic
 
 ## Error Handling
 

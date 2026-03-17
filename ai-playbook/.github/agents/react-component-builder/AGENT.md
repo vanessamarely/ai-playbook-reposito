@@ -41,11 +41,31 @@ Follow the procedures defined in that skill.
 ### Step 3: Generate Component Structure
 
 1. Create the component file at `<targetFolder>/<componentName>.tsx`.
-2. Define TypeScript interface for props.
+2. Define TypeScript interface for props with explicit types:
+   - Use discriminated unions for variant props
+   - Mark readonly properties appropriately
+   - Use `React.ReactNode` for children
+   - Provide JSDoc comments for complex props
+   - Example:
+   ```typescript
+   interface ButtonProps {
+     /** Visual style variant */
+     variant: 'primary' | 'secondary' | 'danger'
+     /** Button click handler */
+     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void
+     /** Disable button interaction */
+     disabled?: boolean
+     children: React.ReactNode
+   }
+   ```
 3. Implement the component with semantic HTML.
 4. Add accessibility attributes (ARIA roles, labels, keyboard handlers).
+5. Use explicit return type: `const Component = (props: Props): JSX.Element => { ... }`
+6. Avoid `any` types - use `unknown` with type guards if needed.
 
-Refer to: `.github/skills/react-components/references/a11y-wcag22.md` for WCAG 2.2 requirements.
+Refer to:
+- `.github/skills/react-components/references/a11y-wcag22.md` for WCAG 2.2 requirements
+- `.github/copilot-instructions.md` for TypeScript best practices
 
 ### Step 4: Apply Project-Specific Overrides
 
@@ -62,22 +82,59 @@ Check for project-specific style guides or component library documentation:
 
 If `eslint-plugin-jsx-a11y` is configured, suggest running: `npm run lint`
 
-### Step 6: Generate Test File (Optional)
+### Step 6: Error Handling and Edge Cases
 
-If tests are expected:
+Implement proper error handling:
+1. For async data components, use AsyncState discriminated union:
+   ```typescript
+   type AsyncState<T> = 
+     | { status: 'idle' }
+     | { status: 'loading' }
+     | { status: 'success'; data: T }
+     | { status: 'error'; error: Error }
+   ```
+2. Add error boundaries for component failures (if top-level component).
+3. Handle loading states with proper ARIA announcements.
+4. Use exhaustive checks with `never` type for state machines.
+
+### Step 7: Generate Test File (Required)
+
+Create comprehensive tests:
 1. Create `<componentName>.test.tsx` in the appropriate test directory.
-2. Include basic rendering test.
-3. Include accessibility test using `@axe-core/react` or similar.
+2. Include basic rendering test with RTL.
+3. Include accessibility test using `@axe-core/react` or `jest-axe`:
+   ```typescript
+   import { axe, toHaveNoViolations } from 'jest-axe'
+   expect.extend(toHaveNoViolations)
+   
+   test('should have no accessibility violations', async () => {
+     const { container } = render(<Component {...props} />)
+     const results = await axe(container)
+     expect(results).toHaveNoViolations()
+   })
+   ```
+4. Test keyboard interactions for interactive components.
+5. Test error states if component handles errors.
 
-### Step 7: Output Summary
+### Step 8: Output Summary
 
 Provide:
-- Path to created component file.
-- Brief description of implemented functionality.
+- Path to created component file with markdown link: `[ComponentName.tsx](path/to/ComponentName.tsx)`
+- Path to test file with link
+- Brief description of implemented functionality
+- List of TypeScript patterns used (discriminated unions, type guards, etc.)
+- Accessibility features implemented
 - Suggested verification commands:
-  - `npm run lint`
+  - `npm run lint` (from project folder)
   - `npm test -- <componentName>`
   - `npm run type-check`
+  - `npm run lint:a11y` (if available)
+
+**Mission Control Context**: When this agent completes, session logs should show:
+- Component structure decisions and reasoning
+- Accessibility considerations applied
+- TypeScript type safety measures
+- Any deviations from standard patterns with justification
 
 ## Error Handling
 
