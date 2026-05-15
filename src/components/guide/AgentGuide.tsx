@@ -315,7 +315,7 @@ Optional:
 - Human-readable implementation plan
 - \`apply_patch\` diffs
 - Accessibility report JSON: \`{violations, passes, incomplete}\`
-- Verification checklist`
+- Verification checklist`,
       filePath: 'ai-playbook/.github/agents/figma-component-builder/AGENT.md'
     },
     {
