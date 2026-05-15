@@ -62,9 +62,11 @@ Agents are multi-step procedures that orchestrate skills and tools to complete l
 |---|---|
 | `scan-workspace` | Detect project type, map to skills, and check AI tool config health |
 | `react-component-builder` | End-to-end React component creation with accessibility and tests |
+| `figma-component-builder` | Convert Figma designs into React/TypeScript components with accessibility validation |
 | `node-microservice-builder` | End-to-end Node.js service creation with validation and tests |
 | `a11y-audit-react` | Audit React components for WCAG violations and suggest fixes |
 | `pr-reviewer` | Review pull requests for quality, security, tests, and policy compliance |
+| `code-reviewer` | Review source code for quality, security, performance, and maintainability issues |
 
 ---
 

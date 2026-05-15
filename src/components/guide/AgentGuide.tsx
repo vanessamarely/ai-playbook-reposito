@@ -264,6 +264,61 @@ Provide:
 - **Missing dependencies**: Suggest installing required packages.`
     },
     {
+      name: 'figma-component-builder',
+      purpose: 'Convert Figma designs into project-ready React/TypeScript components',
+      badge: 'Design-to-Code',
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50',
+      when: 'Implementing UI from Figma nodes or screenshots',
+      steps: [
+        'Confirm scope, destination folder, component library, and client context from prompt',
+        'Fetch design context from Figma MCP using figma_url or fileKey/nodeId',
+        'If Figma access fails, use attached screenshot or request screenshot from user',
+        'Map to existing reusable components before creating new primitives',
+        'Generate apply_patch-ready diffs and run Chrome MCP accessibility checks',
+      ],
+      tools: ['Figma MCP', 'Chrome MCP'],
+      skills: ['figma-component', 'a11y-automation'],
+      markdown: `# Agent: figma-component-builder
+
+## Purpose
+
+Automate conversion of Figma designs into React/TypeScript components and supporting artifacts for a selected project scope.
+
+## Required initial prompt context
+
+- \`scope\`: target project folder under workspace root
+- \`destination_folder\`: exact folder where generated files should be created or updated
+- \`component_library\`: preferred reusable component library for this scope (or \`none\`)
+- \`client_context\`: project-specific conventions
+- \`figma_url\` or \`{fileKey,nodeId}\`
+
+Optional:
+- \`screenshot_image\` (fallback when Figma is unavailable)
+- \`dev_url\`, \`create_mode\`, \`preferences\`
+
+## Core behavior
+
+1. Confirm scope and detect project type from local config files.
+2. Reuse existing components from \`component_library\` before creating new primitives.
+3. Generate minimal \`apply_patch\` diffs for destination files.
+4. Run Chrome MCP accessibility checks (axe + visual snapshots) when \`dev_url\` is provided.
+
+## Figma fallback
+
+- If Figma MCP is unavailable or incomplete, use \`screenshot_image\`.
+- If no screenshot is attached, request one before generating code.
+- State whether output was based on Figma context or screenshot fallback.
+
+## Deliverables
+
+- Human-readable implementation plan
+- \`apply_patch\` diffs
+- Accessibility report JSON: \`{violations, passes, incomplete}\`
+- Verification checklist`
+      filePath: 'ai-playbook/.github/agents/figma-component-builder/AGENT.md'
+    },
+    {
       name: 'a11y-audit-react',
       purpose: 'Audit React components for WCAG 2.2 accessibility compliance',
       badge: 'Audit',

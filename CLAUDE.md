@@ -26,9 +26,11 @@ When asked to perform a development task, follow this sequence:
 | Task | Agent |
 |------|-------|
 | Accessibility audit on React components | `ai-playbook/.github/agents/a11y-audit-react/AGENT.md` |
+| Convert Figma designs into components | `ai-playbook/.github/agents/figma-component-builder/AGENT.md` |
 | Pull request review | `ai-playbook/.github/agents/pr-reviewer/AGENT.md` |
 | Build a React component | `ai-playbook/.github/agents/react-component-builder/AGENT.md` |
 | Build a Node microservice | `ai-playbook/.github/agents/node-microservice-builder/AGENT.md` |
+| Review source code quality | `ai-playbook/.github/agents/code-reviewer/AGENT.md` |
 | Detect workspace type | `ai-playbook/.github/agents/scan-workspace/AGENT.md` |
 
 ## Core Rules

@@ -30,10 +30,23 @@ When responding to requests in this repository, load and follow the relevant ski
 | Task | Skill to Load |
 |------|--------------|
 | Build or modify React components | `ai-playbook/.github/skills/react-components/SKILL.md` |
+| Convert Figma designs to components | `ai-playbook/.github/skills/figma-component/SKILL.md` |
 | Run or integrate accessibility tests | `ai-playbook/.github/skills/a11y-automation/SKILL.md` |
 | Create or extend Node.js/TypeScript services | `ai-playbook/.github/skills/node-typescript-service/SKILL.md` |
 | Create a new skill | `ai-playbook/.github/skills/skill-creator/SKILL.md` |
 | Configure AI tool instructions | `ai-playbook/.github/skills/ai-tool-setup/SKILL.md` |
+
+## Agent Routing
+
+| Task | Agent to Load |
+|------|---------------|
+| Detect workspace type and route skills | `ai-playbook/.github/agents/scan-workspace/AGENT.md` |
+| Build React components end-to-end | `ai-playbook/.github/agents/react-component-builder/AGENT.md` |
+| Convert Figma designs to components | `ai-playbook/.github/agents/figma-component-builder/AGENT.md` |
+| Run React accessibility audits | `ai-playbook/.github/agents/a11y-audit-react/AGENT.md` |
+| Build Node.js microservices | `ai-playbook/.github/agents/node-microservice-builder/AGENT.md` |
+| Review pull requests | `ai-playbook/.github/agents/pr-reviewer/AGENT.md` |
+| Review code quality in chat | `ai-playbook/.github/agents/code-reviewer/AGENT.md` |
 
 ## Universal Rules
 
