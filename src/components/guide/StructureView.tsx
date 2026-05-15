@@ -35,9 +35,11 @@ export default function StructureView() {
           items: [
             { name: 'scan-workspace/', desc: 'Detect project type & route to skills' },
             { name: 'react-component-builder/', desc: 'Build accessible React components' },
+            { name: 'figma-component-builder/', desc: 'Convert Figma designs into components' },
             { name: 'a11y-audit-react/', desc: 'Audit accessibility compliance' },
             { name: 'node-microservice-builder/', desc: 'Create Node.js services' },
             { name: 'pr-reviewer/', desc: 'Review pull requests' },
+            { name: 'code-reviewer/', desc: 'Review source code quality in chat' },
           ],
         },
         {
@@ -49,9 +51,10 @@ export default function StructureView() {
           items: [
             { name: 'skill-creator/', desc: 'Generate new skills with templates' },
             { name: 'react-components/', desc: 'Build React/TS components' },
-            { name: '[library-name]/', desc: 'Client component library (optional)' },
+            { name: 'figma-component/', desc: 'Map Figma design context to components' },
             { name: 'node-typescript-service/', desc: 'Node/TS service development' },
             { name: 'a11y-automation/', desc: 'Accessibility testing automation' },
+            { name: 'ai-tool-setup/', desc: 'Generate AI tool instruction files' },
           ],
         },
         {

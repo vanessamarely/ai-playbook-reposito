@@ -36,6 +36,7 @@ style_output: ./ai-playbook/.github/copilot-instructions/style-output.md
 agents:
   - ./ai-playbook/.github/agents/scan-workspace/AGENT.md
   - ./ai-playbook/.github/agents/react-component-builder/AGENT.md
+  - ./ai-playbook/.github/agents/figma-component-builder/AGENT.md
   - ./ai-playbook/.github/agents/a11y-audit-react/AGENT.md
   - ./ai-playbook/.github/agents/node-microservice-builder/AGENT.md
   - ./ai-playbook/.github/agents/pr-reviewer/AGENT.md
@@ -44,9 +45,11 @@ agents:
 # Available skills (loaded JIT by agents)
 skills:
   - ./ai-playbook/.github/skills/react-components/SKILL.md
+  - ./ai-playbook/.github/skills/figma-component/SKILL.md
   - ./ai-playbook/.github/skills/node-typescript-service/SKILL.md
   - ./ai-playbook/.github/skills/a11y-automation/SKILL.md
-  - ./ai-playbook/.github/skills/component-library-integration/SKILL.md
+  - ./ai-playbook/.github/skills/skill-creator/SKILL.md
+  - ./ai-playbook/.github/skills/ai-tool-setup/SKILL.md
 
 # === FOR CLAUDE AI VERSION (uncomment and use instead) ===
 # orchestrator: ./ai-playbook/orchestrator.md
@@ -57,15 +60,18 @@ skills:
 # agents:
 #   - ./ai-playbook/agents/scan-workspace/agent.md
 #   - ./ai-playbook/agents/react-component-builder/agent.md
+#   - ./ai-playbook/agents/figma-component-builder/agent.md
 #   - ./ai-playbook/agents/a11y-audit-react/agent.md
 #   - ./ai-playbook/agents/node-microservice-builder/agent.md
 #   - ./ai-playbook/agents/pr-reviewer/agent.md
 #   - ./ai-playbook/agents/code-reviewer/agent.md
 # skills:
 #   - ./ai-playbook/skills/react-components/skill.md
+#   - ./ai-playbook/skills/figma-component/skill.md
 #   - ./ai-playbook/skills/node-typescript-service/skill.md
 #   - ./ai-playbook/skills/a11y-automation/skill.md
-#   - ./ai-playbook/skills/component-library-integration/skill.md
+#   - ./ai-playbook/skills/skill-creator/skill.md
+#   - ./ai-playbook/skills/ai-tool-setup/skill.md
 
 # Usage examples:
 # - "Use @ai-playbook orchestrator to scan this project"
@@ -99,6 +105,9 @@ agents:
   react_builder:
     path: "./ai-playbook/.github/agents/react-component-builder/AGENT.md"
     triggers: ["create react component", "build component", "new react"]
+  figma_builder:
+    path: "./ai-playbook/.github/agents/figma-component-builder/AGENT.md"
+    triggers: ["build from figma", "convert figma", "figma component"]
   a11y_audit:
     path: "./ai-playbook/.github/agents/a11y-audit-react/AGENT.md"
     triggers: ["accessibility audit", "check a11y", "wcag check"]
@@ -115,9 +124,11 @@ agents:
 # Skill Registry (lazy-loaded by agents)
 skills:
   react_components: "./ai-playbook/.github/skills/react-components/SKILL.md"
+  figma_component: "./ai-playbook/.github/skills/figma-component/SKILL.md"
   node_typescript: "./ai-playbook/.github/skills/node-typescript-service/SKILL.md"
   a11y_automation: "./ai-playbook/.github/skills/a11y-automation/SKILL.md"
-  component_library: "./ai-playbook/.github/skills/component-library-integration/SKILL.md"
+  skill_creator: "./ai-playbook/.github/skills/skill-creator/SKILL.md"
+  ai_tool_setup: "./ai-playbook/.github/skills/ai-tool-setup/SKILL.md"
 
 # === FOR CLAUDE AI VERSION (uncomment and use instead) ===
 # orchestrator_path: "./ai-playbook/orchestrator.md"
@@ -133,6 +144,9 @@ skills:
 #   react_builder:
 #     path: "./ai-playbook/agents/react-component-builder/agent.md"
 #     triggers: ["create react component", "build component", "new react"]
+#   figma_builder:
+#     path: "./ai-playbook/agents/figma-component-builder/agent.md"
+#     triggers: ["build from figma", "convert figma", "figma component"]
 #   a11y_audit:
 #     path: "./ai-playbook/agents/a11y-audit-react/agent.md"
 #     triggers: ["accessibility audit", "check a11y", "wcag check"]
@@ -147,9 +161,11 @@ skills:
 #     triggers: ["review pr", "check pull request", "review changes"]
 # skills:
 #   react_components: "./ai-playbook/skills/react-components/skill.md"
+#   figma_component: "./ai-playbook/skills/figma-component/skill.md"
 #   node_typescript: "./ai-playbook/skills/node-typescript-service/skill.md"
 #   a11y_automation: "./ai-playbook/skills/a11y-automation/skill.md"
-#   component_library: "./ai-playbook/skills/component-library-integration/skill.md"
+#   skill_creator: "./ai-playbook/skills/skill-creator/skill.md"
+#   ai_tool_setup: "./ai-playbook/skills/ai-tool-setup/skill.md"
 
 # Project Scoping Rules
 scope:
@@ -191,6 +207,11 @@ scope:
       "description": "Build accessible React components following best practices"
     },
     {
+      "name": "figma-component-builder",
+      "path": "../ai-playbook/agents/figma-component-builder/agent.md",
+      "description": "Convert Figma designs into reusable React/TypeScript components"
+    },
+    {
       "name": "a11y-audit-react",
       "path": "../ai-playbook/agents/a11y-audit-react/agent.md",
       "description": "Audit React components for WCAG 2.2 compliance"
@@ -215,9 +236,11 @@ scope:
   "knowledgeBase": {
     "skills": [
       "../ai-playbook/skills/react-components/skill.md",
+      "../ai-playbook/skills/figma-component/skill.md",
       "../ai-playbook/skills/node-typescript-service/skill.md",
       "../ai-playbook/skills/a11y-automation/skill.md",
-      "../ai-playbook/skills/component-library-integration/skill.md"
+      "../ai-playbook/skills/skill-creator/skill.md",
+      "../ai-playbook/skills/ai-tool-setup/skill.md"
     ]
   },
   
@@ -323,8 +346,13 @@ scope:
                   <div className="pl-16 text-muted-foreground">│   │   └── backend-policy.md</div>
                   <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
                   <div className="pl-16 text-muted-foreground">│   │   ├── scan-workspace/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── react-component-builder/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   ├── react-component-builder/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   ├── figma-component-builder/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── ...</div>
                   <div className="pl-12 text-muted-foreground">│   └── skills/</div>
+                  <div className="pl-16 text-muted-foreground">│       ├── react-components/</div>
+                  <div className="pl-16 text-muted-foreground">│       ├── figma-component/</div>
+                  <div className="pl-16 text-muted-foreground">│       └── ...</div>
                   <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
                   <div className="pl-4">├── project-b/</div>
                   <div className="pl-4">└── project-c/</div>
@@ -350,11 +378,17 @@ scope:
                   <div className="pl-8 text-accent">├── agents/  <span className="text-muted-foreground">← Root-level directory</span></div>
                   <div className="pl-12 text-muted-foreground">│   ├── scan-workspace/</div>
                   <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
-                  <div className="pl-12 text-muted-foreground">│   └── react-component-builder/</div>
-                  <div className="pl-16 text-muted-foreground">│       └── agent.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── react-component-builder/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── figma-component-builder/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-12 text-muted-foreground">│   └── ...</div>
                   <div className="pl-8 text-accent">├── skills/  <span className="text-muted-foreground">← Root-level directory</span></div>
-                  <div className="pl-12 text-muted-foreground">│   └── react-components/</div>
-                  <div className="pl-16 text-muted-foreground">│       └── skill.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── react-components/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-12 text-muted-foreground">│   ├── figma-component/</div>
+                  <div className="pl-16 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-12 text-muted-foreground">│   └── ...</div>
                   <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
                   <div className="pl-4">├── project-b/</div>
                   <div className="pl-4">└── project-c/</div>

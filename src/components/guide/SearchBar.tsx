@@ -39,6 +39,14 @@ const SEARCHABLE_DATA: SearchableItem[] = [
     path: 'ai-playbook/.github/agents/react-component-builder/AGENT.md',
   },
   {
+    id: 'figma-component-builder',
+    title: 'Figma Component Builder',
+    description: 'Convert Figma designs into React/TypeScript components with accessibility checks',
+    type: 'agent',
+    category: 'Design-to-Code',
+    path: 'ai-playbook/.github/agents/figma-component-builder/AGENT.md',
+  },
+  {
     id: 'a11y-audit-react',
     title: 'Accessibility Audit React',
     description: 'Audit React components for WCAG 2.2 compliance and accessibility issues',
@@ -78,6 +86,15 @@ const SEARCHABLE_DATA: SearchableItem[] = [
     category: 'Frontend',
     triggers: ['creating a React component', 'building a UI component', 'implement component', 'add keyboard navigation', 'fix accessibility'],
     path: 'ai-playbook/.github/skills/react-components/SKILL.md',
+  },
+  {
+    id: 'figma-component-skill',
+    title: 'Figma Component',
+    description: 'Map Figma design context to reusable React/TypeScript components with scope-aware rules',
+    type: 'skill',
+    category: 'Design-to-Code',
+    triggers: ['convert figma to component', 'figma component generation', 'design to code'],
+    path: 'ai-playbook/.github/skills/figma-component/SKILL.md',
   },
   {
     id: 'a11y-automation-skill',

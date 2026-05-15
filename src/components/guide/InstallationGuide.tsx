@@ -189,12 +189,18 @@ export default function InstallationGuide() {
                   <div className="pl-8 text-accent">│   ├── agents/  <span className="text-muted-foreground">← Agent definitions</span></div>
                   <div className="pl-12 text-muted-foreground">│   │   ├── scan-workspace/</div>
                   <div className="pl-12 text-muted-foreground">│   │   ├── react-component-builder/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── figma-component-builder/</div>
                   <div className="pl-12 text-muted-foreground">│   │   ├── a11y-audit-react/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── node-microservice-builder/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── pr-reviewer/</div>
                   <div className="pl-12 text-muted-foreground">│   │   └── code-reviewer/</div>
                   <div className="pl-8 text-accent">│   ├── skills/  <span className="text-muted-foreground">← Reusable skills</span></div>
                   <div className="pl-12 text-muted-foreground">│   │   ├── react-components/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── figma-component/</div>
                   <div className="pl-12 text-muted-foreground">│   │   ├── node-typescript-service/</div>
-                  <div className="pl-12 text-muted-foreground">│   │   └── a11y-automation/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── a11y-automation/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   ├── skill-creator/</div>
+                  <div className="pl-12 text-muted-foreground">│   │   └── ai-tool-setup/</div>
                   <div className="pl-8 text-accent">│   └── orchestrator.md  <span className="text-muted-foreground">← Main routing logic</span></div>
                 </div>
                 <div className="rounded-lg bg-background p-3 mt-2">
@@ -221,16 +227,28 @@ export default function InstallationGuide() {
                   <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
                   <div className="pl-8 text-muted-foreground">│   ├── react-component-builder/</div>
                   <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── figma-component-builder/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
                   <div className="pl-8 text-muted-foreground">│   ├── a11y-audit-react/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── node-microservice-builder/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── pr-reviewer/</div>
                   <div className="pl-8 text-muted-foreground">│   │   └── agent.md</div>
                   <div className="pl-8 text-muted-foreground">│   └── code-reviewer/</div>
                   <div className="pl-8 text-muted-foreground">│       └── agent.md</div>
                   <div className="pl-4 text-accent">├── skills/  <span className="text-muted-foreground">← Task-specific modules</span></div>
                   <div className="pl-8 text-muted-foreground">│   ├── react-components/</div>
                   <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── figma-component/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
                   <div className="pl-8 text-muted-foreground">│   ├── node-typescript-service/</div>
                   <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
-                  <div className="pl-8 text-muted-foreground">│   └── a11y-automation/</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── a11y-automation/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-8 text-muted-foreground">│   ├── skill-creator/</div>
+                  <div className="pl-8 text-muted-foreground">│   │   └── skill.md</div>
+                  <div className="pl-8 text-muted-foreground">│   └── ai-tool-setup/</div>
                   <div className="pl-8 text-muted-foreground">│       └── skill.md</div>
                   <div className="pl-4 text-accent">├── orchestrator.md  <span className="text-muted-foreground">← Central coordination</span></div>
                 </div>

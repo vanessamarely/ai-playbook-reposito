@@ -628,10 +628,13 @@ generate(taskType, description)
   "agents": {
     "directory": ".github/agents",
     "available": [
+      "scan-workspace",
       "react-component-builder",
+      "figma-component-builder",
       "node-microservice-builder",
       "a11y-audit-react",
-      "pr-reviewer"
+      "pr-reviewer",
+      "code-reviewer"
     ]
   },
   "skills": {
@@ -879,10 +882,20 @@ gemini code \\
   --context .github/agents/react-component-builder/AGENT.md \\
   "Build an accessible button component"
 
+# Reference Figma-to-code agent
+gemini code \
+  --context .github/agents/figma-component-builder/AGENT.md \
+  "Create a profile card from this Figma node"
+
 # Load skill on demand
 gemini code \\
   --context .github/skills/react-components/SKILL.md \\
   "Audit this component for WCAG 2.2 compliance"`}
+
+# Load Figma mapping skill
+gemini code \
+  --context .github/skills/figma-component/SKILL.md \
+  "Map Figma layout to existing component library"
                       </pre>
                     </div>
                   </CardContent>
@@ -1026,6 +1039,12 @@ Task: "Build an accessible React button component"
 → Load: .github/agents/react-component-builder/AGENT.md
 → Execute: Follow agent procedure, loading skills as needed
 
+Task: "Create component from Figma design"
+→ Read: frontend-policy.md
+→ Load: .github/agents/figma-component-builder/AGENT.md
+→ Load: .github/skills/figma-component/SKILL.md
+→ Execute: Generate minimal patch + accessibility checks
+
 Task: "Review this PR for accessibility issues"
 → Read: frontend-policy.md
 → Load: .github/agents/pr-reviewer/AGENT.md
@@ -1088,7 +1107,9 @@ Task: "Review this PR for accessibility issues"
                     <p>When working with Cline, explicitly reference agents/skills in your prompts:</p>
                     <ul className="list-disc list-inside text-xs space-y-1 mt-2">
                       <li>"Follow the react-component-builder agent to create this component"</li>
+                      <li>"Use figma-component-builder to convert this Figma node into code"</li>
                       <li>"Use the a11y-automation skill to check accessibility"</li>
+                      <li>"Use the figma-component skill to map design tokens and structure"</li>
                       <li>"Apply the pr-reviewer agent to this pull request"</li>
                     </ul>
                   </AlertDescription>
