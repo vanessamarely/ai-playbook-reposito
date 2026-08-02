@@ -3,9 +3,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { 
-  Copy, 
-  MessageSquare, 
+import {
+  Copy,
+  MessageSquare,
   Sparkles,
   Workflow,
   BookOpen,
@@ -13,7 +13,6 @@ import {
   GitPullRequest,
   Search,
   Bug,
-  Palette,
   Shield,
   Lightbulb,
   CheckCircle2
@@ -29,7 +28,6 @@ interface PromptTemplate {
   icon: typeof Workflow
   prompt: string
   tags: string[]
-  aiTool?: 'Claude' | 'Copilot' | 'Cursor' | 'All'
 }
 
 const promptTemplates: PromptTemplate[] = [
@@ -39,13 +37,12 @@ const promptTemplates: PromptTemplate[] = [
     description: 'Detect project type and suggest relevant skills',
     category: 'agent',
     icon: Search,
-    aiTool: 'All',
     tags: ['setup', 'detection', 'initialization'],
-    prompt: `Please analyze this workspace and detect the project type. Follow the scan-workspace agent:
+    prompt: `Please analyze this workspace and detect the project type, following the scan-workspace agent/skill for whichever AI tool you are (Claude Code: .claude/agents/scan-workspace.md, Copilot: .github/agents/scan-workspace.agent.md, Cursor: .cursor/commands/scan-workspace.md, Codex CLI: .agents/skills/scan-workspace/SKILL.md):
 
-1. Read and execute: .github/agents/scan-workspace/AGENT.md
-2. Use the detection script to identify the project structure
-3. Suggest which skills are relevant for this project
+1. Run the project detection tool on the current directory
+2. Identify the project structure and applicable skills
+3. Confirm this project's AI tool instruction files are present and up to date
 4. Provide a summary of recommended next steps
 
 Focus on the current directory and respect workspace boundaries.`
@@ -56,9 +53,8 @@ Focus on the current directory and respect workspace boundaries.`
     description: 'Create accessible React component with TypeScript',
     category: 'agent',
     icon: Workflow,
-    aiTool: 'All',
     tags: ['react', 'component', 'accessibility', 'typescript'],
-    prompt: `I need to create a new React component. Follow the react-component-builder agent:
+    prompt: `I need to create a new React component. Please use the react-component-builder agent/skill for whichever AI tool you are.
 
 Component Requirements:
 - Name: [ComponentName]
@@ -67,14 +63,13 @@ Component Requirements:
 - Interactions: [User interactions needed]
 
 Please:
-1. Read: .github/agents/react-component-builder/AGENT.md
-2. Follow: .github/skills/react-components/SKILL.md
-3. Reference: .github/skills/react-components/references/a11y-wcag22.md for accessibility
-4. Use TypeScript with proper types
-5. Ensure WCAG 2.2 AA compliance
-6. Include appropriate ARIA attributes
-7. Implement keyboard navigation
-8. Add focus management
+1. Follow the react-component-builder procedure (agent, prompt, command, or skill — depending on your tool)
+2. Apply the react-components skill's accessibility references
+3. Use TypeScript with proper types
+4. Ensure WCAG 2.2 AA compliance
+5. Include appropriate ARIA attributes
+6. Implement keyboard navigation
+7. Add focus management
 
 Output the component code with proper structure.`
   },
@@ -84,16 +79,10 @@ Output the component code with proper structure.`
     description: 'Review component for WCAG 2.2 compliance',
     category: 'agent',
     icon: Shield,
-    aiTool: 'All',
     tags: ['accessibility', 'audit', 'wcag', 'review'],
-    prompt: `Please audit this component for accessibility issues:
+    prompt: `Please audit this component for accessibility issues, following the a11y-audit-react agent/skill:
 
 [Paste component code or file path]
-
-Follow the a11y-audit-react agent:
-1. Read: .github/agents/a11y-audit-react/AGENT.md
-2. Reference: .github/skills/a11y-automation/SKILL.md
-3. Check against: .github/skills/react-components/references/a11y-wcag22.md
 
 Review for:
 - Semantic HTML structure
@@ -113,18 +102,17 @@ Provide specific code suggestions for each issue found.`
     description: 'Review code changes with inline suggestions',
     category: 'review',
     icon: GitPullRequest,
-    aiTool: 'All',
     tags: ['review', 'pr', 'code-quality', 'suggestions'],
-    prompt: `Please review this code change following the pr-reviewer agent:
+    prompt: `Please review this code change following the pr-reviewer agent/skill:
 
 [Paste code or file paths]
 
 Instructions:
-1. Read: .github/agents/pr-reviewer/AGENT.md
-2. Check code quality, patterns, and best practices
-3. Verify accessibility if frontend code
-4. Check for security issues
-5. Validate error handling
+1. Check code quality, patterns, and best practices
+2. Verify accessibility if frontend code
+3. Check for security issues
+4. Validate error handling
+5. Confirm this playbook's AI tool instruction files are still consistent if this PR touches agents/skills/policies
 
 Provide inline comments with:
 - Line numbers for each suggestion
@@ -140,9 +128,8 @@ Format: "Line X: [severity] - [comment]"`
     description: 'Create a Node.js/TypeScript microservice endpoint',
     category: 'agent',
     icon: FileCode,
-    aiTool: 'All',
     tags: ['node', 'backend', 'api', 'typescript'],
-    prompt: `Create a new Node.js microservice endpoint following the node-microservice-builder agent:
+    prompt: `Create a new Node.js microservice endpoint following the node-microservice-builder agent/skill.
 
 Requirements:
 - Endpoint: [HTTP method and path]
@@ -152,14 +139,12 @@ Requirements:
 - Validation: [Rules]
 
 Please:
-1. Read: .github/agents/node-microservice-builder/AGENT.md
-2. Follow: .github/skills/node-typescript-service/SKILL.md
-3. Reference: .github/skills/node-typescript-service/references/validation-and-errors.md
-4. Implement proper error handling
-5. Add input validation
-6. Include TypeScript types
-7. Follow RESTful conventions
-8. Add appropriate status codes
+1. Follow the node-microservice-builder procedure and the node-typescript-service skill's validation/error reference
+2. Implement proper error handling
+3. Add input validation
+4. Include TypeScript types
+5. Follow RESTful conventions
+6. Add appropriate status codes
 
 Output the service code with proper structure.`
   },
@@ -169,21 +154,13 @@ Output the service code with proper structure.`
     description: 'Use React component building procedures',
     category: 'skill',
     icon: BookOpen,
-    aiTool: 'All',
     tags: ['react', 'skill', 'component', 'procedure'],
     prompt: `I need to build a React component using best practices.
 
-Please follow the React Components skill:
-1. Read: .github/skills/react-components/SKILL.md
-2. Reference as needed:
-   - .github/skills/react-components/references/react-ts-patterns.md
-   - .github/skills/react-components/references/a11y-wcag22.md
-   - .github/skills/react-components/assets/component-spec.template.md
+Please follow the react-components skill (or its Cursor rule / Copilot prompt equivalent) step by step, referencing the WCAG guidelines and TypeScript pattern material it points to.
 
 Component details:
-[Describe your component]
-
-Apply the procedures from the skill file step by step.`
+[Describe your component]`
   },
   {
     id: 'a11y-skill',
@@ -191,14 +168,13 @@ Apply the procedures from the skill file step by step.`
     description: 'Run accessibility testing and validation',
     category: 'skill',
     icon: Shield,
-    aiTool: 'All',
     tags: ['accessibility', 'testing', 'automation'],
     prompt: `I need to test this component for accessibility:
 
 [Component name or path]
 
 Please:
-1. Read: .github/skills/a11y-automation/SKILL.md
+1. Follow the a11y-automation skill (or its Cursor rule / Copilot prompt equivalent)
 2. Guide me through running the validation scripts
 3. If scripts aren't configured, provide setup instructions
 4. Explain how to interpret results
@@ -207,37 +183,11 @@ Please:
 Walk me through the automation process step by step.`
   },
   {
-    id: 'component-library-setup',
-    title: 'Component Library Setup',
-    description: 'Configure workspace for custom component library',
-    category: 'general',
-    icon: Palette,
-    aiTool: 'All',
-    tags: ['library', 'setup', 'configuration'],
-    prompt: `I'm working with a custom component library. Help me set up the workspace:
-
-Library details:
-- Name: [Library name]
-- Package: [npm package or path]
-- Documentation: [Link or path to docs]
-- Special conventions: [List any unique patterns]
-
-Please:
-1. Read: .github/copilot-instructions/client-library.md
-2. Guide me on where to place library-specific documentation
-3. Suggest which files to create in /client-docs/ folder
-4. Explain how agents will use this context
-5. Recommend any overrides needed in client-overrides.md
-
-Help me integrate this library into the AI Playbook workflow.`
-  },
-  {
     id: 'fix-bug',
     title: 'Debug and Fix Issue',
     description: 'Analyze and resolve a bug with context awareness',
     category: 'general',
     icon: Bug,
-    aiTool: 'All',
     tags: ['debugging', 'troubleshooting', 'fix'],
     prompt: `I'm experiencing an issue that needs debugging:
 
@@ -251,14 +201,14 @@ Affected code:
 [File path or code snippet]
 
 Please:
-1. Analyze the issue considering workspace policies
+1. Analyze the issue considering the workspace policy's scope rules
 2. Check if it's related to accessibility, if frontend
 3. Identify root cause
 4. Propose a fix with minimal changes
 5. Explain why this fix works
 6. Suggest tests to prevent regression
 
-Follow the scope-guard principles - only modify affected files.`
+Important: only modify files within this project's scope.`
   },
   {
     id: 'mcp-integration',
@@ -266,21 +216,20 @@ Follow the scope-guard principles - only modify affected files.`
     description: 'Integrate Model Context Protocol tools in your workflow',
     category: 'general',
     icon: Sparkles,
-    aiTool: 'Claude',
-    tags: ['mcp', 'tools', 'integration', 'claude'],
+    tags: ['mcp', 'tools', 'integration'],
     prompt: `I need to use an MCP tool with this task:
 
 Task: [Describe what you need to do]
-MCP Tool: [e.g., @playwright, @chrome, @github, @filesystem]
+MCP Tool: [e.g., Playwright, Chrome, GitHub, filesystem]
 
 Please:
 1. Explain which MCP tool is best for this task
-2. Show me how to invoke it in Claude Desktop
-3. Combine it with the relevant agent or skill from ai-playbook
+2. Show me how to invoke it
+3. Combine it with the relevant agent/skill from this playbook
 4. Guide me through the workflow
-5. Explain what the MCP tool provides vs what the agent does
+5. Explain what the MCP tool provides vs. what the agent/skill does
 
-Example: Use @playwright MCP to test component while following a11y-audit-react agent.`
+Example: Use the Chrome MCP server to test a component while following the figma-component-builder or a11y-audit-react procedure.`
   },
   {
     id: 'create-skill',
@@ -288,7 +237,6 @@ Example: Use @playwright MCP to test component while following a11y-audit-react 
     description: 'Define a new reusable skill for the playbook',
     category: 'skill',
     icon: Lightbulb,
-    aiTool: 'All',
     tags: ['creation', 'skill', 'template'],
     prompt: `I want to create a new skill for the AI Playbook:
 
@@ -297,10 +245,9 @@ Skill name: [lowercase-with-hyphens]
 Target: [frontend/backend/general]
 
 Please:
-1. Read: .github/skills/skill-creator/SKILL.md
-2. Use template: .github/skills/skill-creator/assets/skill-template.md
-3. Follow checklist: .github/skills/skill-creator/references/checklist.md
-4. Validate with: .github/skills/skill-creator/scripts/validate-metadata.py
+1. Follow the skill-creator skill/prompt/command for your AI tool
+2. Author the canonical version first at .claude/skills/<name>/SKILL.md
+3. Then help me adapt it to the other 3 tool formats (Copilot .prompt.md/.agent.md, Cursor .mdc/.md, Codex SKILL.md) using the frontmatter rules in the Structure tab
 
 Help me structure this new skill following the framework conventions.`
   },
@@ -310,7 +257,6 @@ Help me structure this new skill following the framework conventions.`
     description: 'Refactor across multiple files safely',
     category: 'general',
     icon: FileCode,
-    aiTool: 'All',
     tags: ['refactor', 'scope', 'safety'],
     prompt: `I need to refactor code across multiple files:
 
@@ -319,7 +265,7 @@ Affected files: [List files or pattern]
 Scope: [Specific directory or workspace root]
 
 Please:
-1. Verify scope using workspace-policy.md boundaries
+1. Verify scope against the workspace policy's boundaries
 2. Create a refactoring plan before making changes
 3. Show which files will be modified
 4. Explain impact on other parts of the codebase
@@ -334,45 +280,20 @@ Important: Stay within the specified scope and don't modify unrelated files.`
     description: 'Identify backend language and apply correct conventions',
     category: 'general',
     icon: Search,
-    aiTool: 'All',
     tags: ['backend', 'detection', 'conventions'],
     prompt: `Analyze this backend project and apply appropriate conventions:
 
 Project directory: [path]
 
 Please:
-1. Read: .github/copilot-instructions/backend-policy.md
+1. Apply the backend policy's conventions
 2. Detect language: Node/TypeScript, Java, Python, or other
 3. Identify framework: Express/Nest, Spring, FastAPI/Django, etc.
 4. Check for project config: package.json, pom.xml, pyproject.toml
 5. Apply language-specific best practices
-6. Suggest appropriate skill: node-typescript-service or other
+6. Suggest the node-typescript-service skill if applicable
 
 Then help me with: [your backend task]`
-  },
-  {
-    id: 'orchestrator-task',
-    title: 'Complex Task (Orchestrator)',
-    description: 'Use orchestrator for multi-step complex tasks',
-    category: 'agent',
-    icon: Workflow,
-    aiTool: 'All',
-    tags: ['orchestrator', 'complex', 'multi-step'],
-    prompt: `I have a complex task that needs multiple steps:
-
-Goal: [High-level objective]
-Context: [Project type and relevant details]
-
-Please act as the orchestrator:
-1. Read: .github/orchestrator/ORCHESTRATOR.md
-2. Break down this task into steps
-3. Identify which agents/skills are needed for each step
-4. Load them progressively (JiT - Just in Time)
-5. Execute step by step
-6. Coordinate between different skills
-7. Provide status updates after each step
-
-Execute this complex workflow efficiently.`
   },
   {
     id: 'style-output',
@@ -380,19 +301,17 @@ Execute this complex workflow efficiently.`
     description: 'Ask for output in a specific style',
     category: 'general',
     icon: MessageSquare,
-    aiTool: 'All',
     tags: ['formatting', 'output', 'style'],
-    prompt: `Please help me with this task and format output according to style-output.md:
+    prompt: `Please help me with this task and format output according to the style-output policy:
 
 Task: [Your request]
 
 Output requirements:
-1. Read: .github/copilot-instructions/style-output.md
-2. Provide minimal diffs (show only changed lines)
-3. Use relative paths from workspace root
-4. No mass reformatting or unrelated changes
-5. Include verification commands at the end
-6. Show plan first if changes affect multiple files
+1. Provide minimal diffs (show only changed lines)
+2. Use relative paths from the project root
+3. No mass reformatting or unrelated changes
+4. Include verification commands at the end
+5. Show a plan first if changes affect multiple files
 
 Present the solution clearly and concisely.`
   },
@@ -402,14 +321,13 @@ Present the solution clearly and concisely.`
     description: 'Get specific accessibility guidance',
     category: 'skill',
     icon: Shield,
-    aiTool: 'All',
     tags: ['wcag', 'accessibility', 'reference'],
     prompt: `I need accessibility guidance for:
 
 Element/Pattern: [e.g., modal dialog, form, navigation menu]
 
 Please:
-1. Reference: .github/skills/react-components/references/a11y-wcag22.md
+1. Pull from the react-components skill's WCAG 2.2 reference material
 2. Extract relevant WCAG 2.2 AA requirements for this pattern
 3. Provide code examples
 4. Explain keyboard interactions needed
@@ -432,8 +350,8 @@ export default function ExamplePromptsLibrary() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [copiedId, setCopiedId] = useState<string | null>(null)
 
-  const filteredPrompts = selectedCategory === 'all' 
-    ? promptTemplates 
+  const filteredPrompts = selectedCategory === 'all'
+    ? promptTemplates
     : promptTemplates.filter(p => p.category === selectedCategory)
 
   const copyToClipboard = async (prompt: PromptTemplate) => {
@@ -444,15 +362,6 @@ export default function ExamplePromptsLibrary() {
       setTimeout(() => setCopiedId(null), 2000)
     } catch (err) {
       toast.error('Failed to copy prompt')
-    }
-  }
-
-  const getAIToolBadgeColor = (tool?: string) => {
-    switch (tool) {
-      case 'Claude': return 'bg-accent/20 text-accent-foreground border-accent/40'
-      case 'Copilot': return 'bg-primary/20 text-primary border-primary/40'
-      case 'Cursor': return 'bg-secondary text-secondary-foreground border-secondary'
-      default: return 'bg-muted text-muted-foreground border-border'
     }
   }
 
@@ -471,7 +380,7 @@ export default function ExamplePromptsLibrary() {
         <CardContent>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Lightbulb className="h-4 w-4" />
-            <span>Tip: These prompts work with Claude, GitHub Copilot, Cursor, and other AI tools that support file references.</span>
+            <span>These prompts intentionally avoid hardcoding one tool's file paths — see the Structure tab for the exact path per tool.</span>
           </div>
         </CardContent>
       </Card>
@@ -530,11 +439,6 @@ export default function ExamplePromptsLibrary() {
                   </Button>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {prompt.aiTool && (
-                    <Badge variant="outline" className={getAIToolBadgeColor(prompt.aiTool)}>
-                      {prompt.aiTool}
-                    </Badge>
-                  )}
                   {prompt.tags.map((tag) => (
                     <Badge key={tag} variant="secondary" className="text-xs">
                       {tag}
@@ -584,7 +488,7 @@ export default function ExamplePromptsLibrary() {
                 3
               </div>
               <div>
-                <strong>Paste in your AI tool</strong> - Works with Claude, Copilot Chat, Cursor, and others
+                <strong>Paste in your AI tool</strong> - Works with Claude Code, Copilot, Cursor, and Codex CLI
               </div>
             </div>
             <div className="flex items-start gap-2">
@@ -592,7 +496,7 @@ export default function ExamplePromptsLibrary() {
                 4
               </div>
               <div>
-                <strong>Let the AI guide you</strong> - The prompts reference the correct agent/skill files automatically
+                <strong>Let the AI pick the right file</strong> - It resolves the correct agent/skill/rule/prompt path for whichever tool you're in
               </div>
             </div>
           </div>
@@ -608,11 +512,7 @@ export default function ExamplePromptsLibrary() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-accent">•</span>
-                <span>Use "Complex Task (Orchestrator)" for multi-step workflows that need coordination</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-accent">•</span>
-                <span>Combine prompts with MCP tools in Claude Desktop for enhanced capabilities</span>
+                <span>Combine prompts with MCP tools for enhanced capabilities (Figma, Chrome, filesystem, etc.)</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-accent">•</span>

@@ -1,20 +1,6 @@
 ---
 name: node-typescript-service
 description: Builds and extends Node.js/TypeScript microservice endpoints with request validation (Zod/Joi/class-validator), structured error handling, and unit + integration tests. Use when the user wants to create or modify an API endpoint, service layer, or route handler in Express, Nest.js, or Fastify. Do not use for React frontend components, UI elements, or accessibility audits.
-triggers:
-  - create API endpoint
-  - build microservice
-  - Node.js service
-  - TypeScript backend
-  - add route handler
-  - implement REST endpoint
-  - add request validation
-negative_triggers:
-  - React component
-  - frontend component
-  - UI element
-  - accessibility audit
-  - database migration
 ---
 
 # Skill: Node.js/TypeScript Service
@@ -50,9 +36,7 @@ If unclear, request clarification.
 
 ### 2. Load Backend Policy
 
-Read: `.github/copilot-instructions/backend-policy.md`
-
-Follow Node.js/TypeScript conventions.
+Read the project's `CLAUDE.md` (or `../../policies/backend-policy.md` in this playbook) for Node.js/TypeScript conventions.
 
 ### 3. Define Request Validation Schema
 
@@ -76,7 +60,7 @@ const CreateUserSchema = z.object({
 type CreateUserRequest = z.infer<typeof CreateUserSchema>
 ```
 
-Refer to: `references/validation-and-errors.md`
+Refer to: [references/validation-and-errors.md](references/validation-and-errors.md)
 
 ### 4. Implement Route Handler
 
@@ -137,7 +121,7 @@ Return structured error responses:
 }
 ```
 
-Refer to: `references/validation-and-errors.md`
+Refer to: [references/validation-and-errors.md](references/validation-and-errors.md)
 
 ### 6. Add Logging
 
@@ -252,5 +236,5 @@ Suggest verification commands:
 
 ## References
 
-- Validation and Errors: `references/validation-and-errors.md`
-- Service Specification Template: `assets/service-spec.template.md`
+- Validation and Errors: [references/validation-and-errors.md](references/validation-and-errors.md)
+- Service Specification Template: [assets/service-spec.template.md](assets/service-spec.template.md)

@@ -1,0 +1,86 @@
+---
+description: Workspace scope, project isolation, and AI tool instruction file conventions for this playbook
+alwaysApply: true
+---
+
+# Workspace Policy
+
+## Supported AI Tools
+
+This playbook supports four AI coding assistants. Each has its own discovery mechanism — there is no shared folder all of them read.
+
+| AI Tool | Always-loaded instructions | Location |
+|---|---|---|
+| GitHub Copilot | `copilot-instructions.md` | `<repo-root>/.github/copilot-instructions.md` |
+| Claude Code | `CLAUDE.md` | `<repo-root>/CLAUDE.md` |
+| Cursor | `.mdc` rules (`alwaysApply: true`) | `<repo-root>/.cursor/rules/*.mdc` |
+| OpenAI Codex CLI | `AGENTS.md` | `<repo-root>/AGENTS.md` (nearest wins for nested overrides) |
+
+Run `/ai-tool-setup` to generate or refresh instruction files for all four tools.
+
+## Rules, Commands, and Skills (Cursor)
+
+As of Cursor 2.4 (January 2026), Cursor natively reads Agent Skills — the same open `SKILL.md` format used by Claude Code and Codex CLI — directly from `.cursor/skills/<name>/SKILL.md` (project) or `~/.cursor/skills/` (personal); it also reads the shared `.agents/skills/` location and, for legacy compatibility, `.claude/skills/` and `.codex/skills/`. All three Cursor mechanisms coexist and serve different purposes:
+
+| Mechanism | Location | Purpose |
+|---|---|---|
+| Rules | `.cursor/rules/*.mdc` | Short, always-on or glob-scoped guidance auto-attached by file type (like this document) |
+| Commands | `.cursor/commands/*.md` | Simple one-off actions invoked explicitly with `/name` |
+| Skills | `.cursor/skills/<name>/SKILL.md` | Longer, multi-step procedures — explicitly invoked with `/name` or model-selected from `name`/`description`, optionally scoped to file types via a `paths` frontmatter field, and able to bundle `scripts/`, `references/`, and `assets/` subfolders |
+
+This playbook's 13 procedures (the 6 skills and 7 former-agents under `.claude/skills/` and `.claude/agents/`) are ported to Cursor as native skills under `.cursor/skills/<name>/SKILL.md`. The routing table below points at those files. The existing `.cursor/rules/*.mdc` file-type rules and `.cursor/commands/*.md` commands remain valid and continue to work — this is additive, not a replacement.
+
+### Skill Routing (canonical source: `../../.claude/skills/` and `../../.claude/agents/`)
+
+| Task | Skill |
+|---|---|
+| React component (create/modify) | `.cursor/skills/react-components/SKILL.md` |
+| Accessibility testing | `.cursor/skills/a11y-automation/SKILL.md` |
+| Node.js/TypeScript service | `.cursor/skills/node-typescript-service/SKILL.md` |
+| Figma → component | `.cursor/skills/figma-component/SKILL.md` |
+| New skill scaffolding | `.cursor/skills/skill-creator/SKILL.md` |
+| AI tool configuration (all 4 tools) | `.cursor/skills/ai-tool-setup/SKILL.md` |
+| Detect workspace type | `.cursor/skills/scan-workspace/SKILL.md` |
+| Build a React component | `.cursor/skills/react-component-builder/SKILL.md` |
+| Convert Figma designs into components | `.cursor/skills/figma-component-builder/SKILL.md` |
+| Accessibility audit on React components | `.cursor/skills/a11y-audit-react/SKILL.md` |
+| Build a Node microservice | `.cursor/skills/node-microservice-builder/SKILL.md` |
+| Pull request review | `.cursor/skills/pr-reviewer/SKILL.md` |
+| Review source code quality | `.cursor/skills/code-reviewer/SKILL.md` |
+
+## Scope Enforcement
+
+Treat each top-level project folder as an independent, isolated unit.
+
+### Project Isolation Rules
+
+1. Identify the target project folder before making any changes.
+2. Restrict all file operations to that folder and its descendants.
+3. Never traverse upward beyond the target project root.
+4. Never modify files in sibling projects unless explicitly instructed.
+
+### Exclusion Patterns
+
+Ignore the following during analysis and modification:
+
+- `node_modules/`, `dist/`, `build/`, `out/`
+- `.next/`, `.nuxt/`, `.vite/`
+- `coverage/`, `.nyc_output/`
+- `.venv/`, `venv/`, `__pycache__/`
+- `target/` (Java)
+- `.git/`, `.svn/`
+- `*.log`, `*.tmp`
+
+### Target Folder Selection
+
+1. If a specific folder path is provided, validate it exists.
+2. If working from a file path, extract the project root by locating `package.json` (Node/JS), `pom.xml`/`build.gradle` (Java), `pyproject.toml`/`setup.py` (Python), or `.git/` as a fallback.
+3. If ambiguous, ask for explicit clarification before proceeding.
+
+### Cross-Folder Refactor Prohibition
+
+Do NOT change multiple project folders at once unless explicitly requested or a workspace-level coordination task is clearly specified. Default to operating on a single project at a time.
+
+### Scope Validation
+
+Before finishing a change, double-check every modified path is within the target root and that none of the excluded directories above were touched. Abort and flag if a scope violation is detected.

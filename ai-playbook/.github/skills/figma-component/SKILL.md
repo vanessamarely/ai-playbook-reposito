@@ -1,16 +1,6 @@
 ---
 name: figma-component
 description: Converts Figma nodes into production-ready React/TypeScript components using project-provided conventions and reusable component libraries. Use when implementing or updating UI from Figma in any project scope.
-triggers:
-  - convert figma to component
-  - figma component generation
-  - build component from figma node
-  - map figma design system component
-  - generate tsx from figma
-negative_triggers:
-  - backend endpoint
-  - database migration
-  - infra automation
 ---
 
 # Skill: figma-component
@@ -85,7 +75,7 @@ Default layout for a new component `Xyz` (adjust to project conventions in `clie
 
 ### 7) Figma Fallback Workflow
 
-- Attempt to load design context from Figma MCP first.
+- Attempt to load design context from the Figma MCP server first.
 - If unavailable or incomplete, switch to screenshot-driven implementation.
 - Use attached screenshot(s) to infer structure, spacing, typography, states, and interactions.
 - If screenshots are insufficient (missing states or responsive behavior), ask the user for additional screenshots.
@@ -100,7 +90,7 @@ Before completion, provide project-specific commands based on available scripts 
 - unit tests
 - Storybook (if available)
 
-If `dev_url` is provided, run browser validation via Chrome MCP:
+If `dev_url` is provided, run browser validation via the Chrome MCP server:
 
 - capture visual state screenshots
 - run automated `axe-core` accessibility checks
@@ -119,32 +109,32 @@ If violations are found, include concrete remediation guidance and do not mark w
 
 ## Apply Patch Output Requirement
 
-When generating code changes, output `apply_patch`-compatible diffs with minimal, reviewable edits.
+When generating code changes, output minimal, reviewable diffs (using Copilot's native edit tools directly, not a manual patch format).
 
 ## Generic Prompt Examples
 
 1) Create component from Figma
 
-"agent:figma-component-builder scope:web-client destination_folder:src/components/account component_library:acme-ui client_context:TypeScript strict, CSS modules, named exports figma_url:https://figma.com/design/FILEKEY/NAME?node-id=1-2 dev_url:http://localhost:6006 create_mode:preview"
+"scope:web-client destination_folder:src/components/account component_library:acme-ui client_context:TypeScript strict, CSS modules, named exports figma_url:https://figma.com/design/FILEKEY/NAME?node-id=1-2 dev_url:http://localhost:6006 create_mode:preview"
 
 2) Build adapter around an existing library component
 
-"agent:figma-component-builder scope:portal-app destination_folder:src/ui component_library:design-system-react client_context:Tailwind, barrel exports by feature fileKey:ABC nodeId:1:2 dev_url:http://localhost:3000 create_mode:apply"
+"scope:portal-app destination_folder:src/ui component_library:design-system-react client_context:Tailwind, barrel exports by feature fileKey:ABC nodeId:1:2 dev_url:http://localhost:3000 create_mode:apply"
 
 3) Local-only generation without shared library
 
-"agent:figma-component-builder scope:admin-console destination_folder:src/components component_library:none client_context:SCSS modules, PascalCase components figma_url:https://figma.com/design/FILEKEY/FRAME?node-id=2-8 create_mode:preview"
+"scope:admin-console destination_folder:src/components component_library:none client_context:SCSS modules, PascalCase components figma_url:https://figma.com/design/FILEKEY/FRAME?node-id=2-8 create_mode:preview"
 
 4) Screenshot fallback when Figma is unavailable
 
-"agent:figma-component-builder scope:admin-console destination_folder:src/components component_library:none client_context:SCSS modules, PascalCase components screenshot_image:<attached image> create_mode:preview"
+"scope:admin-console destination_folder:src/components component_library:none client_context:SCSS modules, PascalCase components screenshot_image:<attached image> create_mode:preview"
 
 ## Deliverables
 
-- `apply_patch` diffs
-- concise human-readable change summary
+- Applied edits (or a preview plan, depending on `create_mode`)
+- Concise human-readable change summary
 - Chrome MCP a11y/visual JSON report when `dev_url` is supplied
-- verification checklist
+- Verification checklist
 
 ## Maintenance
 

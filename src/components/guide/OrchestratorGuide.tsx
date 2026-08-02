@@ -3,20 +3,109 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Network, 
-  Cpu, 
-  FileText, 
+import {
+  Network,
+  Cpu,
+  FileText,
   ArrowRight,
-  CheckCircle2,
   Info,
   Lightbulb,
-  GitBranch,
   Layers,
   AlertCircle,
-  FolderOpen,
-  Code
+  Code,
 } from 'lucide-react'
+
+interface RoutingTool {
+  id: string
+  label: string
+  badgeClass: string
+  alwaysLoaded: string
+  onDemand: string
+  invocation: string
+  steps: { title: string; detail: string }[]
+  example: { label: string; code: string }[]
+}
+
+const ROUTING: RoutingTool[] = [
+  {
+    id: 'copilot',
+    label: 'GitHub Copilot',
+    badgeClass: 'bg-accent text-accent-foreground',
+    alwaysLoaded: '.github/copilot-instructions.md (repo-wide) + any .github/instructions/*.instructions.md whose applyTo glob matches the file you\'re editing',
+    onDemand: '.github/skills/*/SKILL.md (native since 2026 — Copilot matches your request against skill descriptions, same as Claude); .github/agents/*.agent.md (selected explicitly) and .github/prompts/*.prompt.md (invoked with /prompt-name)',
+    invocation: 'Skills route by description match like Claude/Cursor/Codex do. Agents and prompts are still picked explicitly from a menu or typed as /prompt-name — those two mechanisms have not converged.',
+    steps: [
+      { title: '1. Instructions auto-load', detail: 'copilot-instructions.md loads every conversation; matching .instructions.md files layer on top based on the files in context.' },
+      { title: '2. Skill descriptions load', detail: 'Every .github/skills/*/SKILL.md description becomes available; Copilot loads the matching skill\'s full body when relevant, same as Claude Code.' },
+      { title: '3. You select an agent or prompt (if needed)', detail: 'For a multi-step task, you explicitly pick a custom agent from .github/agents/, or type /prompt-name for a reusable prompt.' },
+      { title: '4. Execution', detail: 'Copilot follows the instructions + whichever skill/agent/prompt content loaded.' },
+    ],
+    example: [
+      { label: 'Repo-wide rule', code: '.github/copilot-instructions.md — always in context' },
+      { label: 'Path-specific rule', code: '.github/instructions/frontend.instructions.md\napplyTo: "**/*.tsx,**/*.ts"' },
+      { label: 'Skill (model decides)', code: '.github/skills/react-components/SKILL.md' },
+      { label: 'Explicit agent pick', code: 'Copilot Chat → Agents → react-component-builder' },
+    ],
+  },
+  {
+    id: 'claude',
+    label: 'Claude Code',
+    badgeClass: 'bg-primary text-primary-foreground',
+    alwaysLoaded: 'CLAUDE.md (root, + any nested CLAUDE.md for the directory you\'re working in)',
+    onDemand: '.claude/skills/*/SKILL.md — Claude reads every skill\'s name + description at session start, then loads the full body only when it decides a skill is relevant (or you type /skill-name yourself)',
+    invocation: 'Claude itself decides which skill to load, based on your message matching a skill\'s description — this is real model-driven routing, not a manual picker.',
+    steps: [
+      { title: '1. CLAUDE.md loads', detail: 'Read at session start — routing table, core rules, tech stack.' },
+      { title: '2. Skill descriptions load', detail: 'Every .claude/skills/*/SKILL.md description (not the full body) is available to Claude as a lightweight index.' },
+      { title: '3. Claude matches your request', detail: 'Your message is compared against skill descriptions; the best match\'s full SKILL.md body loads into context.' },
+      { title: '4. Subagent delegation (optional)', detail: 'For an isolated, multi-step task, Claude can delegate to a .claude/agents/*.md subagent with its own tool access.' },
+      { title: '5. Execution', detail: 'Claude follows the loaded skill\'s procedure, using scripts/references/assets on demand.' },
+    ],
+    example: [
+      { label: 'Always loaded', code: 'CLAUDE.md' },
+      { label: 'Model decides to load', code: '.claude/skills/react-components/SKILL.md' },
+      { label: 'Explicit invocation', code: '/react-components  (or ask Claude directly — it decides)' },
+    ],
+  },
+  {
+    id: 'cursor',
+    label: 'Cursor',
+    badgeClass: 'bg-accent text-accent-foreground',
+    alwaysLoaded: '.cursor/rules/*.mdc with alwaysApply: true',
+    onDemand: '.cursor/skills/*/SKILL.md (native since Cursor 2.4 — description-matched like Claude/Copilot/Codex, or typed as /skill-name); .cursor/rules/*.mdc with globs; .cursor/commands/*.md (only when you type /command-name)',
+    invocation: 'Skills route by description match, same model-driven mechanism as Claude Code/Copilot/Codex. Rules still auto-attach by glob, and commands still require typing /command-name — three mechanisms coexist, each with its own trigger.',
+    steps: [
+      { title: '1. Always-on rules load', detail: 'Every .mdc with alwaysApply: true is in context from the start of the session.' },
+      { title: '2. Skill descriptions load', detail: 'Every .cursor/skills/*/SKILL.md description becomes available; Cursor loads the matching skill\'s full body when relevant, or you type /skill-name.' },
+      { title: '3. Globs auto-attach', detail: 'Opening or editing a file matching a rule\'s globs pulls that rule into context automatically.' },
+      { title: '4. You invoke a command', detail: 'Typing /command-name inserts that command\'s full content as the next instruction — always explicit, never automatic.' },
+    ],
+    example: [
+      { label: 'Always-on rule', code: '.cursor/rules/workspace-policy.mdc\nalwaysApply: true' },
+      { label: 'Skill (model decides)', code: '.cursor/skills/react-components/SKILL.md' },
+      { label: 'Explicit command', code: '/ai-tool-setup  →  .cursor/commands/ai-tool-setup.md' },
+    ],
+  },
+  {
+    id: 'codex',
+    label: 'OpenAI Codex CLI',
+    badgeClass: 'bg-primary text-primary-foreground',
+    alwaysLoaded: 'AGENTS.md — root file plus any nearer AGENTS.md between the repo root and your working directory (nearest wins for conflicts)',
+    onDemand: '.agents/skills/*/SKILL.md — same model-driven description matching as Claude, at a different discovery path',
+    invocation: 'Codex merges AGENTS.md top-to-bottom (root first, nested overrides layered on top) automatically, then matches your request against skill descriptions the same way Claude does — Codex has no separate "agent" file format to pick from.',
+    steps: [
+      { title: '1. AGENTS.md chain builds', detail: 'Codex walks from the repo root to your working directory, combining every AGENTS.md it finds, nearest content applied last.' },
+      { title: '2. Skill descriptions load', detail: 'Every .agents/skills/*/SKILL.md name + description becomes available.' },
+      { title: '3. Codex matches your request', detail: 'The best-matching skill\'s full body loads — or you invoke one explicitly with $skill-name.' },
+      { title: '4. Execution', detail: 'Codex follows the loaded skill\'s procedure, using its scripts/references/assets on demand.' },
+    ],
+    example: [
+      { label: 'Root policy', code: 'AGENTS.md' },
+      { label: 'Nested override', code: 'src/AGENTS.md  (layers on top of root)' },
+      { label: 'Skill (no separate "agent" format)', code: '.agents/skills/react-component-builder/SKILL.md' },
+    ],
+  },
+]
 
 export default function OrchestratorGuide() {
   return (
@@ -25,55 +114,37 @@ export default function OrchestratorGuide() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Network className="h-5 w-5 text-primary" />
-            Understanding the Orchestrator
+            How Requests Reach the Right Agent or Skill
           </CardTitle>
           <CardDescription>
-            The orchestrator is the central coordination layer that routes tasks to the appropriate agents and skills based on your AI tool
+            There is no universal "orchestrator.md" file — each tool has its own routing mechanism, built into the tool itself
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
             <Lightbulb className="h-4 w-4" />
-            <AlertTitle>Core Purpose</AlertTitle>
+            <AlertTitle>What actually routes a request</AlertTitle>
             <AlertDescription className="text-sm">
-              The orchestrator analyzes your request, detects your project type, and automatically loads the right agent or skill without overwhelming the AI with unnecessary context. It works differently depending on whether you're using GitHub Copilot or Claude AI (Cursor, Cline, etc.).
+              As of 2026, <strong>skills route the same way in all four tools</strong>: every skill's <code className="bg-muted px-1.5 py-0.5 rounded">description</code> is visible to the model, which decides when to load the full body — real model-driven routing, not a hand-written dispatcher. Custom agents, prompts, and commands remain <strong>explicit-only</strong> in every tool (you pick one, or type its name) — that part never converged. None of the four tools reads a file literally named <code className="bg-muted px-1.5 py-0.5 rounded">orchestrator.md</code>.
             </AlertDescription>
           </Alert>
 
           <div className="bg-background p-4 rounded-lg space-y-3">
             <h3 className="font-semibold flex items-center gap-2">
               <Cpu className="h-4 w-4 text-accent" />
-              How Orchestration Works
+              Two Routing Models
             </h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-start gap-2">
                 <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-foreground">1. Request Analysis:</strong> You ask the AI to perform a task (build a component, review code, etc.)
+                  <strong className="text-foreground">Explicit (all four, for agents/prompts/commands):</strong> you select an agent from a menu, type a slash command or prompt name, or a file-type glob auto-attaches a rule — deterministic, no ambiguity about what will load.
                 </span>
               </div>
               <div className="flex items-start gap-2">
                 <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-foreground">2. Orchestrator Routes:</strong> The orchestrator examines your request and project structure
-                </span>
-              </div>
-              <div className="flex items-start gap-2">
-                <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-foreground">3. Agent Selection:</strong> It loads the appropriate specialized agent (React builder, code reviewer, etc.)
-                </span>
-              </div>
-              <div className="flex items-start gap-2">
-                <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-foreground">4. Skill Loading:</strong> The agent then loads only the specific skills it needs
-                </span>
-              </div>
-              <div className="flex items-start gap-2">
-                <ArrowRight className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <span>
-                  <strong className="text-foreground">5. Task Execution:</strong> The AI executes the task with focused, relevant context
+                  <strong className="text-foreground">Model-driven (all four, for skills):</strong> every skill's description is always visible to the model; it decides which skill's full body to load based on your actual request — you can still invoke one directly by name. This used to be Claude Code/Codex-only; Copilot and Cursor added it in 2026.
                 </span>
               </div>
             </div>
@@ -84,461 +155,74 @@ export default function OrchestratorGuide() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <GitBranch className="h-5 w-5 text-accent" />
-            Orchestrator: GitHub Copilot vs Claude AI
+            <Layers className="h-5 w-5 text-accent" />
+            Routing, Tool by Tool
           </CardTitle>
           <CardDescription>
-            The orchestrator works differently depending on your AI tool due to their unique architectures and file structures
+            What loads automatically, what loads on demand, and how invocation actually works
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="comparison" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="comparison">Comparison</TabsTrigger>
-              <TabsTrigger value="copilot">GitHub Copilot</TabsTrigger>
-              <TabsTrigger value="claude">Claude AI</TabsTrigger>
+          <Tabs defaultValue="copilot" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+              {ROUTING.map((tool) => (
+                <TabsTrigger key={tool.id} value={tool.id}>{tool.label}</TabsTrigger>
+              ))}
             </TabsList>
 
-            <TabsContent value="comparison" className="space-y-4">
-              <Alert className="bg-accent/10 border-accent/30">
-                <Info className="h-4 w-4" />
-                <AlertTitle>Key Difference</AlertTitle>
-                <AlertDescription className="text-sm">
-                  GitHub Copilot uses a <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/</code> directory structure with automatic policy loading.
-                  Claude AI (Cursor, Cline, etc.) uses root-level directories with manual references via config files.
-                </AlertDescription>
-              </Alert>
-
-              <div className="grid md:grid-cols-2 gap-4">
-                <Card className="bg-accent/5 border-accent/30">
+            {ROUTING.map((tool) => (
+              <TabsContent key={tool.id} value={tool.id} className="space-y-4">
+                <Card className="bg-muted/20">
                   <CardHeader className="pb-3">
-                    <Badge className="w-fit mb-2">GitHub Copilot</Badge>
-                    <CardTitle className="text-base">Structure & Behavior</CardTitle>
+                    <Badge className={`w-fit mb-2 ${tool.badgeClass}`}>{tool.label}</Badge>
                   </CardHeader>
-                  <CardContent className="space-y-3 text-xs">
-                    <div className="space-y-2">
-                      <p className="font-medium text-foreground">Directory Structure:</p>
-                      <div className="font-mono bg-background p-2 rounded text-[10px] space-y-0.5">
-                        <div>.github/</div>
-                        <div className="pl-3">├── orchestrator.md</div>
-                        <div className="pl-3">├── copilot-instructions/</div>
-                        <div className="pl-6">├── workspace-policy.md</div>
-                        <div className="pl-6">└── frontend-policy.md</div>
-                        <div className="pl-3">├── agents/</div>
-                        <div className="pl-6">└── [agent-name]/AGENT.md</div>
-                        <div className="pl-3">└── skills/</div>
-                        <div className="pl-6">└── [skill-name]/SKILL.md</div>
-                      </div>
+                  <CardContent className="space-y-4 text-xs">
+                    <div>
+                      <p className="font-medium text-foreground mb-1">Always loaded</p>
+                      <p className="text-muted-foreground">{tool.alwaysLoaded}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground mb-1">Loaded on demand</p>
+                      <p className="text-muted-foreground">{tool.onDemand}</p>
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground mb-1">How invocation works</p>
+                      <p className="text-muted-foreground">{tool.invocation}</p>
                     </div>
 
                     <Separator />
 
                     <div className="space-y-2">
-                      <p className="font-medium text-foreground">How It Works:</p>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-accent shrink-0 mt-0.5" />
-                          <span>Auto-loads from <code className="bg-muted px-1 rounded">.github/copilot-instructions/</code></span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-accent shrink-0 mt-0.5" />
-                          <span>Orchestrator at <code className="bg-muted px-1 rounded">.github/orchestrator.md</code></span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-accent shrink-0 mt-0.5" />
-                          <span>Files named with UPPERCASE (AGENT.md, SKILL.md)</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-accent shrink-0 mt-0.5" />
-                          <span>Policies applied automatically to all conversations</span>
-                        </li>
-                      </ul>
+                      <h3 className="font-semibold text-sm flex items-center gap-2 text-foreground">
+                        <Code className="h-4 w-4 text-accent" />
+                        Request → Response Flow
+                      </h3>
+                      {tool.steps.map((step, i) => (
+                        <div key={i} className="flex items-start gap-2">
+                          <Badge variant="outline" className="shrink-0">{i + 1}</Badge>
+                          <div className="flex-1">
+                            <p className="font-medium text-foreground">{step.title.replace(/^\d+\.\s*/, '')}</p>
+                            <p className="text-muted-foreground">{step.detail}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
 
                     <Separator />
 
                     <div className="space-y-2">
-                      <p className="font-medium text-foreground">Usage Example:</p>
-                      <div className="font-mono bg-background p-2 rounded text-[10px]">
-                        @workspace Use the scan-workspace agent<br/>
-                        # Copilot automatically knows to look in<br/>
-                        # .github/agents/scan-workspace/AGENT.md
-                      </div>
+                      <h3 className="font-semibold text-sm text-foreground">Path Examples</h3>
+                      {tool.example.map((ex, i) => (
+                        <div key={i} className="bg-background p-2 rounded">
+                          <p className="text-muted-foreground mb-1">{ex.label}:</p>
+                          <pre className="font-mono text-[10px] whitespace-pre-wrap">{ex.code}</pre>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
-
-                <Card className="bg-primary/5 border-primary/30">
-                  <CardHeader className="pb-3">
-                    <Badge className="w-fit mb-2" variant="outline">Claude AI (Cursor, Cline)</Badge>
-                    <CardTitle className="text-base">Structure & Behavior</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3 text-xs">
-                    <div className="space-y-2">
-                      <p className="font-medium text-foreground">Directory Structure:</p>
-                      <div className="font-mono bg-background p-2 rounded text-[10px] space-y-0.5">
-                        <div>ai-playbook/</div>
-                        <div className="pl-3">├── orchestrator.md</div>
-                        <div className="pl-3">├── policies/</div>
-                        <div className="pl-6">├── workspace-policy.md</div>
-                        <div className="pl-6">└── frontend-policy.md</div>
-                        <div className="pl-3">├── agents/</div>
-                        <div className="pl-6">└── [agent-name]/agent.md</div>
-                        <div className="pl-3">└── skills/</div>
-                        <div className="pl-6">└── [skill-name]/skill.md</div>
-                      </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-2">
-                      <p className="font-medium text-foreground">How It Works:</p>
-                      <ul className="space-y-1 text-muted-foreground">
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                          <span>Manually referenced via <code className="bg-muted px-1 rounded">.cursorrules</code> or <code className="bg-muted px-1 rounded">.clinerules</code></span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                          <span>Orchestrator at root level <code className="bg-muted px-1 rounded">orchestrator.md</code></span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                          <span>Files named with lowercase (agent.md, skill.md)</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                          <span>Policies loaded via @ mentions or config references</span>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-2">
-                      <p className="font-medium text-foreground">Usage Example:</p>
-                      <div className="font-mono bg-background p-2 rounded text-[10px]">
-                        @../ai-playbook/agents/scan-workspace/agent.md<br/>
-                        # OR in your .cursorrules:<br/>
-                        # Use ai-playbook orchestrator
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Alert className="bg-muted/50">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Why The Difference?</AlertTitle>
-                <AlertDescription className="text-xs">
-                  <p className="mb-2">GitHub Copilot is tightly integrated with GitHub and expects configuration in the <code className="bg-muted px-1 rounded">.github/</code> directory. It automatically reads policies from <code className="bg-muted px-1 rounded">.github/copilot-instructions/</code>.</p>
-                  <p>Claude AI tools (Cursor, Cline) are IDE extensions that work with any codebase. They use simpler root-level directories and require explicit references via config files or @ mentions.</p>
-                </AlertDescription>
-              </Alert>
-            </TabsContent>
-
-            <TabsContent value="copilot" className="space-y-4">
-              <Card className="bg-accent/5 border-accent/30">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Layers className="h-5 w-5 text-accent" />
-                    GitHub Copilot Orchestrator Pattern
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <FolderOpen className="h-4 w-4 text-primary" />
-                      Directory Structure
-                    </h3>
-                    <div className="font-mono text-xs bg-background p-4 rounded-lg space-y-0.5">
-                      <div>project-root/</div>
-                      <div className="pl-4 text-accent">├── .github/  <span className="text-muted-foreground">← Required directory</span></div>
-                      <div className="pl-8 text-primary">│   ├── orchestrator.md  <span className="text-muted-foreground">← Main coordination</span></div>
-                      <div className="pl-8">│   ├── copilot-instructions/  <span className="text-muted-foreground">← Auto-loaded policies</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── workspace-policy.md  <span className="text-muted-foreground/60">← Project isolation rules</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── frontend-policy.md  <span className="text-muted-foreground/60">← React/TypeScript rules</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── backend-policy.md  <span className="text-muted-foreground/60">← Node/Java/Python rules</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   └── style-output.md  <span className="text-muted-foreground/60">← Response formatting</span></div>
-                      <div className="pl-8">│   ├── agents/  <span className="text-muted-foreground">← Specialized workflows</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── scan-workspace/AGENT.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── react-component-builder/AGENT.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── a11y-audit-react/AGENT.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   └── code-reviewer/AGENT.md</div>
-                      <div className="pl-8">│   └── skills/  <span className="text-muted-foreground">← Reusable procedures</span></div>
-                      <div className="pl-12 text-muted-foreground">│       ├── react-components/SKILL.md</div>
-                      <div className="pl-12 text-muted-foreground">│       ├── node-typescript-service/SKILL.md</div>
-                      <div className="pl-12 text-muted-foreground">│       └── a11y-automation/SKILL.md</div>
-                      <div className="pl-4">└── src/  <span className="text-muted-foreground">← Your code</span></div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <Code className="h-4 w-4 text-accent" />
-                      Orchestrator Execution Flow
-                    </h3>
-                    <div className="space-y-2 text-xs">
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">1</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Auto-Load Policies</p>
-                          <p className="text-muted-foreground">GitHub Copilot automatically reads all files in <code className="bg-muted px-1 rounded">.github/copilot-instructions/</code> for every conversation</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">2</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">User Makes Request</p>
-                          <p className="text-muted-foreground">You ask Copilot to perform a task: "Build a React login form"</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">3</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Orchestrator Routes</p>
-                          <p className="text-muted-foreground">The orchestrator in <code className="bg-muted px-1 rounded">.github/orchestrator.md</code> analyzes the request and routes to <code className="bg-muted px-1 rounded">agents/react-component-builder/AGENT.md</code></p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">4</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Agent Loads Skills</p>
-                          <p className="text-muted-foreground">The agent references <code className="bg-muted px-1 rounded">skills/react-components/SKILL.md</code> for detailed procedures</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">5</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Execute with Context</p>
-                          <p className="text-muted-foreground">Copilot builds the component following policies, agent workflow, and skill procedures</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm">Usage Examples</h3>
-                    <div className="space-y-3">
-                      <div className="bg-background p-3 rounded-lg">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Example 1: Scan project structure</p>
-                        <pre className="text-[10px] font-mono">
-@workspace Scan this project and suggest improvements
-</pre>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          → Orchestrator routes to <code className="bg-muted px-1 rounded">agents/scan-workspace/AGENT.md</code>
-                        </p>
-                      </div>
-
-                      <div className="bg-background p-3 rounded-lg">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Example 2: Build React component</p>
-                        <pre className="text-[10px] font-mono">
-@workspace Create an accessible UserCard component
-</pre>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          → Orchestrator routes to <code className="bg-muted px-1 rounded">agents/react-component-builder/AGENT.md</code><br/>
-                          → Agent loads <code className="bg-muted px-1 rounded">skills/react-components/SKILL.md</code>
-                        </p>
-                      </div>
-
-                      <div className="bg-background p-3 rounded-lg">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Example 3: Code review</p>
-                        <pre className="text-[10px] font-mono">
-@workspace Review src/components/LoginForm.tsx
-</pre>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          → Orchestrator routes to <code className="bg-muted px-1 rounded">agents/code-reviewer/AGENT.md</code>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Alert className="bg-accent/10 border-accent/30">
-                    <Lightbulb className="h-4 w-4" />
-                    <AlertTitle>Key Benefit</AlertTitle>
-                    <AlertDescription className="text-xs">
-                      With GitHub Copilot, policies are always active. You just reference agents or let the orchestrator route automatically. The <code className="bg-muted px-1 rounded">.github/</code> structure is GitHub-native and works seamlessly.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="claude" className="space-y-4">
-              <Card className="bg-primary/5 border-primary/30">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <Layers className="h-5 w-5 text-primary" />
-                    Claude AI Orchestrator Pattern
-                  </CardTitle>
-                  <CardDescription className="text-xs">
-                    For Cursor, Cline, and other Claude-powered tools
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <FolderOpen className="h-4 w-4 text-primary" />
-                      Directory Structure
-                    </h3>
-                    <div className="font-mono text-xs bg-background p-4 rounded-lg space-y-0.5">
-                      <div>project-root/</div>
-                      <div className="pl-4 text-accent">├── .cursorrules  <span className="text-muted-foreground">← Cursor config (references playbook)</span></div>
-                      <div className="pl-4 text-accent">├── .clinerules  <span className="text-muted-foreground">← Cline config (references playbook)</span></div>
-                      <div className="pl-4 text-primary">├── ai-playbook/  <span className="text-muted-foreground">← Root-level directory</span></div>
-                      <div className="pl-8 text-primary">│   ├── orchestrator.md  <span className="text-muted-foreground">← At root, not in .github/</span></div>
-                      <div className="pl-8">│   ├── policies/  <span className="text-muted-foreground">← Root-level, not copilot-instructions/</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── workspace-policy.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── frontend-policy.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── backend-policy.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   └── style-output.md</div>
-                      <div className="pl-8">│   ├── agents/  <span className="text-muted-foreground">← Root-level agents/</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── scan-workspace/</div>
-                      <div className="pl-16 text-muted-foreground">│   │   │   └── agent.md  <span className="text-muted-foreground/60">← lowercase!</span></div>
-                      <div className="pl-12 text-muted-foreground">│   │   ├── react-component-builder/</div>
-                      <div className="pl-16 text-muted-foreground">│   │   │   └── agent.md</div>
-                      <div className="pl-12 text-muted-foreground">│   │   └── code-reviewer/</div>
-                      <div className="pl-16 text-muted-foreground">│   │       └── agent.md</div>
-                      <div className="pl-8">│   └── skills/  <span className="text-muted-foreground">← Root-level skills/</span></div>
-                      <div className="pl-12 text-muted-foreground">│       ├── react-components/</div>
-                      <div className="pl-16 text-muted-foreground">│       │   └── skill.md  <span className="text-muted-foreground/60">← lowercase!</span></div>
-                      <div className="pl-12 text-muted-foreground">│       └── node-typescript-service/</div>
-                      <div className="pl-16 text-muted-foreground">│           └── skill.md</div>
-                      <div className="pl-4">└── src/  <span className="text-muted-foreground">← Your code</span></div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm flex items-center gap-2">
-                      <Code className="h-4 w-4 text-primary" />
-                      Orchestrator Execution Flow
-                    </h3>
-                    <div className="space-y-2 text-xs">
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">1</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Load Config File</p>
-                          <p className="text-muted-foreground">Claude reads <code className="bg-muted px-1 rounded">.cursorrules</code> or <code className="bg-muted px-1 rounded">.clinerules</code> which points to the orchestrator</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">2</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">User Makes Request</p>
-                          <p className="text-muted-foreground">You ask Claude: "Build a React login form" or explicitly mention: "@ai-playbook/orchestrator.md scan project"</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">3</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Orchestrator Routes</p>
-                          <p className="text-muted-foreground">The orchestrator at <code className="bg-muted px-1 rounded">ai-playbook/orchestrator.md</code> analyzes and routes to <code className="bg-muted px-1 rounded">agents/react-component-builder/agent.md</code></p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">4</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Load Policies</p>
-                          <p className="text-muted-foreground">Agent references policies from <code className="bg-muted px-1 rounded">policies/frontend-policy.md</code> as needed</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">5</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Agent Loads Skills</p>
-                          <p className="text-muted-foreground">The agent references <code className="bg-muted px-1 rounded">skills/react-components/skill.md</code> for procedures</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Badge variant="outline" className="shrink-0">6</Badge>
-                        <div className="flex-1">
-                          <p className="font-medium">Execute with Context</p>
-                          <p className="text-muted-foreground">Claude builds the component following the loaded policies and procedures</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm">Configuration File Example</h3>
-                    <div className="bg-background p-3 rounded-lg">
-                      <p className="text-xs font-semibold text-muted-foreground mb-2">.cursorrules (at project root)</p>
-                      <pre className="text-[10px] font-mono">
-{`# AI Playbook Configuration
-orchestrator: ./ai-playbook/orchestrator.md
-
-# Policies to apply
-policies:
-  - ./ai-playbook/policies/workspace-policy.md
-  - ./ai-playbook/policies/frontend-policy.md
-  - ./ai-playbook/policies/style-output.md
-
-# Available agents (loaded on demand)
-agents:
-  - ./ai-playbook/agents/scan-workspace/agent.md
-  - ./ai-playbook/agents/react-component-builder/agent.md
-  - ./ai-playbook/agents/code-reviewer/agent.md`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-sm">Usage Examples</h3>
-                    <div className="space-y-3">
-                      <div className="bg-background p-3 rounded-lg">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Example 1: Using @ mention</p>
-                        <pre className="text-[10px] font-mono">
-@ai-playbook/orchestrator.md scan this project
-</pre>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          → Explicitly loads orchestrator → Routes to appropriate agent
-                        </p>
-                      </div>
-
-                      <div className="bg-background p-3 rounded-lg">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Example 2: Via .cursorrules reference</p>
-                        <pre className="text-[10px] font-mono">
-Create an accessible UserCard component
-</pre>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          → Claude reads .cursorrules → Loads orchestrator<br/>
-                          → Routes to <code className="bg-muted px-1 rounded">agents/react-component-builder/agent.md</code><br/>
-                          → Agent loads <code className="bg-muted px-1 rounded">skills/react-components/skill.md</code>
-                        </p>
-                      </div>
-
-                      <div className="bg-background p-3 rounded-lg">
-                        <p className="text-xs font-semibold text-muted-foreground mb-2">Example 3: Direct agent reference</p>
-                        <pre className="text-[10px] font-mono">
-@ai-playbook/agents/code-reviewer/agent.md review this file
-</pre>
-                        <p className="text-[10px] text-muted-foreground mt-2">
-                          → Directly loads code-reviewer agent (bypasses orchestrator)
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Alert className="bg-primary/10 border-primary/30">
-                    <Lightbulb className="h-4 w-4" />
-                    <AlertTitle>Key Benefit</AlertTitle>
-                    <AlertDescription className="text-xs">
-                      With Claude AI tools, you have flexible control. Use the orchestrator for smart routing, or reference agents directly via @ mentions. The root-level structure is simple and works across any codebase.
-                    </AlertDescription>
-                  </Alert>
-                </CardContent>
-              </Card>
-            </TabsContent>
+              </TabsContent>
+            ))}
           </Tabs>
         </CardContent>
       </Card>
@@ -550,37 +234,36 @@ Create an accessible UserCard component
             Progressive Disclosure Pattern
           </CardTitle>
           <CardDescription>
-            Both GitHub Copilot and Claude AI use the same progressive disclosure strategy
+            All four tools share this strategy, even though the file structure differs
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            The orchestrator keeps AI context lean by loading detailed documentation only when needed. This prevents overwhelming the model with irrelevant information and improves response quality.
+            Keep the always-loaded file short. Put dense, single-purpose content in a skill/prompt/rule/agent that only loads when it's actually relevant. This prevents overwhelming the model with irrelevant information and keeps responses fast and focused.
           </p>
 
           <div className="bg-muted/50 p-4 rounded-lg space-y-3">
             <h3 className="font-semibold text-sm">Loading Strategy:</h3>
-            
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="shrink-0">Always</Badge>
-                <span className="text-muted-foreground">Policies (GitHub Copilot auto-loads, Claude AI via config)</span>
+                <span className="text-muted-foreground">copilot-instructions.md / CLAUDE.md / alwaysApply rules / AGENTS.md</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="shrink-0">On Request</Badge>
-                <span className="text-muted-foreground">Orchestrator (analyzes and routes)</span>
+                <Badge variant="outline" className="shrink-0">By file type</Badge>
+                <span className="text-muted-foreground">.instructions.md (applyTo) / .mdc rules (globs)</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="shrink-0">When Needed</Badge>
-                <span className="text-muted-foreground">Agents (specialized workflows for specific tasks)</span>
+                <Badge variant="outline" className="shrink-0">On request match</Badge>
+                <span className="text-muted-foreground">SKILL.md descriptions in any of the 4 tools — the model decides</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="shrink-0">JIT</Badge>
-                <span className="text-muted-foreground">Skills (detailed procedures loaded by agents)</span>
+                <Badge variant="outline" className="shrink-0">Explicit only</Badge>
+                <span className="text-muted-foreground">.agent.md / .prompt.md / .cursor/commands/*.md</span>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="shrink-0">Lazy</Badge>
-                <span className="text-muted-foreground">References (specs, examples loaded only if skill needs them)</span>
+                <span className="text-muted-foreground">scripts/, references/, assets/ inside any tool's skill folder — loaded only if the SKILL.md points to them</span>
               </div>
             </div>
           </div>
@@ -589,14 +272,13 @@ Create an accessible UserCard component
             <Info className="h-4 w-4" />
             <AlertTitle>Why This Matters</AlertTitle>
             <AlertDescription className="text-xs">
-              <p className="mb-2">Without orchestration, you'd need to load all agents, all skills, and all documentation into every AI conversation. This creates:</p>
+              <p className="mb-2">Without this discipline, every conversation would need every agent, every skill, and every reference doc loaded up front. That creates:</p>
               <ul className="space-y-1 list-disc list-inside pl-2">
                 <li>Token bloat (wasted context window)</li>
                 <li>Slower responses (more to process)</li>
-                <li>Lower quality (AI distracted by irrelevant info)</li>
-                <li>Higher costs (more tokens = more $)</li>
+                <li>Lower quality (the model distracted by irrelevant info)</li>
+                <li>Higher cost (more tokens processed)</li>
               </ul>
-              <p className="mt-2">The orchestrator solves this by loading exactly what's needed, when it's needed.</p>
             </AlertDescription>
           </Alert>
         </CardContent>
@@ -605,36 +287,14 @@ Create an accessible UserCard component
       <Card className="bg-primary/5 border-primary/20">
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-primary" />
-            Quick Reference: Which Structure Do I Use?
+            <AlertCircle className="h-4 w-4 text-primary" />
+            Common Mistake to Avoid
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-start gap-3 p-3 bg-accent/10 rounded-lg">
-              <CheckCircle2 className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium">Using GitHub Copilot?</p>
-                <p className="text-xs text-muted-foreground mt-1">Use the <code className="bg-muted px-1 rounded">.github/</code> directory structure with UPPERCASE filenames (AGENT.md, SKILL.md)</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-primary/10 rounded-lg">
-              <CheckCircle2 className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium">Using Cursor, Cline, or Claude?</p>
-                <p className="text-xs text-muted-foreground mt-1">Use root-level directories with lowercase filenames (agent.md, skill.md)</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-muted rounded-lg">
-              <Info className="h-5 w-5 text-foreground shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium">Want to support both?</p>
-                <p className="text-xs text-muted-foreground mt-1">Maintain two versions of your AI Playbook with different structures, or use the GitHub Copilot version and reference it manually in Claude AI tools</p>
-              </div>
-            </div>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Don't invent a shared <code className="bg-muted px-1 rounded">orchestrator.md</code> and expect every tool to read it — none of them will. For skills, you don't even need to adapt formats anymore: author once and place identical copies (or a symlink) at <code className="bg-muted px-1 rounded">.claude/skills/</code> and <code className="bg-muted px-1 rounded">.agents/skills/</code> and all four tools discover it. Always-loaded instructions and custom agents still need their own tool-specific file — keep that <em>content</em> in sync manually.
+          </p>
         </CardContent>
       </Card>
     </div>

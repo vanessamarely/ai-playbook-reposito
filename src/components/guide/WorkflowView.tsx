@@ -22,8 +22,11 @@ export default function WorkflowView() {
             <div className="flex-1">
               <h4 className="font-semibold mb-1">AI loads workspace policies</h4>
               <p className="text-sm text-muted-foreground mb-2">
-                High-level rules from <code className="bg-muted px-1.5 py-0.5 rounded text-xs">copilot-instructions/</code> are
-                loaded to understand project scope, frontend/backend conventions, and output style.
+                High-level rules are loaded automatically (from <code className="bg-muted px-1.5 py-0.5 rounded text-xs">CLAUDE.md</code>,{' '}
+                <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions.md</code>,{' '}
+                <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursor/rules/*.mdc</code>, or{' '}
+                <code className="bg-muted px-1.5 py-0.5 rounded text-xs">AGENTS.md</code>, depending on the tool) to understand
+                project scope, frontend/backend conventions, and output style.
               </p>
               <div className="bg-muted/30 p-2 rounded text-xs space-y-1">
                 <div>• workspace-policy.md</div>
@@ -65,8 +68,8 @@ export default function WorkflowView() {
             <div className="flex-1">
               <h4 className="font-semibold mb-1">Load appropriate agent</h4>
               <p className="text-sm text-muted-foreground mb-2">
-                Based on the task, an agent is selected (e.g., <code className="bg-muted px-1.5 py-0.5 rounded text-xs">react-component-builder</code>).
-                The agent AGENT.md file is loaded with its high-level procedure.
+                Based on the task, an agent is selected (e.g., <code className="bg-muted px-1.5 py-0.5 rounded text-xs">react-component-builder</code>) —
+                explicitly picked in Copilot/Cursor, or model-matched by description in Claude Code/Codex CLI.
               </p>
             </div>
           </div>

@@ -1,0 +1,79 @@
+---
+description: Build and extend Node.js/TypeScript microservice endpoints with request validation, structured error handling, and unit + integration tests
+globs: "server/**,services/**,**/*.service.ts"
+---
+
+# Node.js/TypeScript Service
+
+Create or modify Node.js/TypeScript backend services with proper validation, error handling, logging, and testing. Not for React frontend components, UI elements, or accessibility audits — see `react-components` / `a11y-automation` for those.
+
+For a guided end-to-end build (handler + validation + tests + routing), run `/node-microservice-builder`.
+
+## Procedure
+
+1. **Detect the framework** from `package.json` dependencies: `express` → Express.js, `@nestjs/core` → Nest.js, `fastify` → Fastify. If unclear, ask for clarification.
+2. **Follow the `backend-policy` rule** for Node.js/TypeScript conventions (module system, logging, validation libraries).
+3. **Define a request validation schema** using the project's validation library (Zod, Joi, or class-validator for Nest.js):
+   ```tsx
+   import { z } from 'zod'
+   const CreateUserSchema = z.object({
+     email: z.string().email(),
+     name: z.string().min(1),
+     age: z.number().int().positive().optional()
+   })
+   type CreateUserRequest = z.infer<typeof CreateUserSchema>
+   ```
+4. **Implement the route handler**:
+   - Express: parse/validate in the handler, delegate to a service, catch and forward errors.
+     ```tsx
+     router.post('/users', async (req: Request, res: Response) => {
+       try {
+         const data = CreateUserSchema.parse(req.body)
+         const user = await createUser(data)
+         res.status(201).json({ success: true, data: user })
+       } catch (error) {
+         handleError(error, res)
+       }
+     })
+     ```
+   - Nest.js: controller class with decorators, DTO with validation decorators, constructor-injected service.
+     ```tsx
+     @Controller('users')
+     export class UsersController {
+       constructor(private readonly usersService: UsersService) {}
+       @Post()
+       async create(@Body() createUserDto: CreateUserDto) {
+         return this.usersService.create(createUserDto)
+       }
+     }
+     ```
+5. **Implement error handling** — map errors to HTTP status codes (400 validation, 401 auth required, 403 forbidden, 404 not found, 409 conflict, 500 internal). Return structured error responses:
+   ```tsx
+   { success: false, error: { code: 'VALIDATION_ERROR', message: 'Invalid input data', details: [...] } }
+   ```
+   Prefer a `Result<T, E>` discriminated union in the service layer over throwing across boundaries where the project already uses that pattern.
+6. **Add structured logging** (Winston, Pino, or the framework's logger) — never `console.log` in production code:
+   ```tsx
+   logger.info('User created', { userId: user.id })
+   logger.error('Database connection failed', { error })
+   ```
+7. **Keep business logic in the service layer**, not the route handler:
+   ```tsx
+   class UsersService {
+     async create(data: CreateUserRequest): Promise<User> {
+       const existing = await this.findByEmail(data.email)
+       if (existing) throw new ConflictError('Email already registered')
+       return this.repository.save(data)
+     }
+   }
+   ```
+8. **Generate tests** adjacent to the handler — unit tests for the service in isolation, integration tests for the full HTTP request/response (e.g. with `supertest`), covering success and error cases.
+9. **Register the endpoint** in the project's routing configuration and verify there's no route conflict.
+10. **Validate the implementation**: validation applied, error handling comprehensive, responses consistently structured, logging captures relevant context, tests cover success and error paths. Suggest `npm run lint`, `npm test`, `npm run build`.
+
+## Error Handling
+
+- **Missing validation library**: suggest installing Zod, Joi, or class-validator.
+- **Framework mismatch**: clarify the detected framework before proceeding.
+- **Route conflict**: notify and suggest an alternative path or method.
+- **Type safety issue**: ensure explicit, validated types — avoid `any`.

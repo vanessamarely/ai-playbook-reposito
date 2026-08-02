@@ -30,7 +30,7 @@ const flowNodes: FlowNode[] = [
     id: 'policies',
     type: 'policy',
     label: 'Policies',
-    description: 'High-level workspace rules, frontend/backend conventions, and output guidelines',
+    description: 'High-level workspace rules, frontend/backend conventions, and output guidelines — always loaded (CLAUDE.md, copilot-instructions.md, .cursor/rules, or AGENTS.md, depending on tool)',
     files: ['workspace-policy.md', 'frontend-policy.md', 'backend-policy.md', 'style-output.md'],
     color: 'bg-accent'
   },
@@ -38,15 +38,15 @@ const flowNodes: FlowNode[] = [
     id: 'agent',
     type: 'agent',
     label: 'Agent',
-    description: 'Orchestration layer that coordinates multiple skills to accomplish a task',
-    files: ['react-component-builder/AGENT.md', 'a11y-audit-react/AGENT.md'],
+    description: 'Multi-step procedure invoked for a complex task (Claude: .claude/agents/, Copilot: .github/agents/*.agent.md, Cursor: .cursor/commands/, Codex: just another skill)',
+    files: ['react-component-builder.md', 'a11y-audit-react.md'],
     color: 'bg-primary'
   },
   {
     id: 'skill',
     type: 'skill',
     label: 'Skill',
-    description: 'Focused procedure for specific task (stays under 500 lines)',
+    description: 'Focused procedure for a specific task (stays under 500 lines) — Claude and Codex support a full SKILL.md folder; Copilot/Cursor use a condensed single file',
     files: ['react-components/SKILL.md', 'a11y-automation/SKILL.md'],
     color: 'bg-accent'
   },

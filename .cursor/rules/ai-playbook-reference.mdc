@@ -1,0 +1,40 @@
+---
+description: Points Cursor at the AI Playbook example package and this repo's own scope rules
+alwaysApply: true
+---
+
+# AI Playbook Reference
+
+This repository is the AI Playbook itself (a reference guide app plus a portable example package at `ai-playbook/`). Migrated from the legacy single `.cursorrules` file — Cursor's Agent mode ignores that format, so this `.mdc` rule replaces it.
+
+## Working on this repo's own app (`src/`)
+
+This is a React 19 + TypeScript + Vite app using Tailwind CSS and shadcn/ui. See [docs/PROJECT_CONTEXT.md](../../docs/PROJECT_CONTEXT.md) for the full stack. No playbook lookup needed for UI work.
+
+## Working on the example package (`ai-playbook/`)
+
+Canonical source for every agent/skill is `ai-playbook/.claude/skills/` and `ai-playbook/.claude/agents/` — edit there first, then port changes to `ai-playbook/.github/`, `ai-playbook/.cursor/`, and `ai-playbook/AGENTS.md` + `ai-playbook/.agents/skills/` using the mapping in `ai-playbook/.claude/skills/ai-tool-setup/references/skill-routing.md`.
+
+Detect project type: `node ai-playbook/tools/project-detect.mjs <targetFolder>`
+
+## Scope Enforcement
+
+- Only modify files within the stated target project folder.
+- Run `node ai-playbook/tools/scope-guard.mjs <targetFolder> <changedFiles...>` before finalizing changes to the example package.
+
+## Code Style
+
+- Minimal diffs: change only the lines necessary.
+- Do not reformat unrelated code or reorganize imports.
+- Use forward slashes in all file paths.
+
+## Security
+
+- Never hardcode secrets, API keys, or passwords.
+- Validate and sanitize all user inputs.
+
+## Testing
+
+- Run `npm test` to execute the test suite.
+- Run `npm run lint` for linting.
+- Run `npx tsc --noEmit` for type checking.

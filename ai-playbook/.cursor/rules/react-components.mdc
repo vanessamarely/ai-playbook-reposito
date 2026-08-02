@@ -1,0 +1,71 @@
+---
+description: Create and modify React components using TypeScript, Tailwind CSS, shadcn/ui, and WCAG 2.2 Level AA accessibility patterns
+globs: "**/*.tsx,**/*.jsx"
+---
+
+# React Components
+
+Create or modify React components using TypeScript with strict accessibility compliance (WCAG 2.2 Level AA), semantic HTML, and type safety. Not for Node.js services, API endpoints, database schemas, or non-React frameworks (Vue, Svelte, Angular).
+
+For a guided end-to-end build (component + tests + summary), use `/react-component-builder`.
+
+## Procedure
+
+1. **Validate the component name** — PascalCase, check for conflicts with existing components in the target directory.
+2. **Define the TypeScript interface for props** — required props without `?`, optional with `?`, specific types (avoid `any`), typed event handlers (e.g., `onClick?: (event: React.MouseEvent) => void`).
+3. **Choose semantic HTML**: `<button>` for actions, `<a>` for navigation, `<input>`/`<select>`/`<textarea>` for form fields, `<nav>`/`<header>`/`<main>`/`<footer>` for landmarks, `<article>`/`<section>` for content structure. Avoid `<div>`/`<span>` for interactive elements.
+4. **Implement keyboard support** for interactive components — `onKeyDown` for Enter/Space, arrow-key navigation for lists/menus, focus trap + restore for modals, ensure Tab reachability:
+   ```tsx
+   const handleKeyDown = (event: React.KeyboardEvent) => {
+     if (event.key === 'Enter' || event.key === ' ') {
+       event.preventDefault()
+       handleAction()
+     }
+   }
+   ```
+5. **Add ARIA only when semantic HTML is insufficient**: `aria-label` for icon buttons without visible text, `aria-labelledby` to reference visible labels, `aria-describedby` for extra context, `aria-expanded` for toggles/dropdowns, `aria-live` for dynamic updates.
+6. **Implement focus management for modals**: move focus in on open, trap focus while open, restore focus to the trigger element on close.
+   ```tsx
+   const modalRef = useRef<HTMLDivElement>(null)
+   useEffect(() => {
+     if (isOpen && modalRef.current) modalRef.current.focus()
+   }, [isOpen])
+   ```
+7. **Follow project-specific conventions** already present in the codebase.
+8. **Generate the component file**: imports, TypeScript interface, component function with typed props, JSX with semantic elements and accessibility attributes, export.
+9. **Validate accessibility**: semantic HTML used correctly, keyboard handlers present, ARIA valid and necessary, focus management for modals, contrast meets 4.5:1 (normal text) / 3:1 (large text).
+10. **Suggest testing**: unit tests for logic, accessibility tests with `@axe-core/react` or `jest-axe`, manual keyboard navigation testing. Commands: `npm run lint` (if `eslint-plugin-jsx-a11y` configured), `npm test -- <ComponentName>`.
+
+## Error Handling
+
+- **Non-semantic element used for interaction**: replace `<div>`/`<span>` with `<button>` or the appropriate element.
+- **Missing keyboard handler**: add `onKeyDown` for Enter/Space.
+- **Invalid ARIA combination**: fix per WCAG guidance below.
+- **Focus trap missing in modal**: implement focus management with refs and event listeners.
+
+## WCAG 2.2 AA Quick Reference
+
+- Images need `alt` text (`alt=""` for decorative). Icon buttons need `aria-label`.
+- Use semantic landmarks (`<nav>`, `<main>`) and correct heading order (one `<h1>`, no skipped levels).
+- All functionality operable via keyboard; no keyboard traps outside intentional modal focus traps.
+- Visible focus indicator on every focusable element (`:focus-visible` outline).
+- Target size ≥ 24×24 CSS px (buttons commonly styled `min-width/height: 44px`).
+- Forms: every input has a visible label, errors are specific and tied to the field via `aria-describedby` + `aria-invalid`.
+- Dynamic status updates use `aria-live="polite"` (or `role="status"`); errors use `role="alert"` (`aria-live="assertive"`).
+- Respect `prefers-reduced-motion` for animations/transitions.
+- Tooltips/popovers must be dismissible (Escape), hoverable, and not disappear on a timeout.
+
+```tsx
+// Dialog pattern
+<div role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+  <h2 id="dialog-title">Dialog Title</h2>
+  <div>Content</div>
+  <button onClick={onClose}>Close</button>
+</div>
+
+// Expandable section
+<button aria-expanded={isOpen} aria-controls="content-id">Expand</button>
+<div id="content-id" hidden={!isOpen}>Content</div>
+```
+
+For automated linting/CI checks against these rules, see the `a11y-automation` rule. For the full pattern catalogue and anti-patterns, run `/a11y-audit-react`.

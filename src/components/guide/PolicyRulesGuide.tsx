@@ -34,16 +34,17 @@ export default function PolicyRulesGuide() {
 
 ## Supported AI Tools
 
-This playbook supports multiple AI coding assistants. The following files serve as the primary instruction entry point for each tool:
+This playbook supports four AI coding assistants. Each has its own discovery mechanism — there is no shared folder all of them read.
 
-| AI Tool | Instruction File | Location |
+| AI Tool | Always-loaded instructions | Location |
 |---|---|---|
 | GitHub Copilot | \`copilot-instructions.md\` | \`<repo-root>/.github/copilot-instructions.md\` |
-| Claude (Code / claude.ai) | \`CLAUDE.md\` | \`<repo-root>/CLAUDE.md\` |
-| Cursor IDE | \`.cursorrules\` | \`<repo-root>/.cursorrules\` |
-| Windsurf (Codeium) | \`.windsurfrules\` | \`<repo-root>/.windsurfrules\` |
+| Claude Code | \`CLAUDE.md\` | \`<repo-root>/CLAUDE.md\` |
+| Cursor | \`.mdc\` rules (\`alwaysApply: true\`) | \`<repo-root>/.cursor/rules/*.mdc\` |
+| OpenAI Codex CLI | \`AGENTS.md\` | \`<repo-root>/AGENTS.md\` (nearest wins for nested overrides) |
 
-All of these files reference the same playbook skills and policies. Use the \`ai-tool-setup\` skill to generate or refresh them.
+Use the \`ai-tool-setup\` skill to generate or refresh all four:
+\`Skill: ai-playbook/.claude/skills/ai-tool-setup/SKILL.md\`
 
 ## Scope Enforcement
 
@@ -391,9 +392,9 @@ Proceed immediately with the fix.`
                 <div className="space-y-2">
                   <p className="text-sm font-medium">Why These Rules Matter</p>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    These policies help AI tools understand your workspace structure, enforce accessibility standards, 
-                    maintain consistent code style, and prevent common mistakes. They work across GitHub Copilot, 
-                    Claude, Cursor, and other AI assistants.
+                    These policies help AI tools understand your workspace structure, enforce accessibility standards,
+                    maintain consistent code style, and prevent common mistakes. The content applies across
+                    GitHub Copilot, Claude Code, Cursor, and OpenAI Codex CLI — each tool just loads it in its own format.
                   </p>
                 </div>
               </div>
@@ -489,23 +490,34 @@ Proceed immediately with the fix.`
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="space-y-2">
-            <p className="font-medium">For GitHub Copilot:</p>
+            <p className="font-medium">GitHub Copilot:</p>
             <p className="text-muted-foreground">
-              Policies are automatically loaded from <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions/</code>
+              workspace + output-style content merges into <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions.md</code> (always loaded);
+              frontend/backend content becomes <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/instructions/*.instructions.md</code> with an <code className="bg-muted px-1.5 py-0.5 rounded text-xs">applyTo</code> glob.
             </p>
           </div>
           <div className="space-y-2">
-            <p className="font-medium">For Claude/Cursor/Other Tools:</p>
+            <p className="font-medium">Claude Code:</p>
             <p className="text-muted-foreground">
-              Copy the policies you need and add them to your tool's configuration file 
-              (<code className="bg-muted px-1.5 py-0.5 rounded text-xs">CLAUDE.md</code>, <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursorrules</code>, etc.)
+              Content lives directly in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">CLAUDE.md</code> — Claude reads the whole file at session start, so keep it focused.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <p className="font-medium">Cursor:</p>
+            <p className="text-muted-foreground">
+              Each policy becomes its own <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursor/rules/*.mdc</code> file — workspace/output-style use <code className="bg-muted px-1.5 py-0.5 rounded text-xs">alwaysApply: true</code>, frontend/backend use a <code className="bg-muted px-1.5 py-0.5 rounded text-xs">globs</code> pattern so they only load for matching files.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <p className="font-medium">OpenAI Codex CLI:</p>
+            <p className="text-muted-foreground">
+              Content merges into <code className="bg-muted px-1.5 py-0.5 rounded text-xs">AGENTS.md</code> at the repo root; a nested <code className="bg-muted px-1.5 py-0.5 rounded text-xs">AGENTS.md</code> (e.g. in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">src/</code>) can layer domain-specific rules on top, since the nearest file wins.
             </p>
           </div>
           <div className="space-y-2">
             <p className="font-medium">Reference in Prompts:</p>
             <p className="text-muted-foreground">
-              When asking AI to work on a task, reference specific policies: 
-              "Follow the frontend policy for accessibility" or "Apply output style guidelines"
+              Regardless of tool: "Follow the frontend policy for accessibility" or "Apply the output style guidelines" — the model will pull from whichever file it auto-loaded.
             </p>
           </div>
         </CardContent>

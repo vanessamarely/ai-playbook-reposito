@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { FolderTree, Copy, CheckCircle2, FileCode, Terminal, AlertTriangle } from 'lucide-react'
+import { FolderTree, Copy, CheckCircle2, FileCode, Terminal, AlertTriangle, XCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -12,284 +12,59 @@ export default function WorkspaceRootSetup() {
     toast.success(`${label} copied to clipboard`)
   }
 
-  const cursorRulesContent = `# AI Playbook Workspace Root Configuration
-# This file enables Cursor to use ai-playbook from workspace root across all projects
-# NOTE: Update paths based on your AI Playbook version:
-#   - GitHub Copilot version: uses .github/ directory
-#   - Claude AI version: uses root-level directories
+  const claudeGlobalSetup = `# Claude Code has a REAL personal scope — no symlink needed.
+# Personal skills/agents apply to every project on your machine.
 
-# === FOR GITHUB COPILOT VERSION ===
-# Reference the orchestrator for intelligent routing
-orchestrator: ./ai-playbook/.github/orchestrator.md
+mkdir -p ~/.claude/skills ~/.claude/agents
+cp -r ai-playbook/.claude/skills/* ~/.claude/skills/
+cp -r ai-playbook/.claude/agents/* ~/.claude/agents/
 
-# Project isolation - only work within the current project
-workspace_policy: ./ai-playbook/.github/copilot-instructions/workspace-policy.md
+# Now every "claude" session on this machine sees these skills/agents,
+# regardless of which repo you're in. Update by re-running the cp above
+# (or symlink instead of copy if you want them to stay in sync automatically):
 
-# Load policies based on project type
-frontend_policy: ./ai-playbook/.github/copilot-instructions/frontend-policy.md
-backend_policy: ./ai-playbook/.github/copilot-instructions/backend-policy.md
-
-# Output style for all AI responses
-style_output: ./ai-playbook/.github/copilot-instructions/style-output.md
-
-# Available agents (use via @ai-playbook path)
-agents:
-  - ./ai-playbook/.github/agents/scan-workspace/AGENT.md
-  - ./ai-playbook/.github/agents/react-component-builder/AGENT.md
-  - ./ai-playbook/.github/agents/figma-component-builder/AGENT.md
-  - ./ai-playbook/.github/agents/a11y-audit-react/AGENT.md
-  - ./ai-playbook/.github/agents/node-microservice-builder/AGENT.md
-  - ./ai-playbook/.github/agents/pr-reviewer/AGENT.md
-  - ./ai-playbook/.github/agents/code-reviewer/AGENT.md
-
-# Available skills (loaded JIT by agents)
-skills:
-  - ./ai-playbook/.github/skills/react-components/SKILL.md
-  - ./ai-playbook/.github/skills/figma-component/SKILL.md
-  - ./ai-playbook/.github/skills/node-typescript-service/SKILL.md
-  - ./ai-playbook/.github/skills/a11y-automation/SKILL.md
-  - ./ai-playbook/.github/skills/skill-creator/SKILL.md
-  - ./ai-playbook/.github/skills/ai-tool-setup/SKILL.md
-
-# === FOR CLAUDE AI VERSION (uncomment and use instead) ===
-# orchestrator: ./ai-playbook/orchestrator.md
-# workspace_policy: ./ai-playbook/policies/workspace-policy.md
-# frontend_policy: ./ai-playbook/policies/frontend-policy.md
-# backend_policy: ./ai-playbook/policies/backend-policy.md
-# style_output: ./ai-playbook/policies/style-output.md
-# agents:
-#   - ./ai-playbook/agents/scan-workspace/agent.md
-#   - ./ai-playbook/agents/react-component-builder/agent.md
-#   - ./ai-playbook/agents/figma-component-builder/agent.md
-#   - ./ai-playbook/agents/a11y-audit-react/agent.md
-#   - ./ai-playbook/agents/node-microservice-builder/agent.md
-#   - ./ai-playbook/agents/pr-reviewer/agent.md
-#   - ./ai-playbook/agents/code-reviewer/agent.md
-# skills:
-#   - ./ai-playbook/skills/react-components/skill.md
-#   - ./ai-playbook/skills/figma-component/skill.md
-#   - ./ai-playbook/skills/node-typescript-service/skill.md
-#   - ./ai-playbook/skills/a11y-automation/skill.md
-#   - ./ai-playbook/skills/skill-creator/skill.md
-#   - ./ai-playbook/skills/ai-tool-setup/skill.md
-
-# Usage examples:
-# - "Use @ai-playbook orchestrator to scan this project"
-# - "Apply react-component-builder agent to create LoginForm component"
-# - "Run code-reviewer agent on src/components/UserCard.tsx"
-# - "Use a11y-audit-react agent to check accessibility"
+# ln -s "$(pwd)/ai-playbook/.claude/skills"/* ~/.claude/skills/
 `
 
-  const clineRulesContent = `# AI Playbook Configuration for Cline
-# Location: ~/.clinerules or workspace-root/.clinerules
-# NOTE: Update paths based on your AI Playbook version:
-#   - GitHub Copilot version: uses .github/ directory
-#   - Claude AI version: uses root-level directories
+  const codexGlobalSetup = `# Codex CLI also has a real personal scope: ~/.codex/AGENTS.md (global instructions)
+# and $HOME/.agents/skills/ (user-scope skills) — both load in every project.
 
-# === FOR GITHUB COPILOT VERSION ===
-# Core Orchestration
-orchestrator_path: "./ai-playbook/.github/orchestrator.md"
+cp ai-playbook/AGENTS.md ~/.codex/AGENTS.md
+mkdir -p ~/.agents/skills
+cp -r ai-playbook/.agents/skills/* ~/.agents/skills/
 
-# Policy References (loaded automatically based on project detection)
-policies:
-  workspace: "./ai-playbook/.github/copilot-instructions/workspace-policy.md"
-  frontend: "./ai-playbook/.github/copilot-instructions/frontend-policy.md"
-  backend: "./ai-playbook/.github/copilot-instructions/backend-policy.md"
-  output_style: "./ai-playbook/.github/copilot-instructions/style-output.md"
-
-# Agent Registry
-agents:
-  scan_workspace:
-    path: "./ai-playbook/.github/agents/scan-workspace/AGENT.md"
-    triggers: ["analyze project", "scan workspace", "detect project type"]
-  react_builder:
-    path: "./ai-playbook/.github/agents/react-component-builder/AGENT.md"
-    triggers: ["create react component", "build component", "new react"]
-  figma_builder:
-    path: "./ai-playbook/.github/agents/figma-component-builder/AGENT.md"
-    triggers: ["build from figma", "convert figma", "figma component"]
-  a11y_audit:
-    path: "./ai-playbook/.github/agents/a11y-audit-react/AGENT.md"
-    triggers: ["accessibility audit", "check a11y", "wcag check"]
-  node_service:
-    path: "./ai-playbook/.github/agents/node-microservice-builder/AGENT.md"
-    triggers: ["create service", "build api", "new endpoint"]
-  code_reviewer:
-    path: "./ai-playbook/.github/agents/code-reviewer/AGENT.md"
-    triggers: ["review code", "code review", "check code quality"]
-  pr_reviewer:
-    path: "./ai-playbook/.github/agents/pr-reviewer/AGENT.md"
-    triggers: ["review pr", "check pull request", "review changes"]
-
-# Skill Registry (lazy-loaded by agents)
-skills:
-  react_components: "./ai-playbook/.github/skills/react-components/SKILL.md"
-  figma_component: "./ai-playbook/.github/skills/figma-component/SKILL.md"
-  node_typescript: "./ai-playbook/.github/skills/node-typescript-service/SKILL.md"
-  a11y_automation: "./ai-playbook/.github/skills/a11y-automation/SKILL.md"
-  skill_creator: "./ai-playbook/.github/skills/skill-creator/SKILL.md"
-  ai_tool_setup: "./ai-playbook/.github/skills/ai-tool-setup/SKILL.md"
-
-# === FOR CLAUDE AI VERSION (uncomment and use instead) ===
-# orchestrator_path: "./ai-playbook/orchestrator.md"
-# policies:
-#   workspace: "./ai-playbook/policies/workspace-policy.md"
-#   frontend: "./ai-playbook/policies/frontend-policy.md"
-#   backend: "./ai-playbook/policies/backend-policy.md"
-#   output_style: "./ai-playbook/policies/style-output.md"
-# agents:
-#   scan_workspace:
-#     path: "./ai-playbook/agents/scan-workspace/agent.md"
-#     triggers: ["analyze project", "scan workspace", "detect project type"]
-#   react_builder:
-#     path: "./ai-playbook/agents/react-component-builder/agent.md"
-#     triggers: ["create react component", "build component", "new react"]
-#   figma_builder:
-#     path: "./ai-playbook/agents/figma-component-builder/agent.md"
-#     triggers: ["build from figma", "convert figma", "figma component"]
-#   a11y_audit:
-#     path: "./ai-playbook/agents/a11y-audit-react/agent.md"
-#     triggers: ["accessibility audit", "check a11y", "wcag check"]
-#   node_service:
-#     path: "./ai-playbook/agents/node-microservice-builder/agent.md"
-#     triggers: ["create service", "build api", "new endpoint"]
-#   code_reviewer:
-#     path: "./ai-playbook/agents/code-reviewer/agent.md"
-#     triggers: ["review code", "code review", "check code quality"]
-#   pr_reviewer:
-#     path: "./ai-playbook/agents/pr-reviewer/agent.md"
-#     triggers: ["review pr", "check pull request", "review changes"]
-# skills:
-#   react_components: "./ai-playbook/skills/react-components/skill.md"
-#   figma_component: "./ai-playbook/skills/figma-component/skill.md"
-#   node_typescript: "./ai-playbook/skills/node-typescript-service/skill.md"
-#   a11y_automation: "./ai-playbook/skills/a11y-automation/skill.md"
-#   skill_creator: "./ai-playbook/skills/skill-creator/skill.md"
-#   ai_tool_setup: "./ai-playbook/skills/ai-tool-setup/skill.md"
-
-# Project Scoping Rules
-scope:
-  respect_boundaries: true
-  cross_project_edits: false
-  readonly_paths: ["./ai-playbook"]
-
-# Usage Instructions
-# 1. From any project: "Use scan_workspace agent to analyze this project"
-# 2. Direct agent: "Apply react_builder to create UserProfile component"
-# 3. Natural trigger: "Check a11y on src/components/Modal.tsx"
-# 4. Code review: "Review code in src/api/userService.ts"
+# Codex merges ~/.codex/AGENTS.md with each repo's own AGENTS.md automatically —
+# you don't need to touch the repos themselves for the global part.
 `
 
-  const claudeProjectContent = `{
-  "name": "Workspace with AI Playbook (Claude AI)",
-  "description": "Multi-repository workspace using centralized AI Playbook with Claude structure",
-  "version": "1.0.0",
-  
-  "customInstructions": {
-    "orchestrator": "../ai-playbook/orchestrator.md",
-    "policies": [
-      "../ai-playbook/policies/workspace-policy.md",
-      "../ai-playbook/policies/frontend-policy.md",
-      "../ai-playbook/policies/backend-policy.md",
-      "../ai-playbook/policies/style-output.md"
-    ]
-  },
-  
-  "agents": [
-    {
-      "name": "scan-workspace",
-      "path": "../ai-playbook/agents/scan-workspace/agent.md",
-      "description": "Detect project type and route to appropriate skills"
-    },
-    {
-      "name": "react-component-builder",
-      "path": "../ai-playbook/agents/react-component-builder/agent.md",
-      "description": "Build accessible React components following best practices"
-    },
-    {
-      "name": "figma-component-builder",
-      "path": "../ai-playbook/agents/figma-component-builder/agent.md",
-      "description": "Convert Figma designs into reusable React/TypeScript components"
-    },
-    {
-      "name": "a11y-audit-react",
-      "path": "../ai-playbook/agents/a11y-audit-react/agent.md",
-      "description": "Audit React components for WCAG 2.2 compliance"
-    },
-    {
-      "name": "node-microservice-builder",
-      "path": "../ai-playbook/agents/node-microservice-builder/agent.md",
-      "description": "Build Node.js/TypeScript microservices"
-    },
-    {
-      "name": "code-reviewer",
-      "path": "../ai-playbook/agents/code-reviewer/agent.md",
-      "description": "Review code quality and suggest improvements inline"
-    },
-    {
-      "name": "pr-reviewer",
-      "path": "../ai-playbook/agents/pr-reviewer/agent.md",
-      "description": "Review pull requests for quality and standards compliance"
-    }
-  ],
-  
-  "knowledgeBase": {
-    "skills": [
-      "../ai-playbook/skills/react-components/skill.md",
-      "../ai-playbook/skills/figma-component/skill.md",
-      "../ai-playbook/skills/node-typescript-service/skill.md",
-      "../ai-playbook/skills/a11y-automation/skill.md",
-      "../ai-playbook/skills/skill-creator/skill.md",
-      "../ai-playbook/skills/ai-tool-setup/skill.md"
-    ]
-  },
-  
-  "scopingRules": {
-    "workspaceRoot": "~/workspace",
-    "projectFolders": ["project-a", "project-b", "project-c"],
-    "sharedResources": ["ai-playbook"],
-    "isolationPolicy": "strict",
-    "readonlyPaths": ["ai-playbook"]
-  },
-  
-  "usage": [
-    "Reference @ai-playbook to use orchestrator: 'Use @ai-playbook/orchestrator.md to scan this React project'",
-    "Direct agent invocation: 'Apply @ai-playbook/agents/react-component-builder/agent.md to create UserCard'",
-    "Inline code review: 'Review this component using @ai-playbook/agents/code-reviewer/agent.md'"
-  ]
-}
+  const cursorGlobalSetup = `# Cursor 2.4+ has a real global scope for SKILLS and COMMANDS — not rules.
+# Global skills: ~/.cursor/skills/ (or the shared ~/.agents/skills/)
+# Global commands: ~/.cursor/commands/
+
+mkdir -p ~/.cursor/skills ~/.cursor/commands
+cp -r ai-playbook/.claude/skills/* ~/.cursor/skills/
+cp ai-playbook/.cursor/commands/*.md ~/.cursor/commands/
+
+# Rules are still project-scoped only — there is no global .cursor/rules/.
+# For rules, symlink (not copy) from each repo so they stay in sync:
+
+# cd your-project && mkdir -p .cursor && \\
+#   ln -s "$(pwd)/../ai-playbook/.cursor/rules" .cursor/rules
 `
 
-  const vscodeSettingsContent = `{
-  "github.copilot.advanced": {
-    "aiPlaybookPath": "../ai-playbook"
-  },
-  
-  "files.associations": {
-    "*.cursorrules": "yaml",
-    "*.clinerules": "yaml"
-  },
-  
-  "files.watcherExclude": {
-    "**/ai-playbook/.git/**": true,
-    "**/ai-playbook/node_modules/**": true
-  },
-  
-  "search.exclude": {
-    "**/ai-playbook/.git": true,
-    "**/ai-playbook/node_modules": true
-  },
-  
-  "cline.agentPaths": [
-    "../ai-playbook/.github/agents"
-  ],
-  
-  "cursor.aiPlaybook": {
-    "enabled": true,
-    "rootPath": "../ai-playbook",
-    "autoLoadOrchestrator": true
-  }
-}
+  const copilotPerRepoSetup = `# GitHub Copilot has a real global scope for SKILLS since 2026:
+# ~/.copilot/skills/ or the shared ~/.agents/skills/ — but NOT for
+# custom instructions, agents, or prompts, which still need each
+# repo's own .github/. Symlinking keeps those three in sync.
+
+mkdir -p ~/.copilot/skills
+cp -r ai-playbook/.claude/skills/* ~/.copilot/skills/
+
+cd your-project
+ln -s "$(pwd)/../ai-playbook/.github/copilot-instructions.md" .github/copilot-instructions.md
+ln -s "$(pwd)/../ai-playbook/.github/instructions" .github/instructions
+ln -s "$(pwd)/../ai-playbook/.github/agents" .github/agents
+ln -s "$(pwd)/../ai-playbook/.github/prompts" .github/prompts
 `
 
   return (
@@ -298,10 +73,10 @@ scope:
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <FolderTree className="h-5 w-5 text-primary" />
-            Workspace Root Configuration Files
+            Sharing the Playbook Across Multiple Projects
           </CardTitle>
           <CardDescription>
-            Example configuration files for using AI Playbook from workspace root across multiple projects
+            Only some tools have a real "install once, use everywhere" mechanism — the rest need a symlink strategy
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -309,334 +84,182 @@ scope:
             <div className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-accent mt-0.5 shrink-0" />
               <div className="space-y-1">
-                <p className="text-sm font-medium">Why Use Workspace Root Setup?</p>
+                <p className="text-sm font-medium">There is no universal workspace-root config</p>
                 <p className="text-xs text-muted-foreground">
-                  Install ai-playbook once at workspace root instead of copying it into every project. 
-                  This eliminates duplication and makes updates easier when working with multiple repositories.
+                  Claude Code and Codex CLI support a personal/global scope for everything (<code className="bg-muted px-1 rounded">~/.claude/</code>, <code className="bg-muted px-1 rounded">~/.codex/</code> + <code className="bg-muted px-1 rounded">$HOME/.agents/skills/</code>). Since 2026, Copilot and Cursor also have a global scope, but <strong>only for skills</strong> (<code className="bg-muted px-1 rounded">~/.copilot/skills/</code>, <code className="bg-muted px-1 rounded">~/.cursor/skills/</code>, or the shared <code className="bg-muted px-1 rounded">~/.agents/skills/</code>) — their always-loaded instructions, custom agents, and (for Copilot) prompts still need each repo's own files, so a symlink into the shared <code className="bg-muted px-1 rounded">ai-playbook/</code> checkout remains the practical fix for those.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Terminal className="h-4 w-4 text-primary" />
-              Workspace Structure Overview
-            </h3>
-            
-            <Tabs defaultValue="copilot" className="space-y-3">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="copilot">GitHub Copilot Structure</TabsTrigger>
-                <TabsTrigger value="claude">Claude AI Structure</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="copilot" className="space-y-2">
-                <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-0.5">
-                  <div>~/workspace/</div>
-                  <div className="pl-4 text-accent">├── .cursorrules  <span className="text-muted-foreground">← Add this file (Cursor)</span></div>
-                  <div className="pl-4 text-accent">├── .clinerules  <span className="text-muted-foreground">← Add this file (Cline)</span></div>
-                  <div className="pl-4 text-accent">├── .vscode/</div>
-                  <div className="pl-8 text-accent">└── settings.json  <span className="text-muted-foreground">← Workspace settings</span></div>
-                  <div className="pl-4 text-primary">├── ai-playbook/  <span className="text-muted-foreground">← GitHub Copilot version</span></div>
-                  <div className="pl-8 text-accent">├── .github/  <span className="text-muted-foreground">← Uses .github directory</span></div>
-                  <div className="pl-12 text-muted-foreground">│   ├── orchestrator.md</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── copilot-instructions/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   ├── workspace-policy.md</div>
-                  <div className="pl-16 text-muted-foreground">│   │   ├── frontend-policy.md</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── backend-policy.md</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── agents/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   ├── scan-workspace/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   ├── react-component-builder/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   ├── figma-component-builder/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── ...</div>
-                  <div className="pl-12 text-muted-foreground">│   └── skills/</div>
-                  <div className="pl-16 text-muted-foreground">│       ├── react-components/</div>
-                  <div className="pl-16 text-muted-foreground">│       ├── figma-component/</div>
-                  <div className="pl-16 text-muted-foreground">│       └── ...</div>
-                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
-                  <div className="pl-4">├── project-b/</div>
-                  <div className="pl-4">└── project-c/</div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Key:</strong> Uses <code className="bg-muted px-1 rounded">.github/</code> directory for all AI configurations, following GitHub Copilot conventions.
-                </p>
-              </TabsContent>
-              
-              <TabsContent value="claude" className="space-y-2">
-                <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-0.5">
-                  <div>~/workspace/</div>
-                  <div className="pl-4 text-accent">├── .cursorrules  <span className="text-muted-foreground">← Add this file (Cursor)</span></div>
-                  <div className="pl-4 text-accent">├── .clinerules  <span className="text-muted-foreground">← Add this file (Cline)</span></div>
-                  <div className="pl-4 text-accent">├── .vscode/</div>
-                  <div className="pl-8 text-accent">└── settings.json  <span className="text-muted-foreground">← Workspace settings</span></div>
-                  <div className="pl-4 text-primary">├── ai-playbook/  <span className="text-muted-foreground">← Claude AI version</span></div>
-                  <div className="pl-8 text-accent">├── orchestrator.md  <span className="text-muted-foreground">← At root level</span></div>
-                  <div className="pl-8 text-accent">├── policies/  <span className="text-muted-foreground">← Root-level directory</span></div>
-                  <div className="pl-12 text-muted-foreground">│   ├── workspace-policy.md</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── frontend-policy.md</div>
-                  <div className="pl-12 text-muted-foreground">│   └── backend-policy.md</div>
-                  <div className="pl-8 text-accent">├── agents/  <span className="text-muted-foreground">← Root-level directory</span></div>
-                  <div className="pl-12 text-muted-foreground">│   ├── scan-workspace/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── react-component-builder/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── figma-component-builder/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── agent.md</div>
-                  <div className="pl-12 text-muted-foreground">│   └── ...</div>
-                  <div className="pl-8 text-accent">├── skills/  <span className="text-muted-foreground">← Root-level directory</span></div>
-                  <div className="pl-12 text-muted-foreground">│   ├── react-components/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── skill.md</div>
-                  <div className="pl-12 text-muted-foreground">│   ├── figma-component/</div>
-                  <div className="pl-16 text-muted-foreground">│   │   └── skill.md</div>
-                  <div className="pl-12 text-muted-foreground">│   └── ...</div>
-                  <div className="pl-4">├── project-a/  <span className="text-muted-foreground">← Your repositories</span></div>
-                  <div className="pl-4">├── project-b/</div>
-                  <div className="pl-4">└── project-c/</div>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  <strong>Key:</strong> Uses root-level directories (<code className="bg-muted px-1 rounded">policies/</code>, <code className="bg-muted px-1 rounded">agents/</code>, <code className="bg-muted px-1 rounded">skills/</code>) with lowercase filenames.
-                </p>
-              </TabsContent>
-            </Tabs>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <Card className="bg-muted/30">
+              <CardHeader className="pb-2">
+                <Badge className="w-fit bg-primary text-primary-foreground text-xs">Claude Code</Badge>
+              </CardHeader>
+              <CardContent className="text-xs text-muted-foreground flex items-start gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                Real personal scope — copy/symlink once to <code className="bg-background px-1 rounded">~/.claude/</code>
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/30">
+              <CardHeader className="pb-2">
+                <Badge className="w-fit bg-primary text-primary-foreground text-xs">Codex CLI</Badge>
+              </CardHeader>
+              <CardContent className="text-xs text-muted-foreground flex items-start gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
+                Real personal scope — <code className="bg-background px-1 rounded">~/.codex/AGENTS.md</code> + <code className="bg-background px-1 rounded">$HOME/.agents/skills/</code>
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/30">
+              <CardHeader className="pb-2">
+                <Badge className="w-fit bg-accent text-accent-foreground text-xs">Cursor</Badge>
+              </CardHeader>
+              <CardContent className="text-xs text-muted-foreground flex items-start gap-1.5">
+                <AlertTriangle className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
+                Skills &amp; commands only (since 2.4) — rules are always project-scoped, symlink per repo
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/30">
+              <CardHeader className="pb-2">
+                <Badge className="w-fit bg-accent text-accent-foreground text-xs">GitHub Copilot</Badge>
+              </CardHeader>
+              <CardContent className="text-xs text-muted-foreground flex items-start gap-1.5">
+                <XCircle className="h-3.5 w-3.5 text-destructive shrink-0 mt-0.5" />
+                Skills only (since 2026) — instructions/agents/prompts symlink <code className="bg-background px-1 rounded">.github/</code> per repo
+              </CardContent>
+            </Card>
           </div>
 
           <Separator />
 
-          <Tabs defaultValue="cursorrules" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="cursorrules">
-                <FileCode className="h-3 w-3 mr-1" />
-                .cursorrules
-              </TabsTrigger>
-              <TabsTrigger value="clinerules">
-                <FileCode className="h-3 w-3 mr-1" />
-                .clinerules
-              </TabsTrigger>
+          <Tabs defaultValue="claude" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
               <TabsTrigger value="claude">
                 <FileCode className="h-3 w-3 mr-1" />
-                Claude Project
+                Claude Code
               </TabsTrigger>
-              <TabsTrigger value="vscode">
+              <TabsTrigger value="codex">
                 <FileCode className="h-3 w-3 mr-1" />
-                VS Code
+                Codex CLI
+              </TabsTrigger>
+              <TabsTrigger value="cursor">
+                <FileCode className="h-3 w-3 mr-1" />
+                Cursor
+              </TabsTrigger>
+              <TabsTrigger value="copilot">
+                <FileCode className="h-3 w-3 mr-1" />
+                Copilot
               </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="cursorrules" className="space-y-4">
-              <Card>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Cursor Rules File</CardTitle>
-                    <Badge variant="outline">~/workspace/.cursorrules</Badge>
-                  </div>
-                  <CardDescription className="text-xs">
-                    Place this file at workspace root to configure Cursor AI across all projects
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="rounded-lg bg-muted/80 p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs font-medium text-muted-foreground">File Contents:</p>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-7 text-xs"
-                        onClick={() => copyToClipboard(cursorRulesContent, '.cursorrules content')}
-                      >
-                        <Copy className="h-3 w-3 mr-1" />
-                        Copy
-                      </Button>
-                    </div>
-                    <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-96 overflow-y-auto">
-                      <code>{cursorRulesContent}</code>
-                    </pre>
-                  </div>
-
-                  <div className="rounded-lg bg-accent/10 border border-accent/30 p-3 space-y-2">
-                    <p className="text-xs font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-3 w-3" />
-                      Usage in Cursor:
-                    </p>
-                    <ul className="space-y-1 text-[11px] text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Open any project folder in your workspace</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Type: <code className="bg-muted px-1 rounded">@ai-playbook orchestrator scan this project</code></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Or: <code className="bg-muted px-1 rounded">Use react-component-builder agent to create LoginForm</code></span>
-                      </li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="clinerules" className="space-y-4">
-              <Card>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Cline Rules File</CardTitle>
-                    <Badge variant="outline">~/workspace/.clinerules</Badge>
-                  </div>
-                  <CardDescription className="text-xs">
-                    Configure Cline to use AI Playbook agents with natural language triggers
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="rounded-lg bg-muted/80 p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs font-medium text-muted-foreground">File Contents:</p>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-7 text-xs"
-                        onClick={() => copyToClipboard(clineRulesContent, '.clinerules content')}
-                      >
-                        <Copy className="h-3 w-3 mr-1" />
-                        Copy
-                      </Button>
-                    </div>
-                    <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-96 overflow-y-auto">
-                      <code>{clineRulesContent}</code>
-                    </pre>
-                  </div>
-
-                  <div className="rounded-lg bg-accent/10 border border-accent/30 p-3 space-y-2">
-                    <p className="text-xs font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-3 w-3" />
-                      Usage in Cline:
-                    </p>
-                    <ul className="space-y-1 text-[11px] text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Natural language: <code className="bg-muted px-1 rounded">Analyze project structure</code> (auto-triggers scan_workspace)</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Direct agent: <code className="bg-muted px-1 rounded">Use react_builder to create UserCard component</code></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Code review: <code className="bg-muted px-1 rounded">Review code in src/components/Modal.tsx</code></span>
-                      </li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
 
             <TabsContent value="claude" className="space-y-4">
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">Claude Desktop Project Configuration</CardTitle>
-                    <Badge variant="outline">claude_desktop_config.json</Badge>
+                    <CardTitle className="text-base">Personal skills &amp; agents</CardTitle>
+                    <Badge variant="outline">~/.claude/skills/, ~/.claude/agents/</Badge>
                   </div>
                   <CardDescription className="text-xs">
-                    Configure Claude Desktop to reference AI Playbook from workspace root
+                    Applies to every project on this machine — no per-repo file needed
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="rounded-lg bg-muted/80 p-4 space-y-2">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-medium text-muted-foreground">Configuration JSON:</p>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-7 text-xs"
-                        onClick={() => copyToClipboard(claudeProjectContent, 'Claude config')}
-                      >
+                      <p className="text-xs font-medium text-muted-foreground">Setup:</p>
+                      <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => copyToClipboard(claudeGlobalSetup, 'Claude global setup')}>
                         <Copy className="h-3 w-3 mr-1" />
                         Copy
                       </Button>
                     </div>
                     <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-96 overflow-y-auto">
-                      <code>{claudeProjectContent}</code>
+                      <code>{claudeGlobalSetup}</code>
                     </pre>
-                  </div>
-
-                  <div className="rounded-lg bg-accent/10 border border-accent/30 p-3 space-y-2">
-                    <p className="text-xs font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-3 w-3" />
-                      Usage with Claude:
-                    </p>
-                    <ul className="space-y-1 text-[11px] text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Reference with <code className="bg-muted px-1 rounded">@ai-playbook</code> prefix in prompts</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Example: <code className="bg-muted px-1 rounded">Use @ai-playbook orchestrator to scan this React project</code></span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Example: <code className="bg-muted px-1 rounded">Apply react-component-builder to create LoginForm</code></span>
-                      </li>
-                    </ul>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="vscode" className="space-y-4">
+            <TabsContent value="codex" className="space-y-4">
               <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base">VS Code Workspace Settings</CardTitle>
-                    <Badge variant="outline">~/workspace/.vscode/settings.json</Badge>
+                    <CardTitle className="text-base">Personal AGENTS.md &amp; skills</CardTitle>
+                    <Badge variant="outline">~/.codex/AGENTS.md, $HOME/.agents/skills/</Badge>
                   </div>
                   <CardDescription className="text-xs">
-                    Configure VS Code to recognize and use AI Playbook across all workspace projects
+                    Codex merges the global AGENTS.md with each repo's own — no per-repo copy needed for the global part
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="rounded-lg bg-muted/80 p-4 space-y-2">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-medium text-muted-foreground">Settings JSON:</p>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        className="h-7 text-xs"
-                        onClick={() => copyToClipboard(vscodeSettingsContent, 'VS Code settings')}
-                      >
+                      <p className="text-xs font-medium text-muted-foreground">Setup:</p>
+                      <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => copyToClipboard(codexGlobalSetup, 'Codex global setup')}>
                         <Copy className="h-3 w-3 mr-1" />
                         Copy
                       </Button>
                     </div>
                     <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-96 overflow-y-auto">
-                      <code>{vscodeSettingsContent}</code>
+                      <code>{codexGlobalSetup}</code>
                     </pre>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-                  <div className="rounded-lg bg-accent/10 border border-accent/30 p-3 space-y-2">
-                    <p className="text-xs font-medium flex items-center gap-2">
-                      <CheckCircle2 className="h-3 w-3" />
-                      What This Configures:
-                    </p>
-                    <ul className="space-y-1 text-[11px] text-muted-foreground">
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>GitHub Copilot: Sets ai-playbook path for reference</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Cline Extension: Registers agent paths</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>Cursor Extension: Enables auto-loading of orchestrator</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-accent">→</span>
-                        <span>File Associations: Recognizes .cursorrules and .clinerules</span>
-                      </li>
-                    </ul>
+            <TabsContent value="cursor" className="space-y-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Global commands + per-repo rules</CardTitle>
+                    <Badge variant="outline">~/.cursor/commands/</Badge>
+                  </div>
+                  <CardDescription className="text-xs">
+                    Only commands have a global scope — rules must be symlinked into each repo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="rounded-lg bg-muted/80 p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-muted-foreground">Setup:</p>
+                      <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => copyToClipboard(cursorGlobalSetup, 'Cursor global setup')}>
+                        <Copy className="h-3 w-3 mr-1" />
+                        Copy
+                      </Button>
+                    </div>
+                    <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-96 overflow-y-auto">
+                      <code>{cursorGlobalSetup}</code>
+                    </pre>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="copilot" className="space-y-4">
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-base">Symlink .github/ per repo</CardTitle>
+                    <Badge variant="outline">No personal/global scope exists</Badge>
+                  </div>
+                  <CardDescription className="text-xs">
+                    Copilot only ever reads from the current repository's own .github/ — this is the closest thing to "install once"
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="rounded-lg bg-muted/80 p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs font-medium text-muted-foreground">Setup (run inside each project repo):</p>
+                      <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => copyToClipboard(copilotPerRepoSetup, 'Copilot per-repo setup')}>
+                        <Copy className="h-3 w-3 mr-1" />
+                        Copy
+                      </Button>
+                    </div>
+                    <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-96 overflow-y-auto">
+                      <code>{copilotPerRepoSetup}</code>
+                    </pre>
                   </div>
                 </CardContent>
               </Card>
@@ -644,6 +267,23 @@ scope:
           </Tabs>
 
           <Separator />
+
+          <div className="space-y-3">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Terminal className="h-4 w-4 text-primary" />
+              Workspace Layout
+            </h3>
+            <div className="rounded-lg bg-muted/50 p-4 font-mono text-xs space-y-0.5">
+              <div>~/workspace/</div>
+              <div className="pl-4 text-primary">├── ai-playbook/ <span className="text-muted-foreground">← the shared checkout from this repo</span></div>
+              <div className="pl-4">├── project-a/</div>
+              <div className="pl-8 text-accent">└── .github/ → symlink into ../ai-playbook/.github/ <span className="text-muted-foreground">(Copilot only)</span></div>
+              <div className="pl-4">├── project-b/</div>
+              <div className="pl-4">└── project-c/</div>
+              <div className="pl-4 text-muted-foreground"># Claude Code and Codex CLI don't need any of the above —</div>
+              <div className="pl-4 text-muted-foreground"># their personal scope already covers every project folder.</div>
+            </div>
+          </div>
 
           <div className="space-y-3">
             <h3 className="font-semibold flex items-center gap-2">
@@ -657,32 +297,30 @@ scope:
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs text-muted-foreground">
-                    AI tools will only modify files in the current project folder, never crossing into sibling projects. 
-                    The ai-playbook folder is read-only and should never be modified by AI agents.
+                    AI tools should only modify files in the current project folder — enforce this with the workspace policy, not by relying on the playbook's location.
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="bg-muted/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">Relative Paths</CardTitle>
+                  <CardTitle className="text-sm">Symlinks vs. copies</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs text-muted-foreground">
-                    All paths use <code className="bg-muted px-1 rounded">../ai-playbook</code> to reference from project folders. 
-                    Adjust based on your workspace structure if ai-playbook is located elsewhere.
+                    Prefer symlinks over copies wherever a tool allows it (Claude, Codex, Cursor commands) so a single{' '}
+                    <code className="bg-muted px-1 rounded">git pull</code> in <code className="bg-muted px-1 rounded">ai-playbook/</code> updates every project instantly.
                   </p>
                 </CardContent>
               </Card>
 
               <Card className="bg-muted/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm">Updates</CardTitle>
+                  <CardTitle className="text-sm">Copilot's instructions/agents/prompts remain per-repo</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs text-muted-foreground">
-                    Update ai-playbook once at workspace root with <code className="bg-muted px-1 rounded">git pull</code>. 
-                    All projects immediately benefit from updates without individual syncing.
+                    Copilot's skills scope is global since 2026, but copilot-instructions.md, custom agents, and prompt files still don't have a personal scope — plan for a symlink (or a small setup script) for those in every repository that uses Copilot.
                   </p>
                 </CardContent>
               </Card>
@@ -693,8 +331,7 @@ scope:
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs text-muted-foreground">
-                    Commit these config files to your workspace-level repository or share via dotfiles. 
-                    Team members can use the same setup instantly.
+                    Commit the symlink setup script to your team's dotfiles or a bootstrap script so everyone gets the same layout instantly.
                   </p>
                 </CardContent>
               </Card>

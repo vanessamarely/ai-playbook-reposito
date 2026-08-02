@@ -1,0 +1,140 @@
+---
+name: a11y-automation
+description: Automates accessibility testing using eslint-plugin-jsx-a11y linting and Playwright-based axe-core checks. Use when the user wants to run, configure, or integrate automated accessibility tests into a React project. Do not use for manually reviewing component structure, building new components, or non-React/non-browser environments.
+when_to_use: run accessibility tests, automate a11y checks, set up axe testing, configure eslint-plugin-jsx-a11y, integrate accessibility into CI, a11y audit automation
+allowed-tools: Bash(scripts/run-a11y-lint.sh *) Bash(node scripts/run-axe-playwright.mjs *)
+---
+
+# Skill: Accessibility Automation
+
+## Purpose
+
+Run automated accessibility checks using linters and browser-based testing tools to identify WCAG violations.
+
+## Inputs
+
+- `targetPath`: Path to files or directory to check
+- `checkType`: `lint`, `browser`, or `both`
+
+## Outputs
+
+- Violation summary with counts by severity
+- Exit code (0 for pass, non-zero for failures)
+- Actionable remediation steps with code fixes
+
+## Procedures
+
+### 1. Validate Target Path
+
+Ensure the path exists and contains testable files.
+
+For `lint`: Look for `.tsx`, `.jsx`, `.ts`, `.js` files.
+For `browser`: Look for test files or running application.
+
+### 2. Run Linting Checks
+
+Execute: `${CLAUDE_SKILL_DIR}/scripts/run-a11y-lint.sh <targetPath>`
+
+This script:
+1. Checks if `eslint-plugin-jsx-a11y` is configured.
+2. Runs eslint on the target path.
+3. Outputs violations grouped by rule.
+
+If linter is not configured, output setup instructions.
+
+### 3. Run Browser-Based Checks (Optional)
+
+If `checkType` is `browser` or `both`:
+
+Execute: `node ${CLAUDE_SKILL_DIR}/scripts/run-axe-playwright.mjs <targetPath>`
+
+This script:
+1. Checks if Playwright and @axe-core/playwright are available.
+2. Runs axe checks on rendered components or pages.
+3. Outputs violations by severity.
+
+If not configured, provide setup guidance.
+
+### 4. Parse Results
+
+Extract:
+- Total violation count
+- Violations by severity (critical, serious, moderate, minor)
+- Violations by rule (grouped)
+- File and line number for each violation
+
+### 5. Summarize Findings
+
+Output to chat:
+- Summary statistics (total violations, by severity, by rule)
+- Per-file breakdown with line numbers
+- Brief descriptions of each violation type
+
+### 6. Propose Fixes
+
+For critical and serious violations:
+- Show code snippet with issue
+- Provide corrected version
+- Reference applicable WCAG guideline
+- Apply fixes using minimal diffs
+
+### 7. Output Remediation Steps
+
+For each violation type, provide:
+- WCAG guideline reference (e.g., 2.4.7 Focus Visible)
+- Explanation of why it matters
+- Code example of correct implementation
+
+Refer to: `../react-components/references/a11y-wcag22.md`
+
+### 8. Suggest Integration
+
+If checks are not part of CI/CD:
+- Provide npm script examples
+- Suggest pre-commit hook setup
+- Recommend automated PR checks
+
+## Error Handling
+
+**Linter not configured**: Output installation and configuration steps for eslint-plugin-jsx-a11y.
+
+**Playwright not available**: Provide installation instructions for Playwright and @axe-core/playwright.
+
+**No violations found**: Output success message and confirm checks ran.
+
+**Critical violations found**: Return non-zero exit code for CI/CD integration.
+
+## Quick Reference: ARIA Live Regions
+
+| Value | Behavior | Use For |
+|-------|----------|---------|
+| `aria-live="polite"` | Announced at next pause | Status updates, saved confirmations |
+| `aria-live="assertive"` | Announced immediately | Errors, time-sensitive alerts |
+| `role="status"` | Same as `polite` | Status messages |
+| `role="alert"` | Same as `assertive` | Error messages |
+
+## Common Anti-Patterns
+
+| Anti-Pattern | Problem | Fix |
+|---|---|---|
+| `div` as button | Not focusable, no keyboard support | Use `<button>` |
+| Missing `alt` text | Images invisible to screen readers | Add descriptive `alt` |
+| Color-only states | Invisible to color-blind users | Add icons, text, or patterns |
+| Autoplaying media | Disorienting, can't be stopped | Add controls, don't autoplay |
+| Custom dropdown with no ARIA | Unusable by keyboard/screen reader | Use native `<select>` or proper ARIA listbox |
+| Removing focus outlines | Users can't see where they are | Style outlines, don't remove them |
+| Empty links/buttons | "Link" announced with no description | Add text or `aria-label` |
+| `tabindex > 0` | Breaks natural tab order | Use `tabindex="0"` or `-1` only |
+
+## References
+
+- WCAG 2.2 Guidelines: `../react-components/references/a11y-wcag22.md`
+
+## Scripts
+
+- Lint Script: [scripts/run-a11y-lint.sh](scripts/run-a11y-lint.sh)
+- Playwright Script: [scripts/run-axe-playwright.mjs](scripts/run-axe-playwright.mjs)
+
+## Assets
+
+- Report Template: [assets/a11y-report.template.md](assets/a11y-report.template.md)

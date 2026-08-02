@@ -1,0 +1,59 @@
+---
+description: Automated accessibility testing via eslint-plugin-jsx-a11y linting and Playwright/axe-core checks for React projects
+globs: "**/*.tsx,**/*.jsx"
+---
+
+# Accessibility Automation
+
+Run automated accessibility checks using linters and browser-based testing tools to identify WCAG violations. Not for manual component review, building new components (see `react-components`), or non-React/non-browser environments.
+
+For a full guided audit with remediation, run `/a11y-audit-react`.
+
+## Procedure
+
+1. **Validate the target path** — for lint checks, look for `.tsx`/`.jsx`/`.ts`/`.js` files; for browser checks, look for test files or a running application.
+2. **Run linting checks**: verify `eslint-plugin-jsx-a11y` is configured, run eslint on the target path, group violations by rule. If not configured, output setup instructions (`npm install --save-dev eslint-plugin-jsx-a11y` and add it to the eslint config's `plugins`/`extends`).
+3. **Run browser-based checks (optional)**: if Playwright and `@axe-core/playwright` are available, run axe checks against rendered components or pages and report violations by severity. If not configured, provide install guidance (`npm install --save-dev @playwright/test @axe-core/playwright`).
+4. **Parse results**: total violation count, violations by severity (critical, serious, moderate, minor), violations grouped by rule, file and line number for each.
+5. **Summarize findings** in chat: summary statistics, per-file breakdown with line numbers, brief description of each violation type.
+6. **Propose fixes** for critical/serious violations: show the offending snippet, the corrected version, the applicable WCAG guideline, and apply the fix as a minimal diff.
+7. **Suggest CI integration** if checks aren't already wired in: npm script examples, pre-commit hook setup, automated PR checks.
+
+## Error Handling
+
+- **Linter not configured**: output install/config steps for `eslint-plugin-jsx-a11y`.
+- **Playwright not available**: output install steps for Playwright + `@axe-core/playwright`.
+- **No violations found**: report success and confirm checks ran.
+- **Critical violations found**: treat as a failing check for CI/CD purposes (non-zero exit code).
+
+## Accessibility Checklist
+
+**Keyboard**: every interactive element focusable via Tab; logical focus order; visible focus indicator; Enter/Escape support on custom widgets; no keyboard traps; skip-to-content link; modals trap focus and return it on close.
+
+**Screen readers**: images have `alt` (`alt=""` if decorative); all inputs have labels; buttons/links have descriptive text (not "click here"); icon-only buttons have `aria-label`; one `<h1>`, no skipped heading levels; dynamic content uses `aria-live`; tables have `<th scope>`.
+
+**Visual**: text contrast ≥ 4.5:1 (normal) / 3:1 (large, 18px+); UI component contrast ≥ 3:1; color is never the only signal; text resizes to 200% without breaking layout; no content flashing >3×/second.
+
+**Forms**: every input has a visible label; required fields marked beyond color; errors are specific and associated with the field; error state shown by more than color; submission errors summarized and focusable.
+
+## Common Anti-Patterns
+
+| Anti-Pattern | Problem | Fix |
+|---|---|---|
+| `div` as button | Not focusable, no keyboard support | Use `<button>` |
+| Missing `alt` text | Invisible to screen readers | Add descriptive `alt` |
+| Color-only states | Invisible to color-blind users | Add icons, text, or patterns |
+| Autoplaying media | Disorienting, can't be stopped | Add controls, don't autoplay |
+| Custom dropdown, no ARIA | Unusable by keyboard/screen reader | Use native `<select>` or proper ARIA listbox |
+| Removing focus outlines | Users lose their place | Style outlines, don't remove them |
+| Empty links/buttons | Announced with no description | Add text or `aria-label` |
+| `tabindex > 0` | Breaks natural tab order | Use `tabindex="0"` or `-1` only |
+
+## ARIA Live Regions
+
+| Value | Behavior | Use For |
+|---|---|---|
+| `aria-live="polite"` / `role="status"` | Announced at next pause | Status updates, saved confirmations |
+| `aria-live="assertive"` / `role="alert"` | Announced immediately | Errors, time-sensitive alerts |
+
+See the `react-components` rule for implementation patterns while building components.

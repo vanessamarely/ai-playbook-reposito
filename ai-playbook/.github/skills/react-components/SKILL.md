@@ -1,22 +1,6 @@
 ---
 name: react-components
 description: Creates and modifies React components using TypeScript, Tailwind CSS, shadcn/ui, and WCAG 2.2 Level AA accessibility patterns. Use when the user wants to build, update, or fix a React UI component, add keyboard navigation, or apply ARIA attributes. Do not use for Node.js services, API endpoints, database schemas, or non-React frontend frameworks (Vue, Svelte, Angular).
-triggers:
-  - creating a React component
-  - building a UI component
-  - implement component
-  - add keyboard navigation
-  - fix accessibility in a component
-  - add ARIA attributes
-  - build a form
-  - create a modal
-negative_triggers:
-  - backend service
-  - API endpoint
-  - database schema
-  - Vue component
-  - Angular component
-  - Svelte component
 ---
 
 # Skill: React Components
@@ -49,7 +33,7 @@ Check for conflicts with existing components in the target directory.
 
 ### 2. Load Accessibility Guidelines
 
-Read: `.github/skills/react-components/references/a11y-wcag22.md`
+Read: [references/a11y-wcag22.md](references/a11y-wcag22.md)
 
 Identify applicable WCAG requirements based on component type (button, form, modal, etc.).
 
@@ -61,7 +45,7 @@ Create interface for component props:
 - Use specific types (avoid `any`)
 - Include event handler types (e.g., `onClick?: (event: React.MouseEvent) => void`)
 
-Refer to: `.github/skills/react-components/references/react-ts-patterns.md`
+Refer to: [references/react-ts-patterns.md](references/react-ts-patterns.md)
 
 ### 4. Choose Semantic HTML
 
@@ -101,7 +85,7 @@ Apply ARIA only when semantic HTML is insufficient:
 - `aria-expanded` for toggles and dropdowns
 - `aria-live` for dynamic content updates
 
-Validate against: `.github/skills/react-components/references/a11y-wcag22.md`
+Validate against: [references/a11y-wcag22.md](references/a11y-wcag22.md)
 
 ### 7. Implement Focus Management
 
@@ -123,7 +107,7 @@ useEffect(() => {
 
 ### 8. Apply Project-Specific Conventions
 
-Follow the project's existing style and conventions.
+Follow the project's existing style and conventions. Check the project's own `CLAUDE.md` for local overrides before applying this skill's defaults.
 
 ### 9. Generate Component File
 
@@ -160,12 +144,12 @@ Commands:
 
 **Missing keyboard handler**: Add `onKeyDown` handler for Enter/Space.
 
-**Invalid ARIA combination**: Refer to `.github/skills/react-components/references/a11y-wcag22.md` for correct usage.
+**Invalid ARIA combination**: Refer to [references/a11y-wcag22.md](references/a11y-wcag22.md) for correct usage.
 
 **Focus trap missing in modal**: Implement focus management with refs and event listeners.
 
 ## References
 
-- WCAG 2.2 Guidelines: `references/a11y-wcag22.md`
-- TypeScript Patterns: `references/react-ts-patterns.md`
-- Component Specification Template: `assets/component-spec.template.md`
+- WCAG 2.2 Guidelines: [references/a11y-wcag22.md](references/a11y-wcag22.md)
+- TypeScript Patterns: [references/react-ts-patterns.md](references/react-ts-patterns.md)
+- Component Specification Template: [assets/component-spec.template.md](assets/component-spec.template.md)

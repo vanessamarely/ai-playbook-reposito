@@ -1,0 +1,40 @@
+---
+description: Converts Figma nodes into production-ready React/TypeScript components using project-provided conventions and reusable component libraries. Apply when implementing or updating UI from a Figma design (Figma URL, fileKey/nodeId, or a design screenshot) in any project scope. Not for backend endpoints, database migrations, or infra automation.
+---
+
+# Figma Component Conversion
+
+Provide reusable, project-agnostic rules for converting Figma designs into code. Do not assume any fixed client name, repository name, or component-library name — those come from the request.
+
+For a fully automated conversion with Chrome-based visual/a11y verification, run `/figma-component-builder`.
+
+## Required Input Contract
+
+The request must supply:
+- `scope`: target top-level project folder.
+- `destination_folder`: exact folder where generated files should be created/updated.
+- `component_library`: preferred reusable component library, or `none`.
+- `client_context`: concise project conventions (tokens, styling model, naming, export rules, test expectations).
+- `figma_url` or `{fileKey, nodeId}` — or, if Figma is inaccessible, an attached `screenshot_image`.
+
+Optional: `dev_url` (for browser-based validation), `create_mode` (`preview` or `apply`), `preferences` (request-level overrides).
+
+If required input is missing, stop and ask for it before generating code. If Figma access fails and no screenshot is provided, ask for a screenshot before generating code.
+
+## Core Rules
+
+1. **Reuse existing components first** — search `scope` for existing components/wrappers before creating new primitives; prioritize composition/adapters around `component_library` when available; if `component_library` is `none`, follow local component patterns in `scope`.
+2. **Scope isolation** — edit only files under `scope`; never modify sibling projects or root-level shared exports without explicit confirmation.
+3. **Minimal patch strategy** — prefer focused diffs (usually 1-3 files); only add `.test.tsx`/`.stories.tsx` when the corresponding tooling (Jest/Vitest, Storybook) is present in `scope/package.json`.
+4. **File layout** for a new component `Xyz` (adjust to `client_context`): `<destination_folder>/Xyz.tsx`, optionally `Xyz.styles.ts`, `Xyz.test.tsx` (if test runner configured), `Xyz.stories.tsx` (if Storybook configured).
+5. **TypeScript/React standards** — functional components, strict typing (avoid `any` unless unavoidable), naming consistent with `client_context`.
+6. **Accessibility baseline** — meet WCAG 2.2 AA: semantic markup, keyboard support, appropriate ARIA (see the `react-components` and `a11y-automation` rules for the detailed patterns and checklist).
+7. **Figma fallback workflow** — try Figma design context first; if unavailable/incomplete, fall back to the provided screenshot(s) to infer structure, spacing, typography, states, and interactions; ask for more screenshots if states or responsive behavior are missing; always state in the output whether the source was Figma or a screenshot fallback.
+
+## Verification
+
+Before completion, provide project-specific commands based on `scope/package.json` scripts: type check, lint, unit tests, Storybook (if available). If `dev_url` is provided, browser-based validation (visual screenshots + `axe-core` checks + console/network review) should be run and violations reported with concrete remediation before marking the work complete.
+
+## Output
+
+Minimal, reviewable diffs; a concise human-readable change summary; an accessibility/visual report when `dev_url` was supplied; a verification checklist.

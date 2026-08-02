@@ -1,0 +1,63 @@
+---
+description: Output style guidelines — minimal diffs, path formatting, verification commands, plan vs. direct fix
+alwaysApply: true
+---
+
+# Output Style Guidelines
+
+## Minimal Diffs
+
+Produce the smallest possible changeset to accomplish the task.
+
+1. Modify only the lines necessary to implement the feature or fix.
+2. Do not reformat unrelated code.
+3. Do not reorganize imports unless required for the change.
+4. Do not rename variables or functions outside the scope of the task.
+
+**Exception**: if the user explicitly requests refactoring or cleanup, broader changes are acceptable.
+
+## Path References
+
+All file paths in output must be:
+- Relative to the target project root.
+- Use forward slashes (`/`) regardless of operating system.
+- Omit leading `./` unless semantically required.
+
+Examples: `src/components/Button.tsx`, `tests/unit/api.test.ts`, `config/database.yml`.
+
+## No Mass Reformatting
+
+Do NOT apply automatic code formatters (Prettier, Black, gofmt) unless the project has a pre-commit hook configured or the user explicitly requests formatting. Preserve the existing code style of the target file.
+
+## No Unrelated Refactors
+
+When fixing a bug or adding a feature:
+- Do not extract functions "for cleanliness" unless required.
+- Do not split files unless the change demands it.
+- Do not introduce design patterns (factory, strategy, etc.) unless solving a concrete problem.
+
+## Verification Commands
+
+After proposing changes, suggest commands the user can run to verify correctness:
+- Linting: `npm run lint`, `eslint src/`, `pylint module/`
+- Type checking: `tsc --noEmit`, `mypy .`
+- Tests: `npm test`, `pytest`, `mvn test`
+- Build: `npm run build`, `gradle build`, `python -m build`
+
+Provide the specific command relevant to the project's tooling.
+
+## Plan vs. Direct Fix
+
+**Plan first** for complex changes involving multiple files/modules, architectural decisions, or trade-offs between approaches. Provide: a brief description of the approach, the list of files to modify, and high-level steps — then execute after confirmation.
+
+**Fix directly** for simple changes: single-file bug fixes, typo corrections, adding a small utility function, updating configuration values.
+
+## Error Messages
+
+When encountering errors during analysis or execution:
+1. State the error clearly.
+2. Identify the likely cause.
+3. Propose a solution.
+4. Do not guess; request additional information if needed.
+
+Avoid vague messages like "something went wrong."

@@ -1,0 +1,69 @@
+---
+description: Backend policy for Node.js/TypeScript, Java, and Python services — conventions, API design, security, error handling
+globs: "server/**,services/**"
+---
+
+# Backend Policy
+
+## Multi-Language Support
+
+Backend services may use different ecosystems. Follow the conventions of each project's chosen language and framework.
+
+## Language-Specific Guidelines
+
+### Node.js / TypeScript
+
+**Project detection**: `package.json` present; TypeScript via `tsconfig.json`. Common frameworks: Express, Nest, Fastify.
+
+**Conventions**:
+- Use ES modules (`import`/`export`) when `"type": "module"` in `package.json`; otherwise CommonJS.
+- Follow existing import ordering conventions.
+- Use async/await for asynchronous operations.
+- Validate incoming data with Zod, Joi, or class-validator.
+- Use structured logging (avoid `console.log` in production code).
+- Handle errors with centralized middleware or interceptors.
+
+**Nest.js specifics**: decorators for controllers/services/modules; constructor-based dependency injection; DTO classes with validation decorators; exception filters for HTTP error responses; guards for auth.
+
+For scaffolding endpoints, run `/node-microservice-builder`.
+
+### Java
+
+**Project detection**: `pom.xml` (Maven) or `build.gradle`/`build.gradle.kts` (Gradle). Common frameworks: Spring Boot, Quarkus, Micronaut.
+
+**Conventions**:
+- Package structure: `com.organization.service.module`.
+- Use annotations for configuration (Spring: `@Service`, `@RestController`, etc.).
+- Constructor-based dependency injection preferred; builder patterns for complex object construction.
+- Validate inputs with Bean Validation (`@Valid`, `@NotNull`, etc.).
+- Handle exceptions with `@ControllerAdvice` or similar.
+- PascalCase for classes, camelCase for methods. Respect the project's Maven/Gradle module structure.
+
+### Python
+
+**Project detection**: `pyproject.toml`, `setup.py`, or `requirements.txt`. Common frameworks: FastAPI, Django, Flask.
+
+**Conventions**:
+- Follow PEP 8; use type hints (PEP 484) for function signatures.
+- Respect `.venv/` or `venv/`.
+- Use `async`/`await` with FastAPI or aiohttp where applicable.
+- Validate with Pydantic models (FastAPI) or framework-specific validators.
+- Use structured logging (not `print`).
+- Catch specific exception types, never bare `except`.
+- Test with pytest; respect existing test structure.
+
+## Universal Backend Principles
+
+**API Design**: RESTful conventions; correct HTTP methods (GET, POST, PUT, PATCH, DELETE); correct status codes (200, 201, 400, 401, 404, 500, etc.); error response bodies with actionable messages.
+
+**Security**: validate and sanitize all inputs; use parameterized queries or ORMs to prevent SQL injection; authenticate and authorize requests appropriately; never log sensitive data (passwords, tokens, PII).
+
+**Data Layer**: use the project's existing ORM/database library; respect transaction boundaries; use migrations for schema changes.
+
+**Configuration**: externalize configuration via environment variables or config files; never hardcode secrets; support multiple environments (dev, staging, production).
+
+**Error Handling**: user-friendly messages externally, detailed context logged internally, structured error responses.
+
+## Exclusions
+
+Do NOT apply frontend-specific rules (React patterns, accessibility guidelines) to backend code. Do NOT enforce semicolon rules or comment restrictions unless specified in a project-local policy file.

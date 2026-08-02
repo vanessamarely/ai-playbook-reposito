@@ -7,6 +7,12 @@ import { toast } from 'sonner'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
+interface ToolPath {
+  tool: string
+  path: string
+  note?: string
+}
+
 export default function AgentGuide() {
   const [copiedAgent, setCopiedAgent] = useState<string | null>(null)
   const [expandedAgent, setExpandedAgent] = useState<string | null>(null)
@@ -17,6 +23,13 @@ export default function AgentGuide() {
     toast.success(`${agentName} agent copied to clipboard!`)
     setTimeout(() => setCopiedAgent(null), 2000)
   }
+
+  const pathsFor = (name: string): ToolPath[] => [
+    { tool: 'Claude Code', path: `.claude/agents/${name}.md`, note: 'Cursor reads this file directly too' },
+    { tool: 'GitHub Copilot', path: `.github/agents/${name}.agent.md` },
+    { tool: 'Cursor', path: `.cursor/commands/${name}.md`, note: 'optional — Cursor already auto-discovers .claude/agents/' },
+    { tool: 'Codex CLI', path: `.agents/skills/${name}/SKILL.md` },
+  ]
 
   const agents = [
     {
@@ -35,17 +48,16 @@ export default function AgentGuide() {
       tools: ['project-detect.mjs', 'scope-guard.mjs'],
       skills: ['Any skill based on detection results'],
       markdown: `---
+name: scan-workspace
 description: Scan a workspace folder to detect project type and route to appropriate skills and AI tool configurations
-tools:
-  - file-system-read
-  - command-execution
+tools: Read, Bash, Grep, Glob
 ---
 
 # Scan Workspace Agent
 
 ## Purpose
 
-Identify the project type within a target folder, determine which skills apply, and verify that AI tool instruction files (GitHub Copilot, Claude, Cursor) are present and up to date.
+Identify the project type within a target folder, determine which skills apply, and verify that AI tool instruction files (GitHub Copilot, Claude, Cursor, Codex) are present and up to date.
 
 ## Inputs
 
@@ -73,82 +85,49 @@ Execute: \`node tools/project-detect.mjs <targetFolder>\`
 
 Expected output: JSON with project metadata.
 
-If the script fails:
-- Check that Node.js is available.
-- Verify the script path is correct relative to the playbook root.
-- Output the stderr and exit.
-
 ### Step 3: Parse Detection Results
 
-Extract:
-- \`projectType\`
-- \`framework\` (if applicable)
-- \`language\`
-- Configuration file paths
+Extract \`projectType\`, \`framework\`, \`language\`, and configuration file paths.
 
 ### Step 4: Map to Skills
-
-Use the following routing table:
 
 | Project Type       | Skills                                                  |
 |--------------------|---------------------------------------------------------|
 | \`react\`            | \`react-components\`, \`a11y-automation\`                   |
 | \`node-typescript\`  | \`node-typescript-service\`                               |
-| \`java-spring\`      | (Refer to backend-policy.md; no specific skill yet)     |
-| \`python-fastapi\`   | (Refer to backend-policy.md; no specific skill yet)     |
 | \`unknown\`          | Fallback to manual inspection                           |
 
 ### Step 5: Check AI Tool Instruction Files
 
-For each AI tool, verify the instruction file exists in \`targetFolder\`:
+For each AI tool, verify the always-loaded file exists in \`targetFolder\`:
 
-| AI Tool | File | Required |
-|---|---|---|
-| GitHub Copilot | \`.github/copilot-instructions.md\` | Recommended |
-| Claude | \`CLAUDE.md\` | Recommended |
-| Cursor | \`.cursorrules\` | Optional |
-| Windsurf | \`.windsurfrules\` | Optional |
-
-For any missing recommended file, add a warning:
-\`\`\`
-WARNING: .github/copilot-instructions.md not found. Run the ai-tool-setup skill to generate it.
-\`\`\`
+| AI Tool | File |
+|---|---|
+| GitHub Copilot | \`.github/copilot-instructions.md\` |
+| Claude Code | \`CLAUDE.md\` |
+| Cursor | \`.cursor/rules/*.mdc\` (an \`alwaysApply: true\` rule) |
+| Codex CLI | \`AGENTS.md\` |
 
 ### Step 6: Apply Scope Guard
 
 Execute: \`node tools/scope-guard.mjs <targetFolder>\`
 
-This ensures subsequent operations remain within the target folder.
-
-If scope violations are detected, abort and notify.
-
 ### Step 7: Output Recommendations
 
-Print:
-- Detected project type.
-- List of recommended skills to load.
-- Relevant policy files.
-- AI tool instruction file status.
-
-Example output:
 \`\`\`json
 {
   "projectType": "react",
   "framework": "vite",
   "language": "typescript",
   "skills": ["react-components", "a11y-automation"],
-  "policies": [
-    ".github/copilot-instructions/workspace-policy.md",
-    ".github/copilot-instructions/frontend-policy.md"
-  ],
+  "policies": ["../policies/workspace-policy.md", "../policies/frontend-policy.md"],
   "aiTools": {
     "copilot": { "present": true, "path": ".github/copilot-instructions.md" },
     "claude":  { "present": true, "path": "CLAUDE.md" },
-    "cursor":  { "present": false, "path": ".cursorrules" }
+    "cursor":  { "present": false, "path": ".cursor/rules/workspace-policy.mdc" },
+    "codex":   { "present": false, "path": "AGENTS.md" }
   },
-  "warnings": [
-    "WARNING: .cursorrules not found. Run the ai-tool-setup skill to generate it."
-  ]
+  "warnings": ["WARNING: AGENTS.md not found. Run the ai-tool-setup skill to generate it."]
 }
 \`\`\`
 
@@ -156,9 +135,7 @@ Example output:
 
 - **Folder not found**: Output clear error message with the attempted path.
 - **Detection script failure**: Output stderr from \`project-detect.mjs\`.
-- **Ambiguous project type**: List candidates and request clarification.
-- **Missing AI tool files**: Include in warnings; suggest running \`ai-tool-setup\` skill.`,
-      filePath: 'ai-playbook/.github/agents/scan-workspace/AGENT.md'
+- **Missing AI tool files**: Include in warnings; suggest running \`ai-tool-setup\`.`,
     },
     {
       name: 'react-component-builder',
@@ -177,11 +154,9 @@ Example output:
       tools: [],
       skills: ['react-components', 'a11y-automation'],
       markdown: `---
+name: react-component-builder
 description: Build accessible React components following TypeScript and WCAG 2.2 standards
-tools:
-  - file-system-read
-  - file-system-write
-  - command-execution
+tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
 # React Component Builder Agent
@@ -212,56 +187,43 @@ Create or modify React components with TypeScript, ensuring accessibility compli
 
 ### Step 2: Load Skill
 
-Read: \`.github/skills/react-components/SKILL.md\`
-
-Follow the procedures defined in that skill.
+Read: \`.claude/skills/react-components/SKILL.md\`
 
 ### Step 3: Generate Component Structure
 
 1. Create the component file at \`<targetFolder>/<componentName>.tsx\`.
-2. Define TypeScript interface for props.
+2. Define TypeScript interface for props with explicit types.
 3. Implement the component with semantic HTML.
 4. Add accessibility attributes (ARIA roles, labels, keyboard handlers).
+5. Use explicit return type; avoid \`any\`.
 
-Refer to: \`.github/skills/react-components/references/a11y-wcag22.md\` for WCAG 2.2 requirements.
+Refer to: \`.claude/skills/react-components/references/a11y-wcag22.md\`
 
 ### Step 4: Apply Project-Specific Overrides
 
-Check for project-specific style guides or component library documentation:
-- If the project has \`.github/component-library-overrides.md\`, read and apply those rules.
-- Otherwise, follow the project's existing code style and conventions.
+Follow the target project's existing style and conventions (its own \`CLAUDE.md\`/\`.github/copilot-instructions.md\` take precedence over this playbook's defaults).
 
 ### Step 5: Validate Accessibility
 
-1. Check for semantic HTML usage.
-2. Verify keyboard event handlers are present for interactive elements.
-3. Ensure focus management for modals or dynamic content.
-4. Confirm ARIA attributes are valid and necessary.
+Check semantic HTML, keyboard handlers, focus management, and valid ARIA usage.
 
-If \`eslint-plugin-jsx-a11y\` is configured, suggest running: \`npm run lint\`
+### Step 6: Error Handling and Edge Cases
 
-### Step 6: Generate Test File (Optional)
+Use an \`AsyncState\` discriminated union for async data, add error boundaries, handle loading states with ARIA announcements.
 
-If tests are expected:
-1. Create \`<componentName>.test.tsx\` in the appropriate test directory.
-2. Include basic rendering test.
-3. Include accessibility test using \`@axe-core/react\` or similar.
+### Step 7: Generate Test File (Required)
 
-### Step 7: Output Summary
+Create \`<componentName>.test.tsx\` with a rendering test and a \`jest-axe\` accessibility test.
 
-Provide:
-- Path to created component file.
-- Brief description of implemented functionality.
-- Suggested verification commands:
-  - \`npm run lint\`
-  - \`npm test -- <componentName>\`
-  - \`npm run type-check\`
+### Step 8: Output Summary
+
+Provide file paths, TypeScript patterns used, accessibility features implemented, and verification commands (\`npm run lint\`, \`npm test -- <componentName>\`, \`npm run type-check\`).
 
 ## Error Handling
 
 - **Component already exists**: Notify and ask if modification or overwrite is intended.
 - **Invalid props specification**: Request clarification on expected types.
-- **Missing dependencies**: Suggest installing required packages.`
+- **Missing dependencies**: Suggest installing required packages.`,
     },
     {
       name: 'figma-component-builder',
@@ -275,48 +237,62 @@ Provide:
         'Fetch design context from Figma MCP using figma_url or fileKey/nodeId',
         'If Figma access fails, use attached screenshot or request screenshot from user',
         'Map to existing reusable components before creating new primitives',
-        'Generate apply_patch-ready diffs and run Chrome MCP accessibility checks',
+        'Apply minimal, reviewable edits and run Chrome MCP accessibility checks',
       ],
       tools: ['Figma MCP', 'Chrome MCP'],
       skills: ['figma-component', 'a11y-automation'],
-      markdown: `# Agent: figma-component-builder
+      markdown: `---
+name: figma-component-builder
+description: Convert Figma designs into React/TypeScript components (or screenshot-driven fallback), then verify them with Chrome MCP visual and accessibility checks. Use when a user wants a Figma design turned into working component code.
+tools: Read, Write, Edit, Bash, Grep, Glob
+---
+
+# Agent: figma-component-builder
 
 ## Purpose
 
-Automate conversion of Figma designs into React/TypeScript components and supporting artifacts for a selected project scope.
+Automate conversion of Figma designs into React/TypeScript components and supporting artifacts for the selected project scope, using the Figma MCP server for design context and the Chrome MCP server to verify accessibility.
 
 ## Required initial prompt context
 
-- \`scope\`: target project folder under workspace root
-- \`destination_folder\`: exact folder where generated files should be created or updated
-- \`component_library\`: preferred reusable component library for this scope (or \`none\`)
-- \`client_context\`: project-specific conventions
-- \`figma_url\` or \`{fileKey,nodeId}\`
+- \`scope\` (required): target project folder under workspace root.
+- \`destination_folder\` (required): exact destination folder for generated component files.
+- \`component_library\` (required): preferred reusable component library, or \`none\`.
+- \`client_context\` (required): project-specific coding conventions.
+- \`figma_url\` or \`{fileKey,nodeId}\` (required unless \`screenshot_image\` is supplied instead).
 
-Optional:
-- \`screenshot_image\` (fallback when Figma is unavailable)
-- \`dev_url\`, \`create_mode\`, \`preferences\`
+Optional: \`screenshot_image\`, \`dev_url\`, \`create_mode\` (\`preview\`|\`apply\`), \`preferences\`.
 
-## Core behavior
+## Operational rules
 
-1. Confirm scope and detect project type from local config files.
-2. Reuse existing components from \`component_library\` before creating new primitives.
-3. Generate minimal \`apply_patch\` diffs for destination files.
-4. Run Chrome MCP accessibility checks (axe + visual snapshots) when \`dev_url\` is provided.
+1. **Scope isolation** — treat each top-level folder as an independent project; confirm \`scope\` before editing.
+2. **Safety** — never edit \`node_modules/\`, \`dist/\`, \`build/\`, \`.git/\`, \`.github/workflows/\`.
+3. **Minimal diffs** — prefer focused, reviewable edits (1-3 files).
+4. **Reuse first** — search \`component_library\` for existing components before creating new primitives.
+5. **Tests & stories** — only create \`.test.tsx\`/\`.stories.tsx\` if Jest/Storybook are already configured.
+6. **Chrome MCP accessibility checks are mandatory** after every component creation or modification: inject axe-core, run WCAG 2.2 AA checks, report violations by impact level, and do not mark the task complete until violations are fixed.
+7. **Figma fallback** — if the Figma MCP server is unavailable, use \`screenshot_image\`; if neither is available, ask the user for one.
 
-## Figma fallback
+## Outputs
 
-- If Figma MCP is unavailable or incomplete, use \`screenshot_image\`.
-- If no screenshot is attached, request one before generating code.
-- State whether output was based on Figma context or screenshot fallback.
+1. Human-readable plan of changes.
+2. Applied edits (or a preview, depending on \`create_mode\`).
+3. Chrome MCP accessibility report: \`{violations, passes, incomplete}\` + remediation steps.
+4. Short verification checklist.
 
-## Deliverables
+## Security
 
-- Human-readable implementation plan
-- \`apply_patch\` diffs
-- Accessibility report JSON: \`{violations, passes, incomplete}\`
-- Verification checklist`,
-      filePath: 'ai-playbook/.github/agents/figma-component-builder/AGENT.md'
+Never attempt to exfiltrate credentials. If a Figma or Chrome MCP token is required, ask the user to provide it via environment variables — never embed secrets in output.
+
+## When to escalate
+
+- Refactors affecting exported types used by other projects.
+- Dev server unreachable or Chrome MCP can't connect.
+- Ambiguous interaction rules or missing design assets.
+
+## Related skills
+
+Use the \`figma-component\` skill for design→code conventions: \`.claude/skills/figma-component/SKILL.md\`.`,
     },
     {
       name: 'a11y-audit-react',
@@ -334,11 +310,9 @@ Optional:
       tools: ['run-a11y-lint.sh', 'run-axe-playwright.mjs'],
       skills: ['a11y-automation'],
       markdown: `---
-description: Audit React components for WCAG 2.2 compliance and suggest fixes
-tools:
-  - file-system-read
-  - command-execution
-  - report-generation
+name: a11y-audit-react
+description: Audit React components for WCAG 2.2 compliance and suggest fixes. Use for accessibility audits of React/TypeScript component files or directories.
+tools: Read, Grep, Glob, Bash
 ---
 
 # Accessibility Audit Agent (React)
@@ -362,84 +336,41 @@ Identify accessibility violations in React components and provide actionable rem
 
 ### Step 1: Validate Scope
 
-1. Verify \`targetPath\` exists.
-2. Determine file(s) to audit based on \`auditScope\`.
-3. Filter for \`.tsx\` and \`.jsx\` files.
+Verify \`targetPath\` exists and filter for \`.tsx\`/\`.jsx\` files based on \`auditScope\`.
 
 ### Step 2: Run Automated Lint
 
-Execute: \`.github/skills/a11y-automation/scripts/run-a11y-lint.sh <targetPath>\`
-
-Capture output.
-
-If eslint-plugin-jsx-a11y is configured, parse violations.
+Execute: \`.claude/skills/a11y-automation/scripts/run-a11y-lint.sh <targetPath>\`
 
 ### Step 3: Load WCAG Guidelines
 
-Read: \`.github/skills/react-components/references/a11y-wcag22.md\`
-
-Use as reference for manual inspection.
+Read: \`.claude/skills/react-components/references/a11y-wcag22.md\`
 
 ### Step 4: Analyze Each Component
 
-For each component file:
-
-1. **Semantic HTML Check**
-   - Detect use of \`<div>\` or \`<span>\` for buttons/links.
-   - Flag missing landmarks (\`<header>\`, \`<nav>\`, \`<main>\`, \`<footer>\`).
-
-2. **Keyboard Navigation Check**
-   - Verify interactive elements have \`onClick\` and \`onKeyDown\` handlers.
-   - Check for keyboard traps in modals or focus-managed sections.
-
-3. **ARIA Usage Check**
-   - Identify missing \`aria-label\` or \`aria-labelledby\` on icon buttons.
-   - Detect invalid ARIA attribute combinations.
-   - Flag redundant ARIA on semantic elements.
-
-4. **Focus Management Check**
-   - Verify modals trap focus and restore on close.
-   - Check that dynamic content updates announce via \`aria-live\` if needed.
-
-5. **Contrast and Motion Check**
-   - Flag hardcoded colors that may violate contrast ratios (suggest calculation).
-   - Detect animations without \`prefers-reduced-motion\` support.
+Check semantic HTML, keyboard navigation, ARIA usage, focus management, and contrast/motion.
 
 ### Step 5: Categorize Violations
 
-Assign severity:
-- **Critical**: Component is unusable via keyboard or screen reader.
-- **Serious**: Missing required ARIA or semantic structure.
-- **Moderate**: Suboptimal patterns that hinder usability.
-- **Minor**: Best practice improvements.
+Critical / Serious / Moderate / Minor.
 
 ### Step 6: Summarize Findings
 
-Output to chat:
-- Summary statistics (total issues, by severity).
-- Per-file breakdown with line numbers.
-- Brief description of each violation.
+Summary statistics, per-file breakdown with line numbers.
 
 ### Step 7: Propose Fixes
 
-For each violation:
-1. Show the problematic code snippet.
-2. Provide corrected version with minimal changes.
-3. Explain the accessibility benefit.
-
-Apply fixes using minimal diffs.
+Show the problematic snippet, the corrected version, and the accessibility benefit — apply with minimal diffs.
 
 ### Step 8: Suggest Automated Tests
 
-If Playwright is available:
-- Reference \`.github/skills/a11y-automation/scripts/run-axe-playwright.mjs\`.
-- Suggest integrating axe checks into the test suite.
+If Playwright is available, reference \`.claude/skills/a11y-automation/scripts/run-axe-playwright.mjs\`.
 
 ## Error Handling
 
 - **No React files found**: Notify and exit.
 - **Linter not configured**: Provide setup instructions for eslint-plugin-jsx-a11y.
-- **Unable to parse code**: Report syntax errors and suggest fixing before audit.`
+- **Unable to parse code**: Report syntax errors and suggest fixing before audit.`,
     },
     {
       name: 'node-microservice-builder',
@@ -458,11 +389,9 @@ If Playwright is available:
       tools: [],
       skills: ['node-typescript-service'],
       markdown: `---
+name: node-microservice-builder
 description: Scaffold or extend Node.js/TypeScript microservices with validation, error handling, and testing
-tools:
-  - file-system-read
-  - file-system-write
-  - command-execution
+tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
 # Node Microservice Builder Agent
@@ -473,108 +402,55 @@ Create or modify Node.js/TypeScript microservice endpoints following backend con
 
 ## Inputs
 
-- \`serviceName\`: Name of the service or module.
-- \`endpointSpec\`: HTTP method, path, request/response schemas, and business logic description.
-- \`targetFolder\`: Service directory within the project.
+- \`serviceName\`, \`endpointSpec\`, \`targetFolder\`.
 
 ## Outputs
 
-- Controller or route handler file.
-- Validation schemas (Zod, Joi, or class-validator).
-- Test file with unit and integration tests.
-- Updated routing configuration if needed.
+- Controller/route handler file, validation schemas, test file, updated routing.
 
 ## Procedure
 
 ### Step 1: Validate Inputs
 
-1. Ensure \`serviceName\` follows the project's naming convention.
-2. Verify \`targetFolder\` is a valid Node.js project (contains \`package.json\`).
-3. Check for \`tsconfig.json\` to confirm TypeScript usage.
+Confirm \`targetFolder\` is a valid Node.js/TypeScript project.
 
 ### Step 2: Load Skill
 
-Read: \`.github/skills/node-typescript-service/SKILL.md\`
-
-Follow the procedures defined in that skill.
+Read: \`.claude/skills/node-typescript-service/SKILL.md\`
 
 ### Step 3: Detect Framework
 
-Check \`package.json\` dependencies:
-- \`express\` → Express.js
-- \`@nestjs/core\` → Nest.js
-- \`fastify\` → Fastify
-
-Adjust code patterns accordingly.
+Express / Nest.js / Fastify, from \`package.json\` dependencies.
 
 ### Step 4: Generate Endpoint Handler
 
-1. Create handler function with typed parameters.
-2. Implement request validation using the project's validation library.
-3. Add error handling with appropriate HTTP status codes.
-4. Structure response with consistent format.
-
-For Nest.js:
-- Use controller class with decorators (\`@Controller\`, \`@Post\`, etc.).
-- Inject dependencies via constructor.
-- Use DTOs with validation decorators.
-
-For Express:
-- Create route handler function.
-- Use middleware for validation.
-- Return responses via \`res.status().json()\`.
+Typed handler with request validation and consistent HTTP status codes.
 
 ### Step 5: Add Validation Schema
 
-Refer to: \`.github/skills/node-typescript-service/references/validation-and-errors.md\`
-
-1. Define input schema (request body, query params, path params).
-2. Use appropriate validation library (Zod, Joi, class-validator).
-3. Attach validation middleware or decorator.
+Refer to: \`.claude/skills/node-typescript-service/references/validation-and-errors.md\` — Zod/Joi/class-validator, explicit types, no \`any\`.
 
 ### Step 6: Implement Error Handling
 
-1. Use custom error classes if available.
-2. Map business logic errors to HTTP status codes:
-   - 400 for validation errors.
-   - 401 for authentication failures.
-   - 403 for authorization failures.
-   - 404 for not found.
-   - 500 for unexpected errors.
-3. Return structured error responses with message and optional error code.
+Result-type pattern in the service layer, custom error classes, structured error responses mapped to HTTP status codes.
 
 ### Step 7: Generate Tests
 
-Create test file adjacent to the handler:
-1. Unit tests for business logic.
-2. Integration tests for HTTP endpoints (use supertest or similar).
-3. Include test cases for:
-   - Successful request.
-   - Validation failures.
-   - Error conditions.
+Unit tests for business logic, integration tests for the HTTP endpoint (supertest or equivalent).
 
 ### Step 8: Update Routing
 
-If the project has centralized routing:
-1. Register the new endpoint in the routing module.
-2. Ensure route conflicts are avoided.
+Register the endpoint; verify no route conflicts.
 
 ### Step 9: Output Summary
 
-Provide:
-- Path to created handler file.
-- Path to validation schema.
-- Path to test file.
-- Suggested verification commands:
-  - \`npm run lint\`
-  - \`npm test -- <serviceName>\`
-  - \`npm run build\`
+File paths, TypeScript patterns used, verification commands (\`npm run lint\`, \`npm test -- <serviceName>\`, \`npm run build\`).
 
 ## Error Handling
 
-- **Framework mismatch**: If the detected framework differs from expectation, clarify before proceeding.
-- **Missing validation library**: Suggest installing an appropriate package.
-- **Route conflict**: Notify and suggest alternative path or method.`
+- **Framework mismatch**: clarify before proceeding.
+- **Missing validation library**: suggest installing one.
+- **Route conflict**: notify and suggest an alternative.`,
     },
     {
       name: 'pr-reviewer',
@@ -587,16 +463,15 @@ Provide:
         'Check changed files against scope rules',
         'Validate against workspace policy',
         'Check frontend/backend specific conventions',
-        'Run diagnostics-summarizer.mjs on errors',
+        'Check AI tool instruction files stayed in sync',
         'Provide actionable feedback in chat',
       ],
-      tools: ['scope-guard.mjs', 'diagnostics-summarizer.mjs'],
+      tools: ['scope-guard.mjs', 'project-detect.mjs'],
       skills: ['Depends on file types being reviewed'],
       markdown: `---
-tools:
-  - file-system-read
-  - diff-analysis
-  - command-execution
+name: pr-reviewer
+description: Review pull requests for code quality, security, tests, policy compliance, and AI tool instruction consistency
+tools: Read, Bash, Grep, Glob
 ---
 
 # Pull Request Reviewer Agent
@@ -610,117 +485,49 @@ Analyze pull request changes for quality, security issues, test coverage, and ad
 - \`diffFile\`: Path to git diff or list of changed files.
 - \`projectRoot\`: Root directory of the target project.
 
-## Outputs
-
-- Review summary with findings categorized by severity.
-- Inline comments for specific issues.
-- Approval or change request recommendation.
-
 ## Procedure
 
 ### Step 1: Parse Diff
 
-1. Extract list of modified, added, and deleted files.
-2. Identify file types (source code, tests, config, documentation).
-3. Calculate scope of changes (lines added/removed).
+Extract modified/added/deleted files, file types, scope of change.
 
 ### Step 2: Run Scope Guard
 
 Execute: \`node tools/scope-guard.mjs <projectRoot> <changedFiles>\`
 
-Ensure all changes are within the allowed scope.
-
-Flag any violations.
-
 ### Step 3: Detect Project Type
 
 Execute: \`node tools/project-detect.mjs <projectRoot>\`
 
-Determine applicable policies and skills.
-
 ### Step 4: Load Relevant Policies
 
-Based on project type, read:
-- \`.github/copilot-instructions/workspace-policy.md\` (always)
-- \`.github/copilot-instructions/frontend-policy.md\` (if frontend)
-- \`.github/copilot-instructions/backend-policy.md\` (if backend)
+Always \`../policies/workspace-policy.md\`; \`frontend-policy.md\`/\`backend-policy.md\` as applicable.
 
 ### Step 5: Code Quality Check
 
-For each changed source file:
-
-1. **Style Consistency**
-   - Verify adherence to project conventions.
-   - Check for unrelated formatting changes (flag as noise).
-
-2. **Type Safety** (TypeScript/Java/Python with types)
-   - Identify \`any\` types or missing type annotations.
-   - Flag type assertions without justification.
-
-3. **Error Handling**
-   - Check for unhandled promise rejections.
-   - Verify appropriate error responses in API endpoints.
-
-4. **Security**
-   - Detect hardcoded secrets or credentials.
-   - Identify SQL injection risks (string concatenation in queries).
-   - Flag unvalidated user input.
-
-5. **Performance**
-   - Identify inefficient loops or algorithms.
-   - Flag synchronous operations in async contexts.
+Style consistency, type safety, error handling, security (hardcoded secrets, injection risks), performance.
 
 ### Step 6: Accessibility Check (Frontend Only)
 
-If frontend changes detected:
-1. Read: \`.github/skills/react-components/references/a11y-wcag22.md\`
-2. Check for:
-   - Use of non-semantic elements for interactive components.
-   - Missing ARIA labels on icon buttons.
-   - Keyboard handler omissions.
+Read \`.claude/skills/react-components/references/a11y-wcag22.md\`; check semantic HTML, ARIA labels, keyboard handlers.
 
 ### Step 7: Test Coverage Check
 
-1. Identify if tests were added or modified.
-2. Correlate test changes with source changes.
-3. Flag new functionality without corresponding tests.
-
-Suggest running:
-- \`npm test -- --coverage\` (or equivalent)
+Flag new functionality without corresponding tests.
 
 ### Step 8: AI Tool Instruction Check
 
-If the PR modifies playbook files (agents, skills, or policies):
-1. Check that \`.github/copilot-instructions.md\`, \`CLAUDE.md\`, and \`.cursorrules\` are consistent with any updated skill routing.
-2. Flag if a new skill was added but not referenced in the AI tool instruction files.
-3. Suggest running the \`ai-tool-setup\` skill to regenerate instruction files if they are stale.
+If the PR touches this playbook's agents/skills/policies: verify \`.github/copilot-instructions.md\`, \`CLAUDE.md\`, \`.cursor/rules/\`, and \`AGENTS.md\` are all still consistent with the routing table, and suggest running \`ai-tool-setup\` if any is stale.
 
-### Step 9: Documentation Check
+### Step 9-11: Documentation, Summarize, Generate Review
 
-1. Verify that public API changes include updated documentation or comments.
-2. For breaking changes, ensure migration notes are provided.
-
-### Step 10: Summarize Findings
-
-Categorize issues:
-- **Blocking**: Security vulnerabilities, breaking changes without migration path, scope violations.
-- **Required**: Missing tests, accessibility violations, type safety issues.
-- **Recommended**: Style improvements, performance optimizations, documentation enhancements, stale AI tool config.
-- **Nitpick**: Minor style or naming suggestions.
-
-### Step 11: Generate Review
-
-Format:
-- Summary section with metrics (files changed, lines added/removed).
-- Findings by category.
-- Inline comments with file path and line number.
-- Overall recommendation: Approve, Request Changes, or Comment.
+Categorize findings as Blocking / Required / Recommended / Nitpick, then produce the review with an overall recommendation.
 
 ## Error Handling
 
-- **Diff parsing failure**: Request valid git diff format.
-- **Project detection failure**: Ask for explicit project type.
-- **Policy file missing**: Proceed with general best practices only.`
+- **Diff parsing failure**: request valid git diff format.
+- **Project detection failure**: ask for explicit project type.
+- **Policy file missing**: proceed with general best practices only.`,
     },
     {
       name: 'code-reviewer',
@@ -739,238 +546,69 @@ Format:
       tools: [],
       skills: ['react-components', 'node-typescript-service', 'a11y-automation'],
       markdown: `---
-description: Review code files for quality, security, performance, and best practices, providing inline comments and actionable suggestions in chat without creating additional files
-tools: [read_file, list_directory]
+name: code-reviewer
+description: Senior code reviewer that evaluates changes across five dimensions — correctness, readability, architecture, security, and performance. Use for thorough code review before merge.
+tools: Read, Grep, Glob
 ---
 
-# Code Reviewer Agent
+# Senior Code Reviewer
 
 ## Purpose
-Analyze source code to identify potential improvements, bugs, security issues, and violations of best practices. Provide line-by-line feedback directly in the AI tool's chat interface with specific suggestions for enhancement.
 
-## Inputs
-- File path or directory to review
-- Optional: specific focus areas (performance, security, accessibility, maintainability)
-- Optional: language/framework context (auto-detected if not provided)
+Act as an experienced Staff Engineer performing a thorough code review. Evaluate proposed changes across a focused framework and produce actionable, categorized feedback.
 
-## Outputs
-- Inline comments with line numbers and specific suggestions
-- Categorized feedback (critical, warning, suggestion, style)
-- Actionable recommendations for each issue
-- Summary of review findings
+## Review Framework
 
-## Procedure
+Evaluate every change across five dimensions: **Correctness**, **Readability**, **Architecture**, **Security**, **Performance**.
 
-### 1. Context Detection
-Inspect the target file(s) and detect:
-- Programming language
-- Framework (React, Vue, Angular, Express, NestJS, etc.)
-- File type (component, service, utility, configuration)
-- Related dependencies and imports
+## Output Format
 
-### 2. Code Analysis
-Examine the code for:
+Categorize every finding as **Critical** (must fix before merge), **Important** (should fix before merge), or **Suggestion**.
 
-**Critical Issues:**
-- Security vulnerabilities (SQL injection, XSS, exposed secrets)
-- Memory leaks or resource exhaustion
-- Null/undefined errors
-- Race conditions or concurrency issues
-- Incorrect error handling
+\`\`\`markdown
+## Review Summary
+**Verdict:** APPROVE | REQUEST CHANGES
+**Overview:** [1-2 sentences]
 
-**Performance Issues:**
-- Inefficient algorithms or data structures
-- Unnecessary re-renders (React)
-- Missing memoization opportunities
-- Large bundle size contributors
-- Blocking operations
+### Critical Issues
+- [File:line] [Description and recommended fix]
 
-**Best Practices:**
-- Naming conventions
-- Code organization and structure
-- Separation of concerns
-- DRY violations
-- SOLID principles
-- Framework-specific patterns
+### Important Issues
+- [File:line] [Description and recommended fix]
 
-**Accessibility (Frontend):**
-- Missing ARIA attributes
-- Keyboard navigation support
-- Semantic HTML usage
-- Color contrast issues in styled components
-- Focus management
+### Suggestions
+- [File:line] [Description]
 
-**Maintainability:**
-- Code complexity (cyclomatic complexity)
-- Function/component size
-- Missing documentation for complex logic
-- Type safety issues (TypeScript)
-- Test coverage gaps
+### What's Done Well
+- [Positive observation]
 
-### 3. Format Output
-For each issue found, output in chat:
-
-\`\`\`
-📍 Line [LINE_NUMBER]: [ISSUE_CATEGORY]
-Current code:
-  [CODE_SNIPPET]
-
-Issue: [DESCRIPTION]
-
-Suggested fix:
-  [IMPROVED_CODE]
-
-Reason: [EXPLANATION]
+### Verification Story
+- Tests reviewed / Build verified / Security checked
 \`\`\`
 
-### 4. Categorization
-Use emojis to indicate severity:
-- 🔴 Critical: Security issues, bugs, breaking errors
-- 🟠 Warning: Performance problems, potential bugs
-- 🟡 Suggestion: Best practices, code quality improvements
-- 🔵 Style: Formatting, naming conventions
+## Rules
 
-### 5. Summary
-Conclude with a summary:
-\`\`\`
-Review Summary:
-✓ [COUNT] critical issues found
-✓ [COUNT] warnings
-✓ [COUNT] suggestions
-✓ [COUNT] style recommendations
-
-Priority Actions:
-1. [MOST_IMPORTANT_FIX]
-2. [SECOND_MOST_IMPORTANT_FIX]
-3. [THIRD_MOST_IMPORTANT_FIX]
-\`\`\`
+1. Always review the tests first — they reveal intent and coverage.
+2. Read the spec or task description before reviewing code.
+3. Every Critical and Important finding needs a specific fix recommendation.
+4. Never approve code with Critical issues.
+5. Always acknowledge what's done well.
 
 ## Framework-Specific Checks
 
-### React/TypeScript
-- Proper use of hooks (dependency arrays, exhaustive deps)
-- Component composition over inheritance
-- Props interface definitions
-- Key props in lists
-- Event handler naming
-- State management patterns
-- Accessibility in JSX
-
-### Node.js/Express
-- Input validation
-- Error middleware usage
-- Async error handling
-- Security headers
-- Rate limiting
-- Environment variable usage
-- Database connection pooling
-
-### Python
-- PEP 8 compliance
-- Type hints usage
-- Exception handling
-- Context managers for resources
-- List comprehensions vs loops
-- Generator usage for large datasets
-
-### Java
-- Exception handling patterns
-- Resource management (try-with-resources)
-- Immutability where appropriate
-- Stream API usage
-- Null safety patterns
-- Design patterns application
-
-## Error Handling
-If the target file cannot be read:
-- Suggest checking file path
-- Verify file permissions
-- Confirm file exists in current workspace
-
-If the language is not recognized:
-- Perform generic code review (structure, naming, complexity)
-- Suggest manual specification of language
-
-## Example Usage
-
-### Request:
-"Review the code in src/components/UserCard.tsx"
-
-### Response:
-\`\`\`
-Reviewing: src/components/UserCard.tsx (React TypeScript Component)
-
-🔴 Line 23: Critical - Potential null reference
-Current code:
-  const userName = user.name.toUpperCase()
-
-Issue: No null check on user or user.name before calling toUpperCase()
-
-Suggested fix:
-  const userName = user?.name?.toUpperCase() ?? 'Unknown'
-
-Reason: If user or user.name is null/undefined, this will throw a runtime error
-
----
-
-🟠 Line 45: Warning - Missing dependency in useEffect
-Current code:
-  useEffect(() => {
-    fetchUserData(userId)
-  }, [])
-
-Issue: userId is used but not included in dependency array
-
-Suggested fix:
-  useEffect(() => {
-    fetchUserData(userId)
-  }, [userId, fetchUserData])
-
-Reason: Effect won't re-run when userId changes, causing stale data
-
----
-
-🟡 Line 12: Suggestion - Extract magic number to constant
-Current code:
-  if (user.age < 18) {
-
-Suggested fix:
-  const MINIMUM_AGE = 18
-  if (user.age < MINIMUM_AGE) {
-
-Reason: Improves readability and makes the business rule explicit
-
----
-
-Review Summary:
-✓ 1 critical issue found
-✓ 2 warnings
-✓ 3 suggestions
-✓ 1 style recommendation
-
-Priority Actions:
-1. Add null checks on line 23 to prevent runtime errors
-2. Fix useEffect dependency array on line 45
-3. Add ARIA label to button on line 67 for accessibility
-\`\`\`
-
-## Integration Notes
-This agent provides feedback **only in chat**. It does not:
-- Create or modify files automatically
-- Generate separate report documents
-- Commit changes to version control
-
-The developer reviews the suggestions and applies them manually, maintaining full control over code changes.
+React/TypeScript (hooks, composition, props types, a11y), Node.js/Express (validation, error middleware, security headers), and language-appropriate checks for Python/Java.
 
 ## Related Skills
-- \`.github/skills/react-components/SKILL.md\` - For React-specific patterns
-- \`.github/skills/node-typescript-service/SKILL.md\` - For backend patterns
-- \`.github/skills/a11y-automation/SKILL.md\` - For accessibility checks
+
+- \`.claude/skills/react-components/SKILL.md\`
+- \`.claude/skills/node-typescript-service/SKILL.md\`
+- \`.claude/skills/a11y-automation/SKILL.md\`
 
 ## References
-- Load frontend policy: \`.github/copilot-instructions/frontend-policy.md\`
-- Load backend policy: \`.github/copilot-instructions/backend-policy.md\`
-- Load style guidelines: \`.github/copilot-instructions/style-output.md\``
+
+- \`../policies/frontend-policy.md\`
+- \`../policies/backend-policy.md\`
+- \`../policies/style-output.md\``,
     },
   ]
 
@@ -983,8 +621,10 @@ The developer reviews the suggestions and applies them manually, maintaining ful
             What are Agents?
           </CardTitle>
           <CardDescription>
-            Agents orchestrate multiple skills to accomplish complex tasks. They coordinate workflows, load context
-            progressively, and manage tool execution.
+            Agents coordinate multi-step tasks. Claude Code and GitHub Copilot each have a dedicated agent file format; Codex CLI has
+            no separate agent concept (it's just another skill). Cursor has its own subagent format too, but — as of Cursor 2.4 (2026) —
+            it also natively discovers subagents straight from <code className="bg-muted px-1 rounded">.claude/agents/</code>, so a
+            Claude Code agent works in Cursor with no extra file.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -1030,13 +670,17 @@ The developer reviews the suggestions and applies them manually, maintaining ful
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
-              {agent.filePath && (
-                <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded">
-                  <FolderOpen className="h-3.5 w-3.5" />
-                  <code>{agent.filePath}</code>
-                </div>
-              )}
-              
+              <div className="grid sm:grid-cols-2 gap-1.5">
+                {pathsFor(agent.name).map((p) => (
+                  <div key={p.tool} className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/30 px-3 py-2 rounded">
+                    <FolderOpen className="h-3.5 w-3.5 shrink-0" />
+                    <span className="font-medium text-foreground shrink-0">{p.tool}:</span>
+                    <code className="truncate">{p.path}</code>
+                    {p.note && <span className="text-[10px] italic shrink-0">({p.note})</span>}
+                  </div>
+                ))}
+              </div>
+
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <Play className="h-4 w-4 text-accent" />
@@ -1084,15 +728,15 @@ The developer reviews the suggestions and applies them manually, maintaining ful
                 </div>
               </div>
 
-              <Collapsible 
-                open={expandedAgent === agent.name} 
+              <Collapsible
+                open={expandedAgent === agent.name}
                 onOpenChange={() => setExpandedAgent(expandedAgent === agent.name ? null : agent.name)}
               >
                 <div className="flex items-center justify-between gap-2 pt-2 border-t">
                   <CollapsibleTrigger asChild>
                     <Button variant="ghost" size="sm" className="flex items-center gap-2">
                       <FileText className="h-4 w-4" />
-                      View Full AGENT.md
+                      View Full .claude/agents/{agent.name}.md
                       <ChevronDown className={`h-4 w-4 transition-transform ${expandedAgent === agent.name ? 'rotate-180' : ''}`} />
                     </Button>
                   </CollapsibleTrigger>
@@ -1116,7 +760,13 @@ The developer reviews the suggestions and applies them manually, maintaining ful
                   </Button>
                 </div>
                 <CollapsibleContent>
-                  <div className="mt-4">
+                  <div className="mt-4 space-y-2">
+                    <p className="text-xs text-muted-foreground">
+                      Shown in Claude Code's format (the richest of the four). See the Structure tab for how the same
+                      procedure is adapted to Copilot's <code className="bg-muted px-1 rounded">.agent.md</code>, Cursor's{' '}
+                      <code className="bg-muted px-1 rounded">.cursor/commands/*.md</code>, and Codex's{' '}
+                      <code className="bg-muted px-1 rounded">.agents/skills/*/SKILL.md</code>.
+                    </p>
                     <ScrollArea className="h-96 w-full rounded-lg border bg-muted/30">
                       <pre className="p-4 text-xs font-mono whitespace-pre-wrap">
                         {agent.markdown}
@@ -1134,28 +784,42 @@ The developer reviews the suggestions and applies them manually, maintaining ful
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
             <Boxes className="h-5 w-5 text-accent" />
-            AGENT.md File Structure
+            Agent File Format, By Tool
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="bg-background p-4 rounded-lg font-mono text-xs space-y-3">
             <div>
-              <p className="text-muted-foreground">YAML frontmatter:</p>
+              <p className="text-muted-foreground">Claude Code — .claude/agents/&lt;name&gt;.md:</p>
               <pre className="text-foreground mt-1">
 {`---
-description: Brief action-oriented description
-tools: [tool1, tool2]
+name: agent-name
+description: What it does and when to use it
+tools: Read, Write, Edit, Bash, Grep, Glob
 ---`}
               </pre>
             </div>
             <div>
-              <p className="text-muted-foreground">Required sections:</p>
-              <ul className="text-foreground space-y-1 mt-1 ml-4">
-                <li>• Purpose</li>
-                <li>• Inputs (what the agent receives)</li>
-                <li>• Outputs (what the agent produces)</li>
-                <li>• Step-by-step procedure</li>
-              </ul>
+              <p className="text-muted-foreground">GitHub Copilot — .github/agents/&lt;name&gt;.agent.md:</p>
+              <pre className="text-foreground mt-1">
+{`---
+description: Required — what it does and when to use it
+name: agent-name
+tools: ["read", "edit", "search"]
+---`}
+              </pre>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Cursor — reads .claude/agents/&lt;name&gt;.md directly (same frontmatter as Claude Code, no copy needed), or its own .cursor/agents/&lt;name&gt;.md. .cursor/commands/&lt;name&gt;.md remains available for simple explicit /name actions with no frontmatter.</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">Codex CLI — .agents/skills/&lt;name&gt;/SKILL.md:</p>
+              <pre className="text-foreground mt-1">
+{`---
+name: agent-name
+description: What it does and when to use it
+---`}
+              </pre>
             </div>
           </div>
         </CardContent>

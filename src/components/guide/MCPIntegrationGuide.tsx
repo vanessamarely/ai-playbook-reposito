@@ -161,18 +161,22 @@ export default function MCPIntegrationGuide() {
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-3">
+                <div className="grid gap-3 md:grid-cols-4">
                   <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
-                    <p className="text-xs font-semibold mb-1">Claude Desktop</p>
-                    <p className="text-[10px] text-muted-foreground">Edit JSON config file</p>
-                  </div>
-                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
-                    <p className="text-xs font-semibold mb-1">Cline (VSCode)</p>
-                    <p className="text-[10px] text-muted-foreground">Add to settings.json</p>
+                    <p className="text-xs font-semibold mb-1">Claude Code</p>
+                    <p className="text-[10px] text-muted-foreground">.mcp.json in project root</p>
                   </div>
                   <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
                     <p className="text-xs font-semibold mb-1">Cursor</p>
-                    <p className="text-[10px] text-muted-foreground">Coming soon (use CLI)</p>
+                    <p className="text-[10px] text-muted-foreground">.cursor/mcp.json</p>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    <p className="text-xs font-semibold mb-1">GitHub Copilot</p>
+                    <p className="text-[10px] text-muted-foreground">.vscode/mcp.json</p>
+                  </div>
+                  <div className="bg-primary/10 p-3 rounded-lg border border-primary/20">
+                    <p className="text-xs font-semibold mb-1">Codex CLI</p>
+                    <p className="text-[10px] text-muted-foreground">~/.codex/config.toml</p>
                   </div>
                 </div>
 
@@ -205,7 +209,7 @@ export default function MCPIntegrationGuide() {
                   <div className="flex items-start gap-3 mb-3">
                     <FileText className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                     <div className="flex-1">
-                      <p className="text-xs font-semibold mb-1">Agent File: pr-reviewer/AGENT.md</p>
+                      <p className="text-xs font-semibold mb-1">Copilot agent file: .github/agents/pr-reviewer.agent.md</p>
                       <pre className="text-[10px] font-mono bg-muted p-3 rounded overflow-x-auto">
 {`---
 description: Review pull requests for code quality
@@ -213,6 +217,9 @@ mcp-servers:
   - github        # Required: Fetch PR data
   - filesystem    # Optional: Read local files
 ---
+# (Claude Code, Cursor, and Codex don't read mcp-servers from
+# the agent/skill file — they use .mcp.json / .cursor/mcp.json /
+# ~/.codex/config.toml instead, shown in the tabs below)
 
 # Purpose
 Automated PR review with GitHub integration via MCP.
@@ -333,7 +340,7 @@ Automated PR review with GitHub integration via MCP.
                   <div className="flex items-start gap-3">
                     <Badge variant="outline" className="shrink-0 mt-0.5">Agent</Badge>
                     <p className="text-xs text-muted-foreground">
-                      Update <code className="bg-muted px-1 py-0.5 rounded">a11y-audit-react/AGENT.md</code> to include <code className="bg-muted px-1 py-0.5 rounded">playwright</code> in mcp-servers list
+                      For Copilot, add <code className="bg-muted px-1 py-0.5 rounded">playwright</code> to the <code className="bg-muted px-1 py-0.5 rounded">mcp-servers</code> list in <code className="bg-muted px-1 py-0.5 rounded">a11y-audit-react.agent.md</code>'s frontmatter; other tools configure it in their MCP config file instead (see tabs above)
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -789,10 +796,9 @@ Automated PR review with direct GitHub integration.
    - Read existing review comments
    - Check linked issues
 2. Use filesystem MCP to read full file context
-3. Analyze changes against policies:
-   - Load .github/copilot-instructions/workspace-policy.md
-   - Load frontend-policy.md or backend-policy.md
-   - Check for violations
+3. Analyze changes against this project's workspace and frontend/backend
+   policy content (CLAUDE.md / .github/copilot-instructions.md / .cursor/rules / AGENTS.md,
+   depending on the tool) and check for violations
 4. Use github MCP to:
    - Post inline comments on specific lines
    - Request changes or approve
@@ -824,7 +830,7 @@ mcp-servers:
 Build, test, and verify React components in one workflow.
 
 ## Procedure
-1. Load .github/skills/react-components/SKILL.md
+1. Follow the react-components skill/prompt/rule for your AI tool
 2. Generate component code following accessibility patterns
 3. Use filesystem MCP to:
    - Write component file
@@ -857,9 +863,9 @@ Build, test, and verify React components in one workflow.
         <CardContent>
           <Tabs defaultValue="claude" className="w-full">
             <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto gap-2 bg-muted/50 p-2">
-              <TabsTrigger value="claude" className="text-xs">Claude Desktop</TabsTrigger>
+              <TabsTrigger value="claude" className="text-xs">Claude Code / Desktop</TabsTrigger>
               <TabsTrigger value="cursor" className="text-xs">Cursor</TabsTrigger>
-              <TabsTrigger value="cline" className="text-xs">Cline (VSCode)</TabsTrigger>
+              <TabsTrigger value="cline" className="text-xs">Codex CLI</TabsTrigger>
               <TabsTrigger value="custom" className="text-xs">Custom Setup</TabsTrigger>
             </TabsList>
 
@@ -945,27 +951,20 @@ When using a11y-audit agent:
             <TabsContent value="cline" className="space-y-4 mt-4">
               <div className="space-y-3">
                 <div className="bg-background p-4 rounded-lg">
-                  <p className="text-xs font-semibold text-muted-foreground mb-2">Cline MCP Configuration</p>
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">Codex CLI MCP Configuration</p>
                   <p className="text-xs text-muted-foreground mb-3">
-                    Cline (VSCode extension) supports MCP servers via settings.json
+                    Codex CLI reads MCP servers from <code className="bg-muted px-1 rounded">~/.codex/config.toml</code> (TOML, not JSON)
                   </p>
                   <pre className="text-xs font-mono">
-{`// .vscode/settings.json or User Settings
-{
-  "cline.mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "\${env:GITHUB_TOKEN}"
-      }
-    },
-    "playwright": {
-      "command": "npx",
-      "args": ["-y", "@executeautomation/playwright-mcp-server"]
-    }
-  }
-}`}
+{`# ~/.codex/config.toml
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-github"]
+env = { GITHUB_TOKEN = "ghp_your_token_here" }
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@executeautomation/playwright-mcp-server"]`}
                   </pre>
                 </div>
 
@@ -973,7 +972,7 @@ When using a11y-audit agent:
                   <CheckCircle2 className="h-4 w-4" />
                   <AlertTitle className="text-xs">Environment Variables</AlertTitle>
                   <AlertDescription className="text-xs">
-                    Store sensitive tokens in environment variables or .env files, reference them with $&#123;env:VAR_NAME&#125;
+                    Store sensitive tokens in environment variables rather than hardcoding them in config.toml where possible.
                   </AlertDescription>
                 </Alert>
               </div>

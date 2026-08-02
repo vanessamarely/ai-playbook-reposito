@@ -1,24 +1,13 @@
 ---
 name: skill-creator
-description: Scaffolds new agent skill documentation following the agentskills.io structure with validated YAML frontmatter, progressive disclosure, and agent-oriented procedural instructions. Use when the user wants to author a new skill, convert prose documentation into an agent skill, or validate an existing SKILL.md. Do not use for writing human-facing README files, changelogs, or general project documentation.
-triggers:
-  - create a new skill
-  - scaffold skill documentation
-  - add agent skill
-  - write SKILL.md
-  - define agent procedures
-negative_triggers:
-  - write README
-  - update changelog
-  - create human documentation
-  - write user guide
+description: Scaffolds new SKILL.md files following the official Agent Skills format (SKILL.md with YAML frontmatter, progressive disclosure, agent-oriented procedural instructions). Use when the user wants to author a new skill for this playbook, convert prose documentation into a skill, or validate an existing SKILL.md. Do not use for writing human-facing README files, changelogs, or general project documentation.
 ---
 
 # Skill: Skill Creator
 
 ## Purpose
 
-Generate new skill documentation that follows the agentskills.io-inspired structure with proper metadata and agent-oriented instructions.
+Generate new `SKILL.md` documentation that follows the official Agent Skills format (see [agentskills.io](https://agentskills.io)) with valid frontmatter and agent-oriented instructions.
 
 ## Inputs
 
@@ -28,7 +17,7 @@ Generate new skill documentation that follows the agentskills.io-inspired struct
 
 ## Outputs
 
-- `SKILL.md` file with valid frontmatter
+- `SKILL.md` file with valid frontmatter, placed at `.github/skills/<name>/SKILL.md`
 - Optional supporting files (`references/`, `assets/`, `scripts/`)
 
 ## Procedures
@@ -38,25 +27,28 @@ Generate new skill documentation that follows the agentskills.io-inspired struct
 Check that the name:
 - Contains only lowercase letters, numbers, and hyphens.
 - Matches the parent directory name.
-- Is unique within `.github/skills/`.
+- Is unique within `.github/skills/` (project) and `~/.copilot/skills/` (personal).
 
-Execute: `python .github/skills/skill-creator/scripts/validate-metadata.py <skillName>`
+Execute: `python scripts/validate-metadata.py <skillName>`
 
 If validation fails, reject and request correction.
 
 ### 2. Load Template
 
-Read: `.github/skills/skill-creator/assets/skill-template.md`
+Read: [assets/skill-template.md](assets/skill-template.md)
 
 Use as the base structure.
 
 ### 3. Populate Frontmatter
 
-Required fields:
-- `name`: The skill identifier (must match directory).
-- `description`: Action-oriented, 1-2 sentences. No first or second person pronouns.
-- `triggers`: List of phrases that indicate this skill should be used.
-- `negative_triggers`: List of phrases indicating this skill does NOT apply.
+GitHub Copilot's supported SKILL.md frontmatter fields:
+
+- `name`: lowercase, hyphens — should match the parent directory name.
+- `description`: What the skill does and when to use it — Copilot uses this to decide when to load the skill. Write it in third person, no "I"/"you"/"we". Required.
+- `license`: Optional license identifier for the skill content.
+- `allowed-tools`: Optional list of tool names pre-approved for the turn that invokes this skill (keep it a simple list, e.g. `shell`, `bash` — omit entirely unless genuinely simple).
+
+Do not invent fields outside this list — unknown frontmatter is parsed but ignored, and it misleads readers about what the platform actually supports.
 
 ### 4. Define Purpose Section
 
@@ -88,6 +80,7 @@ Rules:
 - Use third-person imperative ("Execute", "Verify", "Generate").
 - Include explicit decision branches (if/else).
 - Reference external files for dense information (progressive disclosure).
+- Use paths relative to the skill's own directory (e.g. `scripts/<tool>`) when referencing bundled scripts so the skill works regardless of where it's installed (project or personal).
 
 Pattern:
 ```
@@ -135,18 +128,18 @@ If exceeded:
 
 ### 12. Validate Metadata
 
-Execute: `python .github/skills/skill-creator/scripts/validate-metadata.py <skillPath>`
+Execute: `python scripts/validate-metadata.py <skillPath>`
 
 Check:
 - Name format correctness.
-- Description length (under 200 characters).
+- Description length (under 1,536 characters).
 - No prohibited pronouns (I, you, we).
 
 ## Error Handling
 
 **Invalid skill name**: Must match `^[a-z0-9-]+$`. Reject and provide example.
 
-**Description too long**: Limit to 200 characters. Request condensed version.
+**Description too long**: Trim so `description` stays under 1,536 characters.
 
 **Pronouns detected**: Rewrite description in third-person imperative.
 
@@ -154,4 +147,5 @@ Check:
 
 ## References
 
-- Checklist: `references/checklist.md`
+- Checklist: [references/checklist.md](references/checklist.md)
+- Cross-tool adaptation: see `ai-playbook/.claude/skills/skill-creator/SKILL.md` for the canonical Claude Code source, `ai-playbook/.agents/skills/skill-creator/SKILL.md` for the OpenAI Codex equivalent, and `ai-playbook/.cursor/commands/skill-creator.md` for Cursor.

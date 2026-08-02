@@ -27,7 +27,7 @@ export default function UsageGuide() {
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 The AI Playbook is a <strong>reusable guide and framework</strong> you copy into your individual project or workspace. 
-                It contains agents, skills, and policies that work with your IDE's AI tool (GitHub Copilot, Claude, Cursor, Cline, etc.) 
+                It contains agents, skills, and policies that work with your IDE's AI tool (GitHub Copilot, Claude Code, Cursor, or OpenAI Codex CLI)
                 to help you build components, review code, audit accessibility, and more.
               </p>
               <p className="text-sm text-muted-foreground">
@@ -39,7 +39,7 @@ export default function UsageGuide() {
                 <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
                   <li>Copy the playbook structure into your project or workspace root</li>
                   <li>AI agents and skills are markdown files that guide your AI tool</li>
-                  <li>Works with multiple AI tools (Copilot, Claude, Cursor, Cline, etc.)</li>
+                  <li>Works with GitHub Copilot, Claude Code, Cursor, and OpenAI Codex CLI</li>
                   <li>No scripts to run - just reference files in your AI chat</li>
                   <li>Customize for your project's specific needs</li>
                 </ul>
@@ -53,8 +53,9 @@ export default function UsageGuide() {
               Basic Workflow
             </h3>
             <p className="text-sm text-muted-foreground">
-              The AI Playbook uses an orchestrator pattern that routes your requests to the appropriate agent based on your task. 
-              The exact syntax differs slightly between AI tools, but the concept is the same.
+              There is no shared orchestrator file — each tool routes your request to the appropriate agent/skill using its own
+              mechanism (explicit selection in Copilot/Cursor, or model-driven description matching in Claude Code/Codex CLI).
+              The concept is the same; the mechanism differs. See the Core → Structure tab for the details.
             </p>
 
             <div className="space-y-3">
@@ -95,7 +96,7 @@ export default function UsageGuide() {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    The orchestrator analyzes your request and routes it to the appropriate agent:
+                    Your AI tool matches the request to the appropriate agent/skill:
                   </p>
                   <div className="grid gap-2 text-xs">
                     <div className="flex items-center gap-2 p-2 rounded bg-background">
