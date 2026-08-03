@@ -5,46 +5,21 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { 
-  Shield, 
-  Code, 
-  FileText, 
-  Copy, 
-  Check, 
+import {
+  Shield,
+  Code,
+  FileText,
+  Copy,
+  Check,
   ChevronDown,
-  AlertTriangle,
   CheckCircle,
   Layers,
-  Terminal
+  Terminal,
+  FolderOpen,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
-export default function PolicyRulesGuide() {
-  const [copiedContent, setCopiedContent] = useState<string | null>(null)
-  const [expandedPolicy, setExpandedPolicy] = useState<string | null>(null)
-
-  const copyToClipboard = (content: string, policyName: string) => {
-    navigator.clipboard.writeText(content)
-    setCopiedContent(policyName)
-    toast.success(`${policyName} copied to clipboard!`)
-    setTimeout(() => setCopiedContent(null), 2000)
-  }
-
-  const workspacePolicy = `# Workspace Policy
-
-## Supported AI Tools
-
-This playbook supports four AI coding assistants. Each has its own discovery mechanism — there is no shared folder all of them read.
-
-| AI Tool | Always-loaded instructions | Location |
-|---|---|---|
-| GitHub Copilot | \`copilot-instructions.md\` | \`<repo-root>/.github/copilot-instructions.md\` |
-| Claude Code | \`CLAUDE.md\` | \`<repo-root>/CLAUDE.md\` |
-| Cursor | \`.mdc\` rules (\`alwaysApply: true\`) | \`<repo-root>/.cursor/rules/*.mdc\` |
-| OpenAI Codex CLI | \`AGENTS.md\` | \`<repo-root>/AGENTS.md\` (nearest wins for nested overrides) |
-
-Use the \`ai-tool-setup\` skill to generate or refresh all four:
-\`Skill: ai-playbook/.claude/skills/ai-tool-setup/SKILL.md\`
+const workspacePolicy = `# Workspace Policy
 
 ## Scope Enforcement
 
@@ -89,7 +64,7 @@ Do NOT perform changes across multiple project folders unless:
 
 Default behavior: operate on a single project at a time.`
 
-  const frontendPolicy = `# Frontend Policy
+const frontendPolicy = `# Frontend Policy
 
 ## Technology Stack
 
@@ -123,7 +98,6 @@ Primary focus: React + TypeScript applications.
 
 ### Event Handlers
 - Prefix handler functions with \`handle\` (e.g., \`handleClick\`).
-- Use inline arrow functions sparingly (consider performance implications).
 - Type event parameters explicitly (e.g., \`React.MouseEvent<HTMLButtonElement>\`).
 
 ## Accessibility Policy
@@ -147,10 +121,9 @@ All frontend code must meet WCAG 2.2 Level AA standards.
 - Use \`@testing-library/react\` for component tests
 - Use \`jest-axe\` for automated accessibility testing
 - Include \`toHaveNoViolations()\` matcher in component tests
-- Test keyboard navigation and focus management
-- Verify ARIA attributes and semantic structure`
+- Test keyboard navigation and focus management`
 
-  const backendPolicy = `# Backend Policy
+const backendPolicy = `# Backend Policy
 
 ## Multi-Language Support
 
@@ -172,205 +145,198 @@ This playbook supports backend development in multiple ecosystems. Follow the co
 - Module-based organization.
 - Dependency injection via decorators.
 - DTOs for request/response validation.
-- Pipes for transformation and validation.
 
 ## Java
 
-### Maven Projects
+### Maven / Gradle Projects
 - Standard directory structure: \`src/main/java\`, \`src/test/java\`.
-- \`pom.xml\` dependency management.
 - Lombok for boilerplate reduction (if present).
-
-### Gradle Projects
-- Follow Gradle conventions.
-- Multi-module support.
 
 ### Spring Boot Patterns
 - Controller/Service/Repository layering.
 - Spring annotations for dependency injection.
-- \`application.properties\` or \`application.yml\` for configuration.
 
 ## Python
 
 ### Project Structure
 - \`pyproject.toml\` for modern projects.
 - Virtual environment (\`venv/\`, \`.venv/\`) isolation.
-- Clear module hierarchy.
 
-### FastAPI Patterns
-- Router-based organization.
-- Pydantic models for validation.
-- Async/await for I/O-bound operations.
-
-### Django Patterns
-- App-based modular structure.
-- Models, views, serializers separation.
-- Django ORM patterns.
+### FastAPI / Django Patterns
+- Router-based organization; Pydantic models for validation (FastAPI).
+- App-based modular structure; Django ORM patterns (Django).
 
 ## General Backend Rules
 
-### Error Handling
-- Return meaningful error messages.
-- Use appropriate HTTP status codes.
-- Log errors with sufficient context.
-
-### Validation
+- Return meaningful error messages with appropriate HTTP status codes.
 - Validate all inputs at entry points.
-- Use schema validation libraries appropriate to the ecosystem.
-
-### Testing
-- Unit tests for business logic.
-- Integration tests for API endpoints.
-- Mock external dependencies.
-
-### Security
 - Never log sensitive data (passwords, tokens, keys).
 - Use parameterized queries to prevent SQL injection.
-- Validate and sanitize user input.
-- Follow OWASP guidelines for the language.`
+- Unit tests for business logic, integration tests for API endpoints.`
 
-  const outputStylePolicy = `# Output Style Guidelines
+const outputStylePolicy = `# Output Style Guidelines
 
 ## Minimal Diffs
 
 Produce the smallest possible changeset to accomplish the task.
 
-### Rules
 1. Modify only the lines necessary to implement the feature or fix.
 2. Do not reformat unrelated code.
 3. Do not reorganize imports unless required for the change.
 4. Do not rename variables or functions outside the scope of the task.
 
-### Exception
-If the user explicitly requests refactoring or code cleanup, broader changes are acceptable.
+Exception: if the user explicitly requests refactoring or cleanup, broader changes are acceptable.
 
 ## Path References
 
-All file paths in output must be:
-- Relative to the target project root.
-- Use forward slashes (\`/\`) regardless of operating system.
-- Omit leading \`./\` unless semantically required.
-
-Examples:
-- \`src/components/Button.tsx\`
-- \`tests/unit/api.test.ts\`
-- \`config/database.yml\`
+All file paths in output must be relative to the target project root, use forward slashes, and omit a leading \`./\` unless semantically required.
 
 ## No Mass Reformatting
 
-Do NOT apply automatic code formatters (Prettier, Black, gofmt) unless:
-- The project has a pre-commit hook configured.
-- The user explicitly requests formatting.
-
-Preserve the existing code style of the target file.
+Do NOT apply automatic code formatters (Prettier, Black, gofmt) unless the project has a pre-commit hook configured or the user explicitly requests it. Preserve the existing code style of the target file.
 
 ## No Unrelated Refactors
 
-When fixing a bug or adding a feature:
-- Do not extract functions "for cleanliness" unless required.
-- Do not split files unless the change demands it.
-- Do not introduce design patterns (e.g., factory, strategy) unless solving a concrete problem.
+Do not extract functions "for cleanliness," split files, or introduce design patterns unless the change actually demands it.
 
 ## Verification Commands
 
-After proposing changes, suggest commands the user can run to verify correctness:
+After proposing changes, suggest the specific commands relevant to the project's tooling:
 - Linting: \`npm run lint\`, \`eslint src/\`, \`pylint module/\`
 - Type checking: \`tsc --noEmit\`, \`mypy .\`
 - Tests: \`npm test\`, \`pytest\`, \`mvn test\`
 - Build: \`npm run build\`, \`gradle build\`, \`python -m build\`
 
-Provide the specific command relevant to the project's tooling.
-
 ## Plan vs. Direct Fix
 
-### When to Plan
-For complex changes involving:
-- Multiple files or modules.
-- Architectural decisions.
-- Trade-offs between approaches.
+Plan first (approach, files to modify, high-level steps) for multi-file or architectural changes. Fix directly for single-file bugs, typos, or small utility additions.`
 
-Provide:
-1. Brief description of the approach.
-2. List of files to modify.
-3. High-level steps.
+interface PolicyDef {
+  id: string
+  name: string
+  description: string
+  icon: typeof Shield
+  color: string
+  bgColor: string
+  content: string
+  keyPoints: string[]
+}
 
-Then execute after confirmation.
+const POLICIES: PolicyDef[] = [
+  {
+    id: 'workspace',
+    name: 'Workspace Policy',
+    description: 'Project isolation, scope enforcement, and multi-repo workspace rules',
+    icon: Layers,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    content: workspacePolicy,
+    keyPoints: ['Multi-repository workspace support', 'Project isolation and scope enforcement', 'Exclusion patterns for build artifacts'],
+  },
+  {
+    id: 'frontend',
+    name: 'Frontend Policy',
+    description: 'React, TypeScript, accessibility, and testing standards',
+    icon: Code,
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-50',
+    content: frontendPolicy,
+    keyPoints: ['React + TypeScript best practices', 'WCAG 2.2 Level AA accessibility requirements', 'Testing with jest-axe and React Testing Library'],
+  },
+  {
+    id: 'backend',
+    name: 'Backend Policy',
+    description: 'Multi-language backend guidelines (Node, Java, Python)',
+    icon: Terminal,
+    color: 'text-green-600',
+    bgColor: 'bg-green-50',
+    content: backendPolicy,
+    keyPoints: ['Node.js/TypeScript and Nest.js patterns', 'Java Spring Boot & Python FastAPI/Django patterns', 'Security best practices (OWASP)'],
+  },
+  {
+    id: 'output',
+    name: 'Output Style',
+    description: 'How to format responses, diffs, and verification commands',
+    icon: FileText,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50',
+    content: outputStylePolicy,
+    keyPoints: ['Minimal diffs — smallest possible changesets', 'Relative path references with forward slashes', 'Include verification commands'],
+  },
+]
 
-### When to Fix Directly
-For simple changes:
-- Single-file bug fixes.
-- Typo corrections.
-- Adding a small utility function.
-- Updating configuration values.
+interface ToolInfo {
+  id: string
+  label: string
+  realTerm: string
+  realTermExplain: string
+  locations: Record<string, { file: string; note: string }>
+}
 
-Proceed immediately with the fix.`
-
-  const policies = [
-    {
-      id: 'workspace',
-      name: 'Workspace Policy',
-      description: 'Project isolation, scope enforcement, and multi-repo workspace rules',
-      icon: Layers,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      content: workspacePolicy,
-      keyPoints: [
-        'Multi-repository workspace support',
-        'Project isolation and scope enforcement',
-        'Exclusion patterns for build artifacts',
-        'Target folder selection protocol',
-        'Cross-folder refactor prohibition'
-      ]
+const TOOLS: ToolInfo[] = [
+  {
+    id: 'copilot',
+    label: 'GitHub Copilot',
+    realTerm: 'Instructions',
+    realTermExplain: 'Copilot never calls this "rules" — its docs and UI call it "custom instructions."',
+    locations: {
+      workspace: { file: '.github/copilot-instructions.md', note: 'merged with Output Style, always loaded' },
+      output: { file: '.github/copilot-instructions.md', note: 'merged with Workspace Policy, always loaded' },
+      frontend: { file: '.github/instructions/frontend.instructions.md', note: 'applyTo: "**/*.tsx,**/*.ts"' },
+      backend: { file: '.github/instructions/backend.instructions.md', note: 'applyTo: "server/**,services/**"' },
     },
-    {
-      id: 'frontend',
-      name: 'Frontend Policy',
-      description: 'React, TypeScript, accessibility, and testing standards',
-      icon: Code,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      content: frontendPolicy,
-      keyPoints: [
-        'React + TypeScript best practices',
-        'WCAG 2.2 Level AA accessibility requirements',
-        'Component structure and state management',
-        'Testing with jest-axe and React Testing Library',
-        'Focus management and keyboard navigation'
-      ]
+  },
+  {
+    id: 'claude',
+    label: 'Claude Code',
+    realTerm: 'CLAUDE.md',
+    realTermExplain: 'Claude doesn\'t use the word "rules" either — everything always-loaded lives in one memory file.',
+    locations: {
+      workspace: { file: 'CLAUDE.md', note: 'read in full at session start' },
+      output: { file: 'CLAUDE.md', note: 'read in full at session start' },
+      frontend: { file: 'CLAUDE.md', note: 'read in full at session start' },
+      backend: { file: 'CLAUDE.md', note: 'read in full at session start' },
     },
-    {
-      id: 'backend',
-      name: 'Backend Policy',
-      description: 'Multi-language backend guidelines (Node, Java, Python)',
-      icon: Terminal,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      content: backendPolicy,
-      keyPoints: [
-        'Node.js/TypeScript and Nest.js patterns',
-        'Java Spring Boot conventions',
-        'Python FastAPI and Django patterns',
-        'Error handling and validation',
-        'Security best practices (OWASP)'
-      ]
+  },
+  {
+    id: 'cursor',
+    label: 'Cursor',
+    realTerm: 'Rules',
+    realTermExplain: 'The only one of the four that genuinely calls this "rules" in its own docs and file path.',
+    locations: {
+      workspace: { file: '.cursor/rules/workspace-policy.mdc', note: 'alwaysApply: true' },
+      output: { file: '.cursor/rules/style-output.mdc', note: 'alwaysApply: true' },
+      frontend: { file: '.cursor/rules/frontend-policy.mdc', note: 'globs: "**/*.tsx,**/*.ts"' },
+      backend: { file: '.cursor/rules/backend-policy.mdc', note: 'globs: "server/**,services/**"' },
     },
-    {
-      id: 'output',
-      name: 'Output Style',
-      description: 'How to format responses, diffs, and verification commands',
-      icon: FileText,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      content: outputStylePolicy,
-      keyPoints: [
-        'Minimal diffs - smallest possible changesets',
-        'No mass reformatting or unrelated refactors',
-        'Relative path references with forward slashes',
-        'Include verification commands',
-        'Plan complex changes, fix simple ones directly'
-      ]
-    }
-  ]
+  },
+  {
+    id: 'codex',
+    label: 'OpenAI Codex CLI',
+    realTerm: 'AGENTS.md',
+    realTermExplain: 'No "rules" concept — one instructions file per directory, nearest wins.',
+    locations: {
+      workspace: { file: 'AGENTS.md', note: 'root, always loaded' },
+      output: { file: 'AGENTS.md', note: 'root, always loaded' },
+      frontend: { file: 'src/AGENTS.md', note: 'nested override — layers on top of root' },
+      backend: { file: 'AGENTS.md', note: 'root (no dedicated nested override in this example)' },
+    },
+  },
+]
+
+export default function PolicyRulesGuide() {
+  const [copiedContent, setCopiedContent] = useState<string | null>(null)
+  const [expandedPolicy, setExpandedPolicy] = useState<string | null>(null)
+  const [activeTool, setActiveTool] = useState('copilot')
+
+  const copyToClipboard = (content: string, policyName: string) => {
+    navigator.clipboard.writeText(content)
+    setCopiedContent(policyName)
+    toast.success(`${policyName} copied to clipboard!`)
+    setTimeout(() => setCopiedContent(null), 2000)
+  }
+
+  const tool = TOOLS.find((t) => t.id === activeTool) ?? TOOLS[0]
 
   return (
     <div className="space-y-6">
@@ -378,36 +344,42 @@ Proceed immediately with the fix.`
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5 text-primary" />
-            Policy Rules for AI Tools
+            Always-Loaded Policies
           </CardTitle>
           <CardDescription>
-            Essential guidelines that improve AI assistant performance and code quality across all tools
+            Every tool calls this something different — pick yours to see its real name, real file, and where each policy lives in it
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="bg-accent/10 border border-accent/30 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" />
-                <div className="space-y-2">
-                  <p className="text-sm font-medium">Why These Rules Matter</p>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    These policies help AI tools understand your workspace structure, enforce accessibility standards,
-                    maintain consistent code style, and prevent common mistakes. The content applies across
-                    GitHub Copilot, Claude Code, Cursor, and OpenAI Codex CLI — each tool just loads it in its own format.
-                  </p>
+          <Tabs value={activeTool} onValueChange={setActiveTool} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+              {TOOLS.map((t) => (
+                <TabsTrigger key={t.id} value={t.id} className="text-xs">{t.label}</TabsTrigger>
+              ))}
+            </TabsList>
+            {TOOLS.map((t) => (
+              <TabsContent key={t.id} value={t.id} className="mt-4">
+                <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">
+                      {t.label} calls this <Badge variant="outline">{t.realTerm}</Badge>
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">{t.realTermExplain}</p>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
+              </TabsContent>
+            ))}
+          </Tabs>
         </CardContent>
       </Card>
 
       <div className="grid gap-6">
-        {policies.map((policy) => {
+        {POLICIES.map((policy) => {
           const Icon = policy.icon
           const isExpanded = expandedPolicy === policy.id
           const isCopied = copiedContent === policy.name
+          const location = tool.locations[policy.id]
 
           return (
             <Card key={policy.id} className="border-l-4" style={{ borderLeftColor: `var(--color-${policy.color.split('-')[1]})` }}>
@@ -443,16 +415,20 @@ Proceed immediately with the fix.`
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Key Points</p>
-                  <div className="grid gap-2">
-                    {policy.keyPoints.map((point, idx) => (
-                      <div key={idx} className="flex items-start gap-2">
-                        <CheckCircle className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                        <span className="text-sm text-foreground/80">{point}</span>
-                      </div>
-                    ))}
-                  </div>
+                <div className="flex items-center gap-2 text-xs bg-muted/40 px-3 py-2 rounded">
+                  <FolderOpen className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                  <span className="font-medium text-foreground">In {tool.label}:</span>
+                  <code className="text-accent">{location.file}</code>
+                  <span className="text-muted-foreground">— {location.note}</span>
+                </div>
+
+                <div className="grid gap-1.5">
+                  {policy.keyPoints.map((point, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <CheckCircle className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+                      <span className="text-sm text-foreground/80">{point}</span>
+                    </div>
+                  ))}
                 </div>
 
                 <Collapsible
@@ -468,7 +444,7 @@ Proceed immediately with the fix.`
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="mt-3">
-                    <ScrollArea className="h-[400px] w-full rounded-lg border bg-muted/50">
+                    <ScrollArea className="h-[350px] w-full rounded-lg border bg-muted/50">
                       <pre className="p-4 text-xs font-mono leading-relaxed whitespace-pre-wrap">
                         {policy.content}
                       </pre>
@@ -480,48 +456,6 @@ Proceed immediately with the fix.`
           )
         })}
       </div>
-
-      <Card className="border-accent/30 bg-accent/5">
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-accent" />
-            How to Use These Policies
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div className="space-y-2">
-            <p className="font-medium">GitHub Copilot:</p>
-            <p className="text-muted-foreground">
-              workspace + output-style content merges into <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/copilot-instructions.md</code> (always loaded);
-              frontend/backend content becomes <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.github/instructions/*.instructions.md</code> with an <code className="bg-muted px-1.5 py-0.5 rounded text-xs">applyTo</code> glob.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <p className="font-medium">Claude Code:</p>
-            <p className="text-muted-foreground">
-              Content lives directly in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">CLAUDE.md</code> — Claude reads the whole file at session start, so keep it focused.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <p className="font-medium">Cursor:</p>
-            <p className="text-muted-foreground">
-              Each policy becomes its own <code className="bg-muted px-1.5 py-0.5 rounded text-xs">.cursor/rules/*.mdc</code> file — workspace/output-style use <code className="bg-muted px-1.5 py-0.5 rounded text-xs">alwaysApply: true</code>, frontend/backend use a <code className="bg-muted px-1.5 py-0.5 rounded text-xs">globs</code> pattern so they only load for matching files.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <p className="font-medium">OpenAI Codex CLI:</p>
-            <p className="text-muted-foreground">
-              Content merges into <code className="bg-muted px-1.5 py-0.5 rounded text-xs">AGENTS.md</code> at the repo root; a nested <code className="bg-muted px-1.5 py-0.5 rounded text-xs">AGENTS.md</code> (e.g. in <code className="bg-muted px-1.5 py-0.5 rounded text-xs">src/</code>) can layer domain-specific rules on top, since the nearest file wins.
-            </p>
-          </div>
-          <div className="space-y-2">
-            <p className="font-medium">Reference in Prompts:</p>
-            <p className="text-muted-foreground">
-              Regardless of tool: "Follow the frontend policy for accessibility" or "Apply the output style guidelines" — the model will pull from whichever file it auto-loaded.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   )
 }

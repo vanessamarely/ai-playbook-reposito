@@ -76,3 +76,18 @@ The on-demand **skill** layer has genuinely converged: GitHub Copilot and Cursor
 Only Claude Code needs its own dedicated copy; the other three tools happily discover either shared path. Cursor additionally reads Claude Code's `.claude/agents/` folder directly for subagents.
 
 What has **not** converged: each tool's always-loaded instructions file (`copilot-instructions.md` / `CLAUDE.md` / `.cursor/rules/*.mdc` / `AGENTS.md`) and Copilot's own `.agent.md` custom-agent format remain genuinely tool-specific and need their own file with the correct frontmatter.
+
+## Other real config files (out of scope for this playbook)
+
+Each tool also has a few config files that control permissions, ignore patterns, or editor integration rather than agent/skill content. This playbook doesn't generate them (they're user- and machine-specific), but they're real and worth knowing about:
+
+| Tool | File | Purpose |
+|---|---|---|
+| Claude Code | `.claude/settings.json` (project), `.claude/settings.local.json` (project, not committed), `~/.claude/settings.json` (user) | Tool permissions, hooks, default model |
+| Claude Code | `.mcp.json` (project), `~/.claude.json` (user) | MCP server configuration |
+| GitHub Copilot | `.vscode/settings.json`, `.vscode/extensions.json` | Workspace Copilot settings, recommended extensions |
+| GitHub Copilot | `.vscode/mcp.json` | MCP server configuration (schema: `servers`, not `mcpServers`) |
+| Cursor | `.cursorignore` | Excludes files/folders from Cursor's context, like `.gitignore` |
+| Cursor | `.cursor/mcp.json` (project), `~/.cursor/mcp.json` (global) | MCP server configuration |
+| Codex CLI | `~/.codex/config.toml` (user) | Model, approval_policy, sandbox_mode, `[mcp_servers.*]` |
+| Codex CLI | `.codex/config.toml` (project, trusted projects only) | Project-scoped override of the user config |

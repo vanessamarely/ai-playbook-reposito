@@ -28,9 +28,7 @@ import MCPIntegrationGuide from '@/components/guide/MCPIntegrationGuide'
 import InstallationGuide from '@/components/guide/InstallationGuide'
 import UsageGuide from '@/components/guide/UsageGuide'
 import ExamplePromptsLibrary from '@/components/guide/ExamplePromptsLibrary'
-import WorkspaceRootSetup from '@/components/guide/WorkspaceRootSetup'
 import PolicyRulesGuide from '@/components/guide/PolicyRulesGuide'
-import StructureComparison from '@/components/guide/StructureComparison'
 
 function App() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -64,7 +62,7 @@ function App() {
             </TabsTrigger>
             <TabsTrigger value="rules" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <BookOpen className="h-4 w-4 shrink-0" />
-              <span className="text-xs sm:text-sm">Rules</span>
+              <span className="text-xs sm:text-sm">Instructions</span>
             </TabsTrigger>
             <TabsTrigger value="core" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-2">
               <Layers className="h-4 w-4 shrink-0" />
@@ -79,8 +77,6 @@ function App() {
           <TabsContent value="setup" className="space-y-6">
             <div className="grid gap-6">
               <InstallationGuide />
-              <WorkspaceRootSetup />
-              <UsageGuide />
               <ExamplePromptsLibrary />
             </div>
           </TabsContent>
@@ -203,6 +199,8 @@ function App() {
               </CardContent>
             </Card>
 
+            <UsageGuide />
+
             <DataFlowDiagram />
 
             <WorkflowView />
@@ -210,15 +208,13 @@ function App() {
 
           <TabsContent value="core" className="space-y-6">
             <div className="grid gap-6">
-              <StructureComparison />
-              
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <GitBranch className="h-5 w-5 text-primary" />
-                    Orchestrator
+                    Routing
                   </CardTitle>
-                  <CardDescription>Understanding the AI orchestration layer</CardDescription>
+                  <CardDescription>How requests reach the right agent or skill in each tool</CardDescription>
                 </CardHeader>
               </Card>
               <OrchestratorGuide />

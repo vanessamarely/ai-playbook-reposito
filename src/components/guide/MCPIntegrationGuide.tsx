@@ -862,8 +862,9 @@ Build, test, and verify React components in one workflow.
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="claude" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 h-auto gap-2 bg-muted/50 p-2">
+            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto gap-2 bg-muted/50 p-2">
               <TabsTrigger value="claude" className="text-xs">Claude Code / Desktop</TabsTrigger>
+              <TabsTrigger value="copilot" className="text-xs">GitHub Copilot</TabsTrigger>
               <TabsTrigger value="cursor" className="text-xs">Cursor</TabsTrigger>
               <TabsTrigger value="cline" className="text-xs">Codex CLI</TabsTrigger>
               <TabsTrigger value="custom" className="text-xs">Custom Setup</TabsTrigger>
@@ -923,29 +924,73 @@ Build, test, and verify React components in one workflow.
             </TabsContent>
 
             <TabsContent value="cursor" className="space-y-4 mt-4">
-              <Alert className="bg-accent/10 border-accent/30">
-                <Lightbulb className="h-4 w-4" />
-                <AlertTitle className="text-xs">Cursor MCP Support</AlertTitle>
-                <AlertDescription className="text-xs">
-                  Cursor is adding native MCP support. Until then, use Cursor's built-in terminal and command execution features, or integrate via API.
-                </AlertDescription>
-              </Alert>
+              <div className="bg-background p-4 rounded-lg">
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Configuration File Location</p>
+                <div className="space-y-1 text-xs font-mono">
+                  <div><strong>Project:</strong> .cursor/mcp.json</div>
+                  <div><strong>Global (all projects):</strong> ~/.cursor/mcp.json</div>
+                </div>
+              </div>
 
               <div className="bg-background p-4 rounded-lg">
-                <p className="text-xs font-semibold text-muted-foreground mb-2">Workaround: Command-Based Approach</p>
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Example Configuration</p>
                 <pre className="text-xs font-mono">
-{`# In .cursorrules or agent instructions
-When testing components:
-1. Use terminal to run: npx playwright test
-2. Ask to execute: npx playwright codegen [url]
-3. For GitHub ops: Use gh CLI: gh pr view, gh pr review
-
-When using a11y-audit agent:
-1. Run: npm run test:a11y
-2. Capture output and analyze
-3. Generate fixes based on violations`}
+{`{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "ghp_your_token_here" }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@executeautomation/playwright-mcp-server"]
+    }
+  }
+}`}
                 </pre>
               </div>
+
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertTitle className="text-xs">After Configuration</AlertTitle>
+                <AlertDescription className="text-xs">
+                  Reload the Cursor window (or restart) to pick up new servers. They appear in the MCP tools list inside Agent chat.
+                </AlertDescription>
+              </Alert>
+            </TabsContent>
+
+            <TabsContent value="copilot" className="space-y-4 mt-4">
+              <div className="bg-background p-4 rounded-lg">
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Configuration File Location</p>
+                <div className="space-y-1 text-xs font-mono">
+                  <div><strong>Project (VS Code):</strong> .vscode/mcp.json</div>
+                </div>
+              </div>
+
+              <div className="bg-background p-4 rounded-lg">
+                <p className="text-xs font-semibold text-muted-foreground mb-2">Example Configuration</p>
+                <pre className="text-xs font-mono">
+{`{
+  "servers": {
+    "github": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": { "GITHUB_TOKEN": "\${input:github_token}" }
+    }
+  }
+}`}
+                </pre>
+              </div>
+
+              <Alert>
+                <CheckCircle2 className="h-4 w-4" />
+                <AlertTitle className="text-xs">Note the different shape</AlertTitle>
+                <AlertDescription className="text-xs">
+                  Copilot's schema uses a top-level <code className="bg-muted px-1 rounded">servers</code> key (not <code className="bg-muted px-1 rounded">mcpServers</code>) and an explicit <code className="bg-muted px-1 rounded">type</code> per server. Manage servers from the Command Palette → "MCP: Add Server", or edit the file directly.
+                </AlertDescription>
+              </Alert>
             </TabsContent>
 
             <TabsContent value="cline" className="space-y-4 mt-4">
@@ -1042,6 +1087,71 @@ response = json.loads(process.stdout.readline())`}
               </div>
             </TabsContent>
           </Tabs>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-accent" />
+            Other Config Files Per Tool
+          </CardTitle>
+          <CardDescription>
+            Beyond agents/skills/instructions and MCP, each tool has a couple more real config files worth knowing about
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b text-left text-muted-foreground">
+                  <th className="py-2 pr-4">Tool</th>
+                  <th className="py-2 pr-4">File</th>
+                  <th className="py-2">What it's for</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">Claude Code</Badge></td>
+                  <td className="py-2 pr-4 font-mono">.claude/settings.json</td>
+                  <td className="py-2 text-muted-foreground">Tool permissions, hooks, default model (project-level, committed)</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">Claude Code</Badge></td>
+                  <td className="py-2 pr-4 font-mono">.claude/settings.local.json</td>
+                  <td className="py-2 text-muted-foreground">Same as above but personal, not committed (gitignored)</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">Claude Code</Badge></td>
+                  <td className="py-2 pr-4 font-mono">~/.claude/settings.json</td>
+                  <td className="py-2 text-muted-foreground">Same settings, applied to every project on this machine</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">GitHub Copilot</Badge></td>
+                  <td className="py-2 pr-4 font-mono">.vscode/settings.json</td>
+                  <td className="py-2 text-muted-foreground">Copilot-specific VS Code workspace settings</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">GitHub Copilot</Badge></td>
+                  <td className="py-2 pr-4 font-mono">.vscode/extensions.json</td>
+                  <td className="py-2 text-muted-foreground">Recommends the Copilot extension (and others) to teammates</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">Cursor</Badge></td>
+                  <td className="py-2 pr-4 font-mono">.cursorignore</td>
+                  <td className="py-2 text-muted-foreground">Excludes files/folders from Cursor's context (like .gitignore)</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4"><Badge variant="outline">Codex CLI</Badge></td>
+                  <td className="py-2 pr-4 font-mono">.codex/config.toml</td>
+                  <td className="py-2 text-muted-foreground">Project-scoped override of ~/.codex/config.toml (trusted projects only)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            None of these affect the 13 agents/skills in this playbook — they're user- and machine-specific (permissions, ignore patterns, editor settings), so this playbook doesn't generate them. Listed here so nothing about each tool's real structure is missing from this guide.
+          </p>
         </CardContent>
       </Card>
 

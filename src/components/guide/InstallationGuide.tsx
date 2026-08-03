@@ -13,6 +13,9 @@ interface ToolSetup {
   verifyCommand: string
   testPrompt: string
   checklist: string[]
+  hasGlobalScope: boolean
+  globalScopeNote: string
+  globalSetupScript: string
 }
 
 const TOOL_SETUPS: ToolSetup[] = [
@@ -28,6 +31,22 @@ const TOOL_SETUPS: ToolSetup[] = [
       '.github/skills/<name>/SKILL.md exists for each skill (name + description frontmatter)',
       '.github/agents/*.agent.md files have a description field; select one explicitly from the Copilot Chat agent picker to test it',
     ],
+    hasGlobalScope: false,
+    globalScopeNote: 'Skills only (since 2026) — copilot-instructions.md, custom agents, and prompt files have no personal scope and still need each repo\'s own .github/. Symlinking keeps them in sync.',
+    globalSetupScript: `# GitHub Copilot has a real global scope for SKILLS since 2026:
+# ~/.copilot/skills/ or the shared ~/.agents/skills/ — but NOT for
+# custom instructions, agents, or prompts, which still need each
+# repo's own .github/. Symlinking keeps those three in sync.
+
+mkdir -p ~/.copilot/skills
+cp -r ai-playbook/.claude/skills/* ~/.copilot/skills/
+
+cd your-project
+ln -s "$(pwd)/../ai-playbook/.github/copilot-instructions.md" .github/copilot-instructions.md
+ln -s "$(pwd)/../ai-playbook/.github/instructions" .github/instructions
+ln -s "$(pwd)/../ai-playbook/.github/agents" .github/agents
+ln -s "$(pwd)/../ai-playbook/.github/prompts" .github/prompts
+`,
   },
   {
     id: 'claude',
@@ -41,6 +60,21 @@ const TOOL_SETUPS: ToolSetup[] = [
       '.claude/agents/<name>.md exists for each subagent',
       'Ask Claude "what skills are available?" to confirm discovery',
     ],
+    hasGlobalScope: true,
+    globalScopeNote: 'Real personal scope for everything — no symlink needed. Skills/agents copied to ~/.claude/ apply to every project on this machine.',
+    globalSetupScript: `# Claude Code has a REAL personal scope — no symlink needed.
+# Personal skills/agents apply to every project on your machine.
+
+mkdir -p ~/.claude/skills ~/.claude/agents
+cp -r ai-playbook/.claude/skills/* ~/.claude/skills/
+cp -r ai-playbook/.claude/agents/* ~/.claude/agents/
+
+# Now every "claude" session on this machine sees these skills/agents,
+# regardless of which repo you're in. Update by re-running the cp above
+# (or symlink instead of copy if you want them to stay in sync automatically):
+
+# ln -s "$(pwd)/ai-playbook/.claude/skills"/* ~/.claude/skills/
+`,
   },
   {
     id: 'cursor',
@@ -54,6 +88,22 @@ const TOOL_SETUPS: ToolSetup[] = [
       '.cursor/commands/*.md files appear in the / command menu',
       'No leftover .cursorrules file (legacy, ignored by Agent mode)',
     ],
+    hasGlobalScope: true,
+    globalScopeNote: 'Skills & commands only (since 2.4) — rules are always project-scoped, so those still need a symlink per repo.',
+    globalSetupScript: `# Cursor 2.4+ has a real global scope for SKILLS and COMMANDS — not rules.
+# Global skills: ~/.cursor/skills/ (or the shared ~/.agents/skills/)
+# Global commands: ~/.cursor/commands/
+
+mkdir -p ~/.cursor/skills ~/.cursor/commands
+cp -r ai-playbook/.claude/skills/* ~/.cursor/skills/
+cp ai-playbook/.cursor/commands/*.md ~/.cursor/commands/
+
+# Rules are still project-scoped only — there is no global .cursor/rules/.
+# For rules, symlink (not copy) from each repo so they stay in sync:
+
+# cd your-project && mkdir -p .cursor && \\
+#   ln -s "$(pwd)/../ai-playbook/.cursor/rules" .cursor/rules
+`,
   },
   {
     id: 'codex',
@@ -67,6 +117,18 @@ const TOOL_SETUPS: ToolSetup[] = [
       'Run /skills in Codex CLI to confirm they were discovered',
       'If using a nested AGENTS.md, confirm it only contains what differs from root',
     ],
+    hasGlobalScope: true,
+    globalScopeNote: 'Real personal scope for everything — Codex merges ~/.codex/AGENTS.md with each repo\'s own automatically.',
+    globalSetupScript: `# Codex CLI has a real personal scope: ~/.codex/AGENTS.md (global instructions)
+# and $HOME/.agents/skills/ (user-scope skills) — both load in every project.
+
+cp ai-playbook/AGENTS.md ~/.codex/AGENTS.md
+mkdir -p ~/.agents/skills
+cp -r ai-playbook/.agents/skills/* ~/.agents/skills/
+
+# Codex merges ~/.codex/AGENTS.md with each repo's own AGENTS.md automatically —
+# you don't need to touch the repos themselves for the global part.
+`,
   },
 ]
 
@@ -85,17 +147,17 @@ export default function InstallationGuide() {
             Installation Guide
           </CardTitle>
           <CardDescription>
-            How to install the AI Playbook and configure each of the 4 supported AI tools
+            Pick the AI tool you actually use — each tab below has everything for that tool in one place: what loads automatically, how to install, how to verify, and how to share it across projects.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <Terminal className="h-5 w-5 text-accent" />
-              Step 1: Choose Your Installation Method
+              Step 1: Get the Playbook
             </h3>
             <p className="text-sm text-muted-foreground">
-              These options are the same regardless of which AI tool you use — only the setup in Step 3 differs per tool.
+              Same regardless of which AI tool you use — only Step 2 below differs per tool.
             </p>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -105,9 +167,6 @@ export default function InstallationGuide() {
                   <CardTitle className="text-sm">Workspace Root</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <p className="text-xs text-muted-foreground">
-                    Clone once at the workspace root; see the Setup tab's "Sharing Across Projects" card for which tools support this natively.
-                  </p>
                   <div className="rounded-lg bg-background p-2 font-mono text-[10px] flex items-center justify-between gap-2">
                     <code className="flex-1">cd ~/workspace && git clone &lt;repo-url&gt; ai-playbook</code>
                     <Button size="sm" variant="ghost" className="h-6 w-6 p-0 shrink-0" onClick={() => copyToClipboard('cd ~/workspace && git clone <repo-url> ai-playbook', 'Clone command')}>
@@ -147,29 +206,17 @@ export default function InstallationGuide() {
                 </CardContent>
               </Card>
             </div>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <FolderGit2 className="h-5 w-5 text-accent" />
-              Step 2: Verify the Playbook's Own Structure
-            </h3>
-            <p className="text-sm text-muted-foreground">
-              After cloning/copying, confirm <code className="bg-muted px-1 rounded">ai-playbook/</code> contains all 4 tool trees:{' '}
-              <code className="bg-muted px-1 rounded">.claude/</code>, <code className="bg-muted px-1 rounded">.github/</code>,{' '}
-              <code className="bg-muted px-1 rounded">.cursor/</code>, and <code className="bg-muted px-1 rounded">AGENTS.md</code> +{' '}
-              <code className="bg-muted px-1 rounded">.agents/skills/</code>. See the <strong>Core → Structure</strong> tab for the full breakdown of each.
+            <p className="text-xs text-muted-foreground">
+              After cloning/copying, <code className="bg-muted px-1 rounded">ai-playbook/</code> should contain all 4 tool trees (<code className="bg-muted px-1 rounded">.claude/</code>, <code className="bg-muted px-1 rounded">.github/</code>, <code className="bg-muted px-1 rounded">.cursor/</code>, <code className="bg-muted px-1 rounded">AGENTS.md</code> + <code className="bg-muted px-1 rounded">.agents/skills/</code>) — see the <strong>Core</strong> tab for the full breakdown of each.
             </p>
           </div>
 
           <Separator />
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Step 3: Configure Your AI Tool</h3>
+            <h3 className="text-lg font-semibold">Step 2: Set Up Your AI Tool</h3>
             <p className="text-sm text-muted-foreground">
-              What actually loads automatically differs per tool — pick the one you use:
+              Pick the one you use — everything you need for it lives in its own tab.
             </p>
 
             <Tabs defaultValue="copilot" className="space-y-4">
@@ -185,7 +232,7 @@ export default function InstallationGuide() {
                     <CardHeader className="pb-3">
                       <CardTitle className="text-base flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4 text-accent" />
-                        {t.label}
+                        {t.label} — what loads automatically
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
@@ -203,34 +250,49 @@ export default function InstallationGuide() {
                       </div>
                     </CardContent>
                   </Card>
+
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm">Use it across every project (no per-repo copy)</CardTitle>
+                        <Badge variant={t.hasGlobalScope ? 'default' : 'outline'} className="text-xs">
+                          {t.hasGlobalScope ? 'Global scope available' : 'Symlink per repo'}
+                        </Badge>
+                      </div>
+                      <CardDescription className="text-xs">{t.globalScopeNote}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <p className="text-xs font-medium text-muted-foreground">Setup:</p>
+                        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => copyToClipboard(t.globalSetupScript, `${t.label} sharing setup`)}>
+                          <Copy className="h-3 w-3 mr-1" />
+                          Copy
+                        </Button>
+                      </div>
+                      <pre className="text-[10px] leading-relaxed overflow-x-auto max-h-72 overflow-y-auto bg-muted/50 rounded-lg p-3">
+                        <code>{t.globalSetupScript}</code>
+                      </pre>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-muted/30">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-sm">Verify Installation</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-1.5 text-xs text-muted-foreground">
+                        {t.checklist.map((item, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
                 </TabsContent>
               ))}
             </Tabs>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Step 4: Verify Installation</h3>
-            <div className="grid gap-3 md:grid-cols-2">
-              {TOOL_SETUPS.map((t) => (
-                <Card key={t.id} className="bg-muted/30">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm">{t.label}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-1.5 text-xs text-muted-foreground">
-                      {t.checklist.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-accent shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
           </div>
 
           <Separator />
@@ -243,7 +305,7 @@ export default function InstallationGuide() {
                 <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
                   <li>Always-loaded instructions and custom agents are independent per tool — installing for one doesn't configure the others</li>
                   <li>Skills are the exception: <code className="bg-muted px-1 rounded">.claude/skills/</code> and <code className="bg-muted px-1 rounded">.agents/skills/</code> together cover all 4 tools natively, so you only need to author/update a skill once</li>
-                  <li>Claude Code and Codex CLI also support a personal/global scope so you don't need to touch every repo — see the Setup tab</li>
+                  <li>Prefer symlinks over copies wherever a tool allows it, so a single <code className="bg-muted px-1 rounded">git pull</code> in <code className="bg-muted px-1 rounded">ai-playbook/</code> updates every project instantly</li>
                   <li>Customize client-specific overrides in your project's own instructions, not in the shared playbook</li>
                 </ul>
               </div>
